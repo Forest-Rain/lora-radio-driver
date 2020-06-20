@@ -60,7 +60,6 @@
 >        [*] Enable ulog
 > [*] Enable ISR log.
 ```
-<br />
 
 ## 2.2 获取软件包
 
