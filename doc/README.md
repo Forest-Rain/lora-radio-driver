@@ -78,7 +78,7 @@ RT-Thread online packages --->
                 Version (latest)  --->
 ```
 
-1. 选择lora模块，根据实际使用的MCU硬件平台与lora模块，配置SPI与GPIO引脚等功能选项
+1. 选择lora模块，根据实际使用的MCU硬件平台(当前验证平台是STM32L0\STM32L4)与LoRa模块，配置SPI与GPIO引脚等功能选项
    - 设定SPI口
    - 设定LoRa模块的GPIO口（比如 RESET、NSS、BUSY、DIO1、TXE、RXE...）
      - 支持使用引脚号来定义GPIO，
