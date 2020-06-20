@@ -23,7 +23,7 @@
    - LoRa SIP\SoC
   
 ## 1.1 LoRa Radio Driver 软件包组织结构
- <br />![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1592539008368-2a9e7389-2b06-4d17-a5d2-0ad9865c830c.png#align=left&display=inline&height=650&margin=%5Bobject%20Object%5D&name=image.png&originHeight=650&originWidth=1182&size=70704&status=done&style=none&width=1182)
+ <br />![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1592692110122-190f719b-5e6a-43d8-bf04-e0d4366a7524.png#align=left&display=inline&height=654&margin=%5Bobject%20Object%5D&name=image.png&originHeight=654&originWidth=1178&size=71946&status=done&style=none&width=1178)
 
 - lora-radio
    - sx126x\127x驱动包
