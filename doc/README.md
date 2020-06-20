@@ -49,7 +49,7 @@ LoRa-Radio-Driver软件包是基于RTOS( RT-Thread ) 实现的LoRa Tranceiver芯
 ## 2.1 依赖
 
 - multi-rtimer软件包
-   - 用于提供定时器超时服务
+   - 用于提供RF驱动中的发送与接收超时服务
    - 如果用于时间精度要求高(ms级别)的场景，注意开启LSE，并设置RTC时钟源为外部32768晶振
 - 可选
    - ulog组件
