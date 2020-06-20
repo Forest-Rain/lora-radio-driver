@@ -15,7 +15,7 @@
    - 可作为phy层对接到LoRaWAN协议栈
 - 当前支持LoRa 模块\芯片
    - LoRa Transceiver (SPI)
-      - SX126X (SX1262\SX1268..)
+      - SX126X (SX1262\ASR6500S\SX1268..)
         - [x] LSD4WN-2R717N40 ( SX1268 )
       - SX127X (SX1272\SX1276\SX1278..)
         - [x] LSD4WN-2F717N20 ( SX1278 )
