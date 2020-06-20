@@ -1,0 +1,26 @@
+from building import *
+
+src   = []
+cwd   = GetCurrentDir()
+include_path = [cwd]
+
+# add lora radio driver.
+if GetDepend('USING_LORA_CHIP_SX126X'):
+    src = Split('''
+	sx126x/lora-radio-sx126x.c
+	sx126x/lora-spi-sx126x.c
+	sx126x/sx126x.c
+	''')
+    include_path += [cwd+'/sx126x']
+
+if GetDepend('USING_LORA_CHIP_SX127X'):
+    src = Split('''
+    sx127x/lora-radio-sx127x.c
+    sx127x/lora-spi-sx127x.c
+	sx127x/sx127x.c
+	''')
+    include_path += [cwd+'/sx127x']
+
+group = DefineGroup('lora-radio-driver', src, depend = ['PKG_USING_LORA_RADIO_DRIVER'], CPPPATH = include_path)
+
+Return('group')
