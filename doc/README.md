@@ -102,4 +102,4 @@ RT-Thread online packages --->
  
  <br />![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1592551287552-a4268ba4-06e7-4a0c-bf8a-cc5742cb0a78.png#align=left&display=inline&height=890&margin=%5Bobject%20Object%5D&name=image.png&originHeight=890&originWidth=1306&size=223346&status=done&style=none&width=1306)<br />lora ping 双向通信测试示例(SX1278 <-> SX1268)<br />
 
-<br />![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1592551532403-4f10f828-3eb3-406e-af6d-45ddfaf6310e.png#align=left&display=inline&height=816&margin=%5Bobject%20Object%5D&name=image.png&originHeight=816&originWidth=1704&size=213381&status=done&style=none&width=1704)<br />单向通信测试示例 SX1278  <- 或-> SX1268<br />
+<br />![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1592551532403-4f10f828-3eb3-406e-af6d-45ddfaf6310e.png#align=left&display=inline&height=816&margin=%5Bobject%20Object%5D&name=image.png&originHeight=816&originWidth=1704&size=213381&status=done&style=none&width=1704)<br />单向通信测试示例 (SX1278  <- 或-> SX1268)<br />
