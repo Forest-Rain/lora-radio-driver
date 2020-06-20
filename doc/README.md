@@ -21,12 +21,6 @@
         - [x] [LSD4RF-2F717N20 ( SX1278 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
         - [x] Ra-01 ( SX1278 )
    - LoRa SIP\SoC
-- 当前MCU测试平台
-   - LSD4RF-2NTEST002 (STM32L476ZG)
-       - LSD4RF-2R717N40
-       - LSD4RF-2F717N20
-   - Nucleo-L476RG (STM32L476RG)
-       - Ra-01(RT-thread LoRa扩展板V1)
   
 ## 1.1 LoRa Radio Driver 软件包组织结构
  <br />![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1592539008368-2a9e7389-2b06-4d17-a5d2-0ad9865c830c.png#align=left&display=inline&height=650&margin=%5Bobject%20Object%5D&name=image.png&originHeight=650&originWidth=1182&size=70704&status=done&style=none&width=1182)
@@ -96,7 +90,12 @@ RT-Thread online packages --->
 在 lora-radio-driver\ports\lora-module文件下，参考已有模板，增加新的lora模块驱动文件xxxx-board.c<br />
 
 ## 2.4 使用示例
-
+- 当前MCU测试平台
+   - LSD4RF-2NTEST002 (STM32L476ZG)
+       - LSD4RF-2R717N40
+       - LSD4RF-2F717N20
+   - Nucleo-L476RG (STM32L476RG)
+       - Ra-01(RT-thread LoRa扩展板V1)
 ## 2.4.1 Finish测试命令
 若使能[* ] LoRa Radio Test，则可以通过finish命令进行LoRa测试<br />![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1592550763879-ac947241-b072-4db8-89bf-ced6ab168af9.png#align=left&display=inline&height=163&margin=%5Bobject%20Object%5D&name=image.png&originHeight=163&originWidth=858&size=21400&status=done&style=none&width=858)
 
