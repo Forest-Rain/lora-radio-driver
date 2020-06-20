@@ -38,8 +38,8 @@
    - lora radio driver示例文件
 - port
    - 主要包含支持的lora模块
-      - 文件夹中的xxxx-borad.c包含了主要的LoRa模块硬件接口配置：
-         - LoRa模块功率输出方式（PA\RFO...）
+      - 单个文件夹中xxxx-borad.c为实际使用LoRa模块的相关硬件接口配置：
+         - LoRa模块的功率输出方式（PA\RFO...）
          - LoRa模块的RF高频开关控制方式（TXE、RXE、无..）
          - LoRa模块的DIO口（DIO0、DIO1、DIO2....）
          - LoRa模块的工作频率限制等
