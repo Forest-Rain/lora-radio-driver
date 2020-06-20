@@ -20,6 +20,7 @@
       - SX127X (SX1272\SX1276\SX1278..)
         - [x] LSD4WN-2F717N20 ( SX1278 )
         - [x] Ra-01 ( SX1278 )
+   - LoRa SIP\SoC
 
 ## 1.1 LoRa Radio Driver 软件包组织结构
  <br />![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1592539008368-2a9e7389-2b06-4d17-a5d2-0ad9865c830c.png#align=left&display=inline&height=650&margin=%5Bobject%20Object%5D&name=image.png&originHeight=650&originWidth=1182&size=70704&status=done&style=none&width=1182)
