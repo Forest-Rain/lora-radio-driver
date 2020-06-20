@@ -1,7 +1,7 @@
 # LoRa-Radio-Driver软件包
 
 # 1 简介
-LoRa-Radio-Driver软件包是基于RTOS( RT-Thread ) 实现的LoRa Tranceiver芯片的驱动文件，可用于快速搭建基于LoRa等通信的应用产品。<br />LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio]()基础上，进一步封装实现。
+  LoRa-Radio-Driver软件包是基于RTOS( RT-Thread ) 实现的LoRa Tranceiver芯片的驱动文件，可用于快速搭建基于LoRa等通信的应用产品。<br />LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio]()基础上，进一步封装实现。
 > LoRaMac\Radio
 > [https://github.com/Lora-net/LoRaMac-node/tree/master/src/radio](https://github.com/Lora-net/LoRaMac-node/tree/master/src/radio)
 
@@ -15,12 +15,11 @@ LoRa-Radio-Driver软件包是基于RTOS( RT-Thread ) 实现的LoRa Tranceiver芯
    - 可作为phy层对接到LoRaWAN协议栈
 - 当前支持LoRa 模块\芯片
    - LoRa Transceiver (SPI)
-      - SX126X
+      - SX126X (SX1262\SX1268..)
         - [x] LSD4WN-2R717N40 ( SX1268 )
-      - SX127X
+      - SX127X (SX1272\SX1276\SX1278..)
         - [x] LSD4WN-2F717N20 ( SX1278 )
         - [x] Ra-01 ( SX1278 )
-
 
 ## 1.1 LoRa Radio Driver 软件包组织结构
  <br />![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1592539008368-2a9e7389-2b06-4d17-a5d2-0ad9865c830c.png#align=left&display=inline&height=650&margin=%5Bobject%20Object%5D&name=image.png&originHeight=650&originWidth=1182&size=70704&status=done&style=none&width=1182)
@@ -81,6 +80,8 @@ RT-Thread online packages --->
 1. 选择lora模块，根据实际使用的MCU硬件平台与lora模块，配置SPI与GPIO引脚等功能选项
    - 设定SPI口
    - 设定LoRa模块的GPIO口（比如 RESET、NSS、BUSY、DIO1、TXE、RXE...）
+    - 支持使用引脚号来定义GPIO，
+    - 支持使用引脚名来定义GPIO，比如 输入 A10 代表引脚GPIOA、PIN10 (STM32)
 2. 根据实际情况，可选择测试示例
 
 
