@@ -16,13 +16,14 @@ LoRa-Radio-Driver软件包是基于RTOS( RT-Thread ) 实现的LoRa Tranceiver芯
 - 当前支持LoRa 模块\芯片
    - LoRa Transceiver (SPI)
       - SX126X
-- [x] LSD4WN-2R717N40 ( SX1268 )
+        - [x] LSD4WN-2R717N40 ( SX1268 )
       - SX127X
-- [x] LSD4WN-2F717N20 ( SX1278 )
-- [x] Ra-01 ( SX1278 )
+        - [x] LSD4WN-2F717N20 ( SX1278 )
+        - [x] Ra-01 ( SX1278 )
 
 
 ## 1.1 LoRa Radio Driver 软件包组织结构
+ <br />
 ![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1592539008368-2a9e7389-2b06-4d17-a5d2-0ad9865c830c.png#align=left&display=inline&height=650&margin=%5Bobject%20Object%5D&name=image.png&originHeight=650&originWidth=1182&size=70704&status=done&style=none&width=1182)
 
 - lora-radio
@@ -60,7 +61,7 @@ LoRa-Radio-Driver软件包是基于RTOS( RT-Thread ) 实现的LoRa Tranceiver芯
 > [*] Enable ISR log.
 
 <br />
-<a name="kJb7k"></a>
+
 ## 2.2 获取软件包
 
 <br />使用 lora-radio-timer 软件包，需要在 RT-Thread 的包管理中选中它，具体路径如下：<br />
