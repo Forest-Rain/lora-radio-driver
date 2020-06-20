@@ -86,7 +86,7 @@ RT-Thread online packages --->
 
 
 ## 2.3 新增LoRa模块
-在 lora-radio-driver\ports\lora-module文件下，参考已有模板，增加新的lora模块驱动文件xxxx-board.c，<br />
+在 lora-radio-driver\ports\lora-module文件下，参考已有模板，增加新的lora模块驱动文件xxxx-board.c<br />
 
 ## 2.4 使用示例
 
@@ -98,7 +98,7 @@ RT-Thread online packages --->
 | lora probe | 测试lora设备(SPI)是否访问正常 |
 | lora cw \<para1\> \<para2\> | 载波测试<br />  para1:频点，单位Hz<br />para2:功率，单位dBm |
 | lora ping \<para1\> \<para2\> | 双向通信测试<br /> para1 : 主机\从机<br /> -m 主机<br /> -s 从机<br />para2: 发送数据包个数 |
-| lora rx  | 接收数据包，同时以16进制格式与ASCII码显示数据内容 |
+| lora rx  | 接收(监听)lora数据包，同时以16进制格式与ASCII码显示数据内容 |
  
  <br />![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1592551287552-a4268ba4-06e7-4a0c-bf8a-cc5742cb0a78.png#align=left&display=inline&height=890&margin=%5Bobject%20Object%5D&name=image.png&originHeight=890&originWidth=1306&size=223346&status=done&style=none&width=1306)<br />lora ping 双向通信测试示例(SX1278 <-> SX1268)<br />
 
