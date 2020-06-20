@@ -91,7 +91,7 @@ RT-Thread online packages --->
 
 ## 2.4 使用示例
 - 当前MCU测试平台
-   - LSD4RF-2NTEST002 (STM32L476ZG)
+   - LSD4RF-TEST2002 (STM32L476VG)
        - LSD4RF-2R717N40
        - LSD4RF-2F717N20
    - Nucleo-L476RG (STM32L476RG)
