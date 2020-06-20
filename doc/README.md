@@ -89,14 +89,15 @@ RT-Thread online packages --->
 ## 2.3 新增LoRa模块
 在 lora-radio-driver\ports\lora-module文件下，参考已有模板，增加新的lora模块驱动文件xxxx-board.c<br />
 
-## 2.4 使用示例
-- 当前MCU测试平台
+# 3 使用示例
+## 3.1 测试平台 
+- 当前测试平台(MCU:STM32L)
    - LSD4RF-TEST2002 (STM32L476VG)
        - LSD4RF-2R717N40
        - LSD4RF-2F717N20
    - Nucleo-L476RG (STM32L476RG)
        - Ra-01(RT-thread LoRa扩展板V1)
-## 2.4.1 Finish测试命令
+## 3.2 Finish测试命令
 若使能[* ] LoRa Radio Test，则可以通过finish命令进行LoRa测试<br />![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1592550763879-ac947241-b072-4db8-89bf-ced6ab168af9.png#align=left&display=inline&height=163&margin=%5Bobject%20Object%5D&name=image.png&originHeight=163&originWidth=858&size=21400&status=done&style=none&width=858)
 
 | finish命令 | 说明 |
@@ -105,7 +106,7 @@ RT-Thread online packages --->
 | lora cw \<para1\> \<para2\> | 载波测试<br />  para1:频点，单位Hz<br />para2:功率，单位dBm |
 | lora ping \<para1\> \<para2\> | 双向通信测试<br /> para1 : 主机\从机<br /> -m 主机<br /> -s 从机<br />para2: 发送数据包个数 |
 | lora rx  | 接收(监听)lora数据包，同时以16进制格式与ASCII码显示数据内容 |
- 
+## 3.3 实际测试示例
  <br />![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1592551287552-a4268ba4-06e7-4a0c-bf8a-cc5742cb0a78.png#align=left&display=inline&height=890&margin=%5Bobject%20Object%5D&name=image.png&originHeight=890&originWidth=1306&size=223346&status=done&style=none&width=1306)<br />lora ping 双向通信测试示例(SX1278 <-> SX1268)<br />
 
 <br />![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1592551532403-4f10f828-3eb3-406e-af6d-45ddfaf6310e.png#align=left&display=inline&height=816&margin=%5Bobject%20Object%5D&name=image.png&originHeight=816&originWidth=1704&size=213381&status=done&style=none&width=1704)<br />lora rx 接收(监听)lora数据包测试示例 (SX1278  <- 或-> SX1268)<br />
