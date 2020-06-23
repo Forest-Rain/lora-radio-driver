@@ -62,7 +62,7 @@
 ```
 
 ## 2.2 获取软件包
-使用 lora-radio-timer 软件包，需要在 RT-Thread 的包管理中选中它，具体路径如下：<br />
+使用 lora-radio-driver 软件包，需要在 RT-Thread 的包管理中选中它，具体路径如下：<br />
 
 ```
 RT-Thread online packages --->
