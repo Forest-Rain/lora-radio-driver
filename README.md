@@ -1,9 +1,7 @@
 # LoRa-Radio-Driver软件包
 
 # 1 简介
-  LoRa-Radio-Driver软件包是基于RTOS( RT-Thread ) 实现的LoRa Tranceiver芯片的驱动文件，可用于快速搭建基于LoRa等通信的应用产品。<br />LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio]()基础上，进一步封装实现。
-> LoRaMac\Radio
-> [https://github.com/Lora-net/LoRaMac-node/tree/master/src/radio](https://github.com/Lora-net/LoRaMac-node/tree/master/src/radio)
+  LoRa-Radio-Driver软件包是基于RTOS( RT-Thread ) 实现的LoRa Tranceiver芯片的驱动文件，可用于快速搭建基于LoRa等通信的应用产品。
 
 - 主要特点:
    - 当前支持LoRa Transceiver（sx126x\sx127x ）
@@ -21,4 +19,5 @@
         - [x] [LSD4RF-2F717N20 ( SX1278 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
         - [x] Ra-01 ( SX1278 )
    - LoRa SIP\SoC
+   
 更多详细信息请查看[LoRa-Radio-Driver/doc] (https://github.com/Forest-Rain/lora-radio-driver/tree/master/doc)
