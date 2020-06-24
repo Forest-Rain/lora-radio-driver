@@ -48,12 +48,14 @@
 
 ## 2.1 依赖
 
-- multi-rtimer软件包
-   - 用于提供RF驱动中的发送与接收超时服务
-   - 如果用于时间精度要求高(ms级别)的场景，注意开启LSE，并设置RTC时钟源为外部32768晶振
-- 可选
+- 可选依赖
+  - multi-rtimer软件包(若未选用multi-rtimer软件包，则默认采用rt_tick来提供定时服务)
+    - 用于提供RF驱动中的发送与接收超时服务等
+    - 如果用于时间精度要求高(ms级别)的场景，注意开启LSE，并设置RTC时钟源为外部32768晶振
+   
    - ulog组件
       - lora-raido-driver内部使用ulog接口，若使能ulog，则可看到更多调试输出信息
+      - lora-radio-test.c使用ulog接口，用于打印测试信息
 ```
 > RT-Thread Components --->
 >    Utiliess --->
