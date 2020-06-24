@@ -29,10 +29,7 @@
 
 #include <math.h>
 #include <string.h>
-#ifdef PKG_USING_MULTI_RTIMER
-#include "hw_rtc_stm32l.h"
-#include "multi_rtimer.h"
-#endif
+#include "lora-radio-timer.h"
 #include "lora-radio.h"
 //#include "delay.h"
 
@@ -264,7 +261,7 @@ uint8_t SX127xCheck(void)
 
     if( SX127x.Settings.Modem == MODEM_LORA ) 
     {        
-        /*SPI 验证,选一个寄存器来做验证*/
+        /*spi check*/
         SX127xWrite(REG_LR_PAYLOADLENGTH, 0x55); 
         test = SX127xRead(REG_LR_PAYLOADLENGTH);
         if (test != 0x55)

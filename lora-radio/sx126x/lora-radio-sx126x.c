@@ -24,11 +24,7 @@
  */
 #include "rtthread.h"
 #include <string.h>
-#ifdef PKG_USING_MULTI_RTIMER
-#include "hw_rtc_stm32l.h"
-#include "multi_rtimer.h"
-#endif
-
+#include "lora-radio-timer.h"
 #include "lora-radio.h"
 #include "sx126x.h"
 #include "sx126x-board.h"
@@ -514,7 +510,7 @@ uint8_t RadioCheck(void)
         //LOG_D("Packet Type is %s\n",( SX126x.PacketParams.PacketType == PACKET_TYPE_LORA )? "LoRa":"FSK");
         LOG_D("Packet Type is %s\n",( SX126x.PacketParams.PacketType == PACKET_TYPE_LORA )? "LoRa":"FSK");
         
-        /*SPI 验证,选一个寄存器来做验证*/
+        /*SPI Check*/
         SX126xWriteRegister(REG_LR_PAYLOADLENGTH, 0x55); 
         test = SX126xReadRegister(REG_LR_PAYLOADLENGTH);
         if (test != 0x55)
