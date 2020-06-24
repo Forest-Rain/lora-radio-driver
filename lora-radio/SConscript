@@ -4,6 +4,8 @@ src   = []
 cwd   = GetCurrentDir()
 include_path = [cwd]
 
+
+
 # add lora radio driver.
 if GetDepend('USING_LORA_CHIP_SX126X'):
     src = Split('''
@@ -20,6 +22,9 @@ if GetDepend('USING_LORA_CHIP_SX127X'):
 	sx127x/sx127x.c
 	''')
     include_path += [cwd+'/sx127x']
+
+src += ['common/lora_radio_timer.c']
+include_path += [cwd+'/common']
 
 group = DefineGroup('lora-radio-driver', src, depend = ['PKG_USING_LORA_RADIO_DRIVER'], CPPPATH = include_path)
 

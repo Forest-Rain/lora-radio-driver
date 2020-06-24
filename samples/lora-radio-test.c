@@ -9,9 +9,7 @@
  */
 #include <rtthread.h>
 #include "board.h"
-#ifdef PKG_USING_MULTI_RTIMER
-#include "multi_rtimer.h"
-#endif
+#include "lora_radio_timer.h"
 #include "lora-radio.h"
 #include "lora-radio-test.h"
 
@@ -25,7 +23,7 @@
 #define LOG_I rt_kprintf
 #endif
 
-/* ÊÂ¼þ¿ØÖÆ¿é */
+/* ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Æ¿ï¿½ */
 static struct rt_event radio_event;
 
 const uint8_t PingMsg[] = "PING";
@@ -171,7 +169,7 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
     
     rssi_value_total += rssi_value;
     snr_value_total += snr_value;
-    rx_timestamp = rtimer_get_current_time();
+    rx_timestamp = TimerGetCurrentTime();
 }
 
 void OnTxTimeout( void )
@@ -185,7 +183,7 @@ void OnRxTimeout( void )
     Radio.Sleep( );
     rt_event_send(&radio_event, EV_RADIO_RX_TIMEOUT);
  
-    rx_timestamp = rtimer_get_current_time();
+    rx_timestamp = TimerGetCurrentTime();
 }
 
 void OnRxError( void )
@@ -198,7 +196,7 @@ void send_ping_packet(uint32_t src_addr,uint32_t dst_addr,uint8_t len)
 {
     tx_seq_cnt++;
                             
-    tx_timestamp = rtimer_get_current_time();
+    tx_timestamp = TimerGetCurrentTime();
     
     // Send the next PING frame
     uint8_t index = 0;
@@ -245,14 +243,14 @@ void lora_init(void)
         if( lora_radio_test_thread == RT_NULL )
         {
             rt_event_init(&radio_event, "radio-event", RT_IPC_FLAG_FIFO);
-            /* ´´½¨Ïß³Ì */
+            /* ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ */
             lora_radio_test_thread = rt_thread_create("lora-radio-test",
                                     lora_radio_test_thread_entry, 
                                     RT_NULL,//parameters,
                                     4096, 
                                     2, 
                                     10);
-            /* ´´½¨³É¹¦ÔòÆô¶¯Ïß³Ì */
+            /* ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ */
             if (lora_radio_test_thread != RT_NULL)
             {
                 rt_thread_startup(lora_radio_test_thread);
@@ -378,7 +376,7 @@ void lora_radio_test_thread_entry(void* parameter)
                                 slaver_addr |= Buffer[7] << 16;
                                 slaver_addr |= Buffer[8] << 24;
                                                 
-                               //LOG_I("À´×Ô slave µÄ»Ø¸´:×Ö½Ú=%d,Ê±¼ä=%d ms",BufferSize,( rx_timestamp - tx_timestamp ) );
+                               //LOG_I("ï¿½ï¿½ï¿½ï¿½ slave ï¿½Ä»Ø¸ï¿½:ï¿½Ö½ï¿½=%d,Ê±ï¿½ï¿½=%d ms",BufferSize,( rx_timestamp - tx_timestamp ) );
                                LOG_I("Reply from [0x%X]:bytes=%d,total time=%d ms,rssi=%d,snr=%d",slaver_addr,BufferSize,( rx_timestamp - tx_timestamp ),rssi_value,snr_value );
                                  
                                // Send the next PING frame
@@ -470,7 +468,7 @@ void lora_radio_test_thread_entry(void* parameter)
                             if( !tx_seq_cnt ) 
                             {
                                 LOG_I("Master Address(MA):[0x%X]",master_address);
-                                //LOG_D("ÕýÔÚ PING [%X] ¾ßÓÐ%d×Ö½ÚµÄÊý¾Ý:%d\n",slaver_address,payload_len);
+                                //LOG_D("ï¿½ï¿½ï¿½ï¿½ PING [%X] ï¿½ï¿½ï¿½ï¿½%dï¿½Ö½Úµï¿½ï¿½ï¿½ï¿½ï¿½:%d\n",slaver_address,payload_len);
                                 LOG_I("Pinging [SA=0x%X] with %d bytes of data for %d counters:", slaver_address, payload_len, max_tx_nbtrials);
                                 LOG_I("With radio parameters: freq=%d, TxPower=%d, SF=%d, CR=%d, BW=%d\n", lora_radio_test_paras.frequency, lora_radio_test_paras.txpower, lora_radio_test_paras.sf, lora_radio_test_paras.cr, lora_radio_test_paras.bw);
                             }
@@ -483,7 +481,7 @@ void lora_radio_test_thread_entry(void* parameter)
                             // tx_seq_cnt -= 1;
                             //rx_timeout_cnt -= 1;
                             
-                            //ping statistics for 192.168.1.1£ºpackets£ºsent=4£¬received=0£¬lost=4 
+                            //ping statistics for 192.168.1.1ï¿½ï¿½packetsï¿½ï¿½sent=4ï¿½ï¿½received=0ï¿½ï¿½lost=4 
                             uint16_t per = 100 - ( (float) rx_correct_cnt / tx_seq_cnt ) * 100;
                             uint32_t tx_total_byte = tx_seq_cnt * ( payload_len + MAC_HEADER_OVERHEAD );
                             uint32_t tx_total_kbyte_integer = tx_total_byte >> 10;   // / 1024
