@@ -1,7 +1,5 @@
-# LoRa-Radio-Driver软件包
-
-# 1 简介
-  LoRa-Radio-Driver软件包是基于RTOS( RT-Thread ) 实现的LoRa Tranceiver芯片的驱动文件，可用于快速搭建基于LoRa等通信的应用产品。
+# LoRa-Radio-Driver软件包 简介
+  LoRa-Radio-Driver软件包是基于RTOS( RT-Thread ) 实现的LoRa Tranceiver芯片的驱动文件包，可用于快速搭建基于LoRa等通信的应用产品。
 
 - 主要特点:
    - 当前支持LoRa Transceiver（sx126x\sx127x ）
@@ -20,4 +18,4 @@
         - [x] Ra-01 ( SX1278 )
    - LoRa SIP\SoC
    
-更多详细信息请查看[LoRa-Radio-Driver/doc] (https://github.com/Forest-Rain/lora-radio-driver/tree/master/doc)
+更多详细信息请查看[LoRa-Radio-Driver/doc](https://github.com/Forest-Rain/lora-radio-driver/tree/master/doc)
