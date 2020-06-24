@@ -1,17 +1,19 @@
-/*
- * @file 
- * @Date 2020-06-17 17:38:34
- * @LastEditTime: 2020-06-24 15:48:17
- * @Description 
- *      lora_radio/lorawan timer
- */ 
+/*!
+ * \file      lora-radio-timer.c
+ *
+ * \brief     lora-radio timer 
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * \author    DerekChen
+ */
 
 #include <rtconfig.h>
 #ifndef PKG_USING_MULTI_RTIMER
 
 #include <rtthread.h>
 #include <stdint.h>
-#include "lora_radio_timer.h"
+#include "lora-radio-timer.h"
 
 void rtick_timer_init( rtick_timer_event_t *obj, void ( *callback )( void ) )
 {

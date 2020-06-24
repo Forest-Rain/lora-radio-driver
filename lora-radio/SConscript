@@ -23,7 +23,7 @@ if GetDepend('USING_LORA_CHIP_SX127X'):
 	''')
     include_path += [cwd+'/sx127x']
 
-src += ['common/lora_radio_timer.c']
+src += ['common/lora-radio-timer.c']
 include_path += [cwd+'/common']
 
 group = DefineGroup('lora-radio-driver', src, depend = ['PKG_USING_LORA_RADIO_DRIVER'], CPPPATH = include_path)

@@ -1,9 +1,3 @@
-/*
- * @file 
- * @Date 2020-06-17 17:38:34
- * @LastEditTime 2020-06-19 14:06:45
- * @Description 
- */ 
 #ifndef __LORA_RADIO_TIMER_H__
 #define __LORA_RADIO_TIMER_H__
 

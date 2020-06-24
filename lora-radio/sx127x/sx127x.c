@@ -29,7 +29,7 @@
 
 #include <math.h>
 #include <string.h>
-#include "lora_radio_timer.h"
+#include "lora-radio-timer.h"
 #include "lora-radio.h"
 //#include "delay.h"
 
@@ -261,7 +261,7 @@ uint8_t SX127xCheck(void)
 
     if( SX127x.Settings.Modem == MODEM_LORA ) 
     {        
-        /*SPI ��֤,ѡһ���Ĵ���������֤*/
+        /*spi check*/
         SX127xWrite(REG_LR_PAYLOADLENGTH, 0x55); 
         test = SX127xRead(REG_LR_PAYLOADLENGTH);
         if (test != 0x55)

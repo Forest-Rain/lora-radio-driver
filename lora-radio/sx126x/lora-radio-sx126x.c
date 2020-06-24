@@ -24,7 +24,7 @@
  */
 #include "rtthread.h"
 #include <string.h>
-#include "lora_radio_timer.h"
+#include "lora-radio-timer.h"
 #include "lora-radio.h"
 #include "sx126x.h"
 #include "sx126x-board.h"
@@ -510,7 +510,7 @@ uint8_t RadioCheck(void)
         //LOG_D("Packet Type is %s\n",( SX126x.PacketParams.PacketType == PACKET_TYPE_LORA )? "LoRa":"FSK");
         LOG_D("Packet Type is %s\n",( SX126x.PacketParams.PacketType == PACKET_TYPE_LORA )? "LoRa":"FSK");
         
-        /*SPI ��֤,ѡһ���Ĵ���������֤*/
+        /*SPI Check*/
         SX126xWriteRegister(REG_LR_PAYLOADLENGTH, 0x55); 
         test = SX126xReadRegister(REG_LR_PAYLOADLENGTH);
         if (test != 0x55)
