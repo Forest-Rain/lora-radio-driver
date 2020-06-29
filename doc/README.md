@@ -21,7 +21,7 @@
         - [x] [LSD4RF-2F717N20 ( SX1278 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
         - [x] Ra-01 ( SX1278 )
    - LoRa SIP\SoC
-  
+
 ## 1.1 LoRa Radio Driver 软件包组织结构
  <br />![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1592692110122-190f719b-5e6a-43d8-bf04-e0d4366a7524.png#align=left&display=inline&height=654&margin=%5Bobject%20Object%5D&name=image.png&originHeight=654&originWidth=1178&size=71946&status=done&style=none&width=1178)
 
@@ -52,10 +52,10 @@
 ## 2.1 依赖
 
 - 可选依赖
-  - multi-rtimer软件包(若未选用multi-rtimer软件包，则默认采用rt_tick来提供定时服务)
+  - multi-rtimer软件包(若未选用multi-rtimer软件包，则默认采用rt_tick来提供定时服务，注意**要开启SOFT_TIMER**)
     - 用于提供RF驱动中的发送与接收超时服务等
     - 如果用于时间精度要求高(ms级别)的场景，注意开启LSE，并设置RTC时钟源为外部32768晶振
-   
+  
    - ulog组件
       - lora-raido-driver内部使用ulog接口，若使能ulog，则可看到更多调试输出信息
       - lora-radio-test.c使用ulog接口，用于打印测试信息
