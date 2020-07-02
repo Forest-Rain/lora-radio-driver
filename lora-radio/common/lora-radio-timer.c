@@ -17,12 +17,12 @@
 
 void rtick_timer_init( rtick_timer_event_t *obj, void ( *callback )( void ) )
 {
-    int count = 0;
+    static int count = 0;
     
     char name[RT_NAME_MAX];
-    rt_snprintf(name,8,"rtk_%d",count);
+    rt_snprintf(name,8,"rtk_%d",count++);
 
-    rt_timer_init(&(obj->timer),name,(void (*)(void*))callback,RT_NULL,1000,RT_IPC_FLAG_FIFO);
+    rt_timer_init(&(obj->timer),name,(void (*)(void*))callback,RT_NULL,1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
 }
 
 void rtick_timer_start( rtick_timer_event_t *obj )
