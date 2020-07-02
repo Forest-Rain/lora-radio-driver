@@ -11,6 +11,7 @@
 #include <rtconfig.h>
 #ifndef PKG_USING_MULTI_RTIMER
 
+
 #include <rtthread.h>
 #include <stdint.h>
 #include "lora-radio-timer.h"
@@ -43,7 +44,8 @@ void rtick_timer_reset( rtick_timer_event_t *obj )
 
 void rtick_timer_set_value( rtick_timer_event_t *obj, uint32_t value )
 {
-    rt_timer_control(&(obj->timer),RT_TIMER_CTRL_SET_TIME,&value);
+    uint32_t tick = rt_tick_from_millisecond(value);
+    rt_timer_control(&(obj->timer),RT_TIMER_CTRL_SET_TIME,&tick);
 }
 
 TimerTime_t rtick_timer_get_current_time( void )
