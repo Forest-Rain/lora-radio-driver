@@ -17,6 +17,7 @@
    - LoRa Transceiver (SPI)
       - SX126X (SX1262\ASR6500S\LLCC68\SX1268..)
         - [x] [LSD4RF-2R717N40 ( SX1268 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
+        - [x] ASR6500S ( SX1262 )
       - SX127X (SX1272\SX1276\SX1278..)
         - [x] [LSD4RF-2F717N20 ( SX1278 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
         - [x] Ra-01 ( SX1278 )
