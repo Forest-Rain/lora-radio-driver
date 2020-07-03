@@ -23,12 +23,10 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
-
-//#include <string.h>
-//#include "utilities.h"
+#ifdef PKG_USING_MULTI_RTIMER
 #include "multi_rtimer.h"
+#endif
 #include "lora-radio.h"
-//#include "delay.h"
 #include "sx126x.h"
 #include "sx126x-board.h"
 
@@ -91,23 +89,23 @@ void SX126xSetInterruptMode( void );
 void SX126xProcessIrqs( void );
 
 void SX126xInit( DioIrqHandler dioIrq )
-{   
+{
     SX126xReset( );
 
     SX126xIoIrqInit( dioIrq );
 
     SX126xWakeup( );
     SX126xSetStandby( STDBY_RC );
-    
+
 #ifdef LORA_RADIO_USE_TCXO
     // Initialize TCXO control
     SX126xIoTcxoInit( );
 #endif
-    
+
 #ifdef LORA_RADIO_USE_DIO2_AS_RF_SWITCH_CTRL
     SX126xSetDio2AsRfSwitchCtrl( true );
 #endif
-    
+
     SX126xSetOperatingMode( MODE_STDBY_RC );
 }
 
@@ -120,10 +118,10 @@ void SX126xSetOperatingMode( RadioOperatingModes_t mode )
 {
     OperatingMode = mode;
 
-#if defined( LORA_RADIO_RFSW2_PIN ) && defined( LORA_RADIO_RFSW1_PIN )      
+#if defined( LORA_RADIO_RFSW2_PIN ) && defined( LORA_RADIO_RFSW1_PIN )
     SX126xSetAntSw( mode );
 #endif
-    
+
 #if defined( USE_RADIO_DEBUG )
     switch( mode )
     {
@@ -224,7 +222,7 @@ void SX126xSetCrcPolynomial( uint16_t polynomial )
 void SX126xSetWhiteningSeed( uint16_t seed )
 {
     uint8_t regValue = 0;
-    
+
     switch( SX126xGetPacketType( ) )
     {
         case PACKET_TYPE_GFSK:
@@ -263,9 +261,9 @@ void SX126xSetSleep( SleepParams_t sleepConfig )
                       ( ( uint8_t )sleepConfig.Fields.Reset << 1 ) |
                       ( ( uint8_t )sleepConfig.Fields.WakeUpRTC ) );
     SX126xWriteCommand( RADIO_SET_SLEEP, &value, 1 );
-#else    
+#else
     SX126xWriteCommand( RADIO_SET_SLEEP, &sleepConfig.Value, 1 );
-#endif    
+#endif
     SX126xSetOperatingMode( MODE_SLEEP );
 }
 
@@ -384,9 +382,9 @@ void SX126xCalibrate( CalibrationParams_t calibParam )
                       ( ( uint8_t )calibParam.Fields.RC64KEnable ) );
 
     SX126xWriteCommand( RADIO_CALIBRATE, &value, 1 );
-#else    
+#else
     SX126xWriteCommand( RADIO_CALIBRATE, ( uint8_t* )&calibParam, 1 );
-#endif    
+#endif
 }
 
 void SX126xCalibrateImage( uint32_t freq )
