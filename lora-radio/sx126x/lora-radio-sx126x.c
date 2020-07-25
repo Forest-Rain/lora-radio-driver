@@ -39,14 +39,12 @@
 #define LOG_I(...)
 #endif
 
-#ifdef USING_LORA_RADIO_DRIVER_RTOS_SUPPORT
 
 #define EV_LORA_RADIO_IRQ_FIRED       0x0001
 
 static struct rt_event lora_radio_event;
 static struct rt_thread lora_radio_thread;
 static rt_uint8_t rt_lora_radio_thread_stack[4096];
-#endif
 
 /*!
  * \brief Initializes the radio
@@ -363,8 +361,8 @@ const struct Radio_s Radio =
     RadioRssi,
     RadioWrite,
     RadioRead,
-    //RadioWriteBuffer,
-    //RadioReadBuffer,
+    RadioWriteBuffer,
+    RadioReadBuffer,
     RadioSetMaxPayloadLength,
     RadioSetPublicNetwork,
     RadioGetWakeupTime,
@@ -548,7 +546,6 @@ static uint8_t RadioGetFskBandwidthRegValue( uint32_t bandwidth )
     while( 1 );
 }
 
-#ifdef USING_LORA_RADIO_DRIVER_RTOS_SUPPORT
 /**
   * @brief  lora_radio_thread_entry
   * @param  None
@@ -569,19 +566,9 @@ static void lora_radio_thread_entry(void* parameter)
     }
 }
 
-#endif
-
 void RadioInit( RadioEvents_t *events )
 {
     RadioEvents = events;
-
-    SX126x.spi = lora_radio_spi_init(LORA_RADIO0_SPI_BUS_NAME, LORA_RADIO0_DEVICE_NAME, RT_NULL);
-    if (SX126x.spi == RT_NULL)
-    {
-        LOG_D("sx126x spi init failed\n");
-    }
-    
-    LOG_D("sx126x spi init succeed\n");
 
     SX126xIoInit();
 
@@ -596,29 +583,23 @@ void RadioInit( RadioEvents_t *events )
     #ifdef PKG_USING_MULTI_RTIMER
     hw_rtc_init();
     #endif
-    ////#ifdef USE_LoRaWAN_MAC_ENABLE
-    // Initialize driver timeout timers
+
     TimerInit( &TxTimeoutTimer, RadioOnTxTimeoutIrq );
     TimerInit( &RxTimeoutTimer, RadioOnRxTimeoutIrq );
-    ////#endif
 
-    #ifdef USING_LORA_RADIO_DRIVER_RTOS_SUPPORT
-        rt_event_init(&lora_radio_event, "ev_phy", RT_IPC_FLAG_FIFO);
 
-        rt_thread_init(&lora_radio_thread,               	  
-                       "lora-phy",                     	  
-                       lora_radio_thread_entry,          	  
-                       RT_NULL,                    	  
-                       &rt_lora_radio_thread_stack[0],       
-                       sizeof(rt_lora_radio_thread_stack),  
-                       1,                          	  
-                       20);                           
-                                   
-        rt_thread_startup(&lora_radio_thread);    
-                               
-    #else
-        IrqFired = false;
-    #endif
+    rt_event_init(&lora_radio_event, "ev_phy", RT_IPC_FLAG_FIFO);
+
+    rt_thread_init(&lora_radio_thread,               	  
+                    "lora-phy",                     	  
+                    lora_radio_thread_entry,          	  
+                    RT_NULL,                    	  
+                    &rt_lora_radio_thread_stack[0],       
+                    sizeof(rt_lora_radio_thread_stack),  
+                    1,                          	  
+                    20);                           
+                                
+    rt_thread_startup(&lora_radio_thread);
 }
 
 RadioState_t RadioGetStatus( void )
@@ -1204,30 +1185,15 @@ void RadioOnRxTimeoutIrq( void /** context*/ )
         RadioEvents->RxTimeout( );
     }
 }
-////void RadioIrqProcess( void )
-////{}
+
 void RadioOnDioIrq( void* context )
 {
-    #ifdef USING_LORA_RADIO_DRIVER_RTOS_SUPPORT
-        rt_event_send(&lora_radio_event, EV_LORA_RADIO_IRQ_FIRED);      
-    #else
-        IrqFired = true;
-    #endif
+    rt_event_send(&lora_radio_event, EV_LORA_RADIO_IRQ_FIRED);
 }
 
 void RadioIrqProcess( void )
 {
-    #ifndef USING_LORA_RADIO_DRIVER_RTOS_SUPPORT
-    if( IrqFired == true )
-    #endif    
     {
-        #ifndef USING_LORA_RADIO_DRIVER_RTOS_SUPPORT
-        CRITICAL_SECTION_BEGIN( );
-        // Clear IRQ flag
-        IrqFired = false;
-        CRITICAL_SECTION_END( );
-        #endif
-
         uint16_t irqRegs = SX126xGetIrqStatus( );
         SX126xClearIrqStatus( IRQ_RADIO_ALL );
 

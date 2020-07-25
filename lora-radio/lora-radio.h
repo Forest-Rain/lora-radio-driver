@@ -322,7 +322,7 @@ struct Radio_s
      * \param [IN] buffer Buffer containing the new register's values
      * \param [IN] size   Number of registers to be written
      */
-    //void    ( *WriteBuffer )( uint16_t addr, uint8_t *buffer, uint8_t size );
+    void    ( *WriteBuffer )( uint16_t addr, uint8_t *buffer, uint8_t size );
     /*!
      * \brief Reads multiple radio registers starting at address
      *
@@ -330,7 +330,7 @@ struct Radio_s
      * \param [OUT] buffer Buffer where to copy the registers data
      * \param [IN] size Number of registers to be read
      */
-    //void    ( *ReadBuffer )( uint16_t addr, uint8_t *buffer, uint8_t size );
+    void    ( *ReadBuffer )( uint16_t addr, uint8_t *buffer, uint8_t size );
     /*!
      * \brief Sets the maximum payload length.
      *

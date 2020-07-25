@@ -142,12 +142,7 @@ typedef struct SX127x_s
 //    Gpio_t        DIO3;
 //    Gpio_t        DIO4;
 //    Gpio_t        DIO5;
-//    Spi_t         Spi;
-    
-/*!
- * Radio Spi bus
- */
-    struct rt_spi_device *spi;
+    struct rt_spi_device *Spi;
     
     RadioSettings_t Settings;
 }SX127x_t;

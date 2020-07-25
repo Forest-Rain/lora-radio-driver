@@ -41,7 +41,7 @@
     #define LORA_RADIO_RFSW2_PIN     stm32_pin_get(LORA_RADIO_RFSW2_PIN_NAME)
     #endif
 #else
-    // 若未使用menuconfig,可根据实际使用的LoRa模块，直接设置该参数
+    // 锟斤拷未使锟斤拷menuconfig,锟缴革拷锟斤拷实锟斤拷使锟矫碉拷LoRa模锟介，直锟斤拷锟斤拷锟矫该诧拷锟斤拷
     #ifndef LORA_RADIO_NSS_PIN
     #define LORA_RADIO_NSS_PIN    GET_PIN(A,15)
     #endif
@@ -92,11 +92,6 @@ void SX126xIoDeInit( void );
  * \brief Initializes the TCXO power pin.
  */
 void SX126xIoTcxoInit( void );
-
-/*!
- * \brief Initializes the radio debug pins.
- */
-void SX126xIoDbgInit( void );
 
 /*!
  * \brief HW Reset of the radio

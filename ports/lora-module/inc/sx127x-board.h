@@ -30,45 +30,6 @@
 #include "SX127x/SX127x.h"
 #include "rtconfig.h"
 
-#ifdef LORA_RADIO_GPIO_SETUP_BY_PIN_NAME
-    #define LORA_RADIO_NSS_PIN       stm32_pin_get(LORA_RADIO_NSS_PIN_NAME)
-    #define LORA_RADIO_RESET_PIN     stm32_pin_get(LORA_RADIO_RESET_PIN_NAME)
-    #define LORA_RADIO_DIO0_PIN      stm32_pin_get(LORA_RADIO_DIO1_PIN_NAME)
-    #if defined( LORA_RADIO_DIO1_PIN_NAME ) 
-    #define LORA_RADIO_DIO1_PIN      stm32_pin_get(LORA_RADIO_DIO1_PIN_NAME)
-    #endif
-    #if defined( LORA_RADIO_DIO2_PIN_NAME ) 
-    #define LORA_RADIO_DIO2_PIN      stm32_pin_get(LORA_RADIO_DIO2_PIN_NAME)
-    #endif
-    #if defined( LORA_RADIO_DIO3_PIN_NAME ) 
-    #define LORA_RADIO_DIO1_PIN      stm32_pin_get(LORA_RADIO_DIO3_PIN_NAME)
-    #endif
-    #if defined( LORA_RADIO_DIO4_PIN_NAME ) 
-    #define LORA_RADIO_DIO2_PIN      stm32_pin_get(LORA_RADIO_DIO4_PIN_NAME)
-    #endif
-    #if defined( LORA_RADIO_DIO5_PIN_NAME ) 
-    #define LORA_RADIO_DIO1_PIN      stm32_pin_get(LORA_RADIO_DIO5_PIN_NAME)
-    #endif
-    #if defined( LORA_RADIO_RFSW1_PIN_NAME ) && defined ( LORA_RADIO_RFSW2_PIN_NAME )  
-    #define LORA_RADIO_RFSW1_PIN     stm32_pin_get(LORA_RADIO_RFSW1_PIN_NAME)
-    #define LORA_RADIO_RFSW2_PIN     stm32_pin_get(LORA_RADIO_RFSW2_PIN_NAME)
-    #endif
-#else
-
-    // 若未使用menuconfig,可根据实际使用的LoRa模块，直接设置该参数
-    #ifndef LORA_RADIO_NSS_PIN
-    #define LORA_RADIO_NSS_PIN    GET_PIN(A,15)
-    #endif
-    #ifndef LORA_RADIO_RESET_PIN
-    #define LORA_RADIO_RESET_PIN  GET_PIN(A,7)
-    #endif
-    #ifndef LORA_RADIO_DIO0_PIN
-    #define LORA_RADIO_DIO0_PIN   GET_PIN(B,1)
-    #endif
-
-
-#endif // end of LORA_RADIO_GPIO_SETUP_BY_PIN_NAME
-
 /*!
  * \brief delayms for radio access
  */
@@ -123,11 +84,6 @@ void SX127xIoDeInit( void );
  * \brief Initializes the TCXO power pin.
  */
 void SX127xIoTcxoInit( void );
-
-/*!
- * \brief Initializes the radio debug pins.
- */
-void SX127xIoDbgInit( void );
 
 /*!
  * \brief Resets the radio

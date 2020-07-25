@@ -11,7 +11,6 @@
 #include <rtconfig.h>
 #ifndef PKG_USING_MULTI_RTIMER
 
-
 #include <rtthread.h>
 #include <stdint.h>
 #include "lora-radio-timer.h"

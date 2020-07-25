@@ -655,19 +655,12 @@ typedef union
  */
 typedef struct SX126x_s
 {
-////    Gpio_t        Reset;
-////    Gpio_t        BUSY;
-////    Gpio_t        DIO1;
-////    Gpio_t        DIO2;
-////    Gpio_t        DIO3;
-////    Spi_t         Spi;
-    
- ////   #ifdef RT_USING_SPI
-    struct rt_spi_device *spi;
-////    #else
-////    //SPI_TypeDef *spi;
-////    #endif
-    
+    // rt_base_t     Reset;
+    // rt_base_t     BUSY;
+    // rt_base_t     DIO1;
+    // rt_base_t     DIO2;
+    // rt_base_t     DIO3;
+    struct rt_spi_device *Spi;
     PacketParams_t PacketParams;
     PacketStatus_t PacketStatus;
     ModulationParams_t ModulationParams;

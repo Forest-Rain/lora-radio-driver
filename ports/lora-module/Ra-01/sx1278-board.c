@@ -34,7 +34,6 @@
  */
 static bool RadioIsActive = false;
 
-#ifdef USING_LORA_RADIO_DRIVER_RTOS_SUPPORT
 /*!
  * \brief DIO 0 IRQ callback
  */
@@ -64,90 +63,51 @@ void SX127xOnDio4IrqEvent( void *args );
  * \brief DIO 5 IRQ callback
  */
 void SX127xOnDio5IrqEvent( void *args );
-#endif
-
-/*!
- * Debug GPIO pins objects
- */
-#if defined( USE_RADIO_DEBUG )
-Gpio_t DbgPinTx;
-Gpio_t DbgPinRx;
-#endif
-
-#ifdef LORA_RADIO_GPIO_SETUP_BY_PIN_NAME
-int stm32_pin_get(char *pin_name)
-{
-    //eg: pin_name : "A4"  ( GPIOA, GPIO_PIN_4 )--> drv_gpio.c pin
-    char pin_index = strtol(&pin_name[1],0,10);
-    
-    if(pin_name[0] < 'A' || pin_name[0] > 'Z')
-    {
-        return -1;
-    }
-
-    return (16 * (pin_name[0]-'A') + pin_index);
-}
-#endif
 
 void SX127xIoInit( void )
 {
-#ifdef USING_LORA_RADIO_DRIVER_RTOS_SUPPORT
-    // RT-Thread
-    rt_pin_mode(LORA_RADIO_NSS_PIN, PIN_MODE_OUTPUT);
+    SX127x.Spi = (struct rt_spi_device *)rt_device_find(LORA_RADIO_DEVICE_NAME);
+    if(SX127x.Spi == RT_NULL)
+    {
+        rt_kprintf("ERROR: NO SPI  DEVICE NAMED %s attached\n",LORA_RADIO_DEVICE_NAME);
+        return;
+    }
     
-    rt_pin_mode(LORA_RADIO_DIO0_PIN, PIN_MODE_INPUT_PULLDOWN);
-#ifdef LORA_RADIO_DIO1_PIN     
-    rt_pin_mode(LORA_RADIO_DIO1_PIN, PIN_MODE_INPUT_PULLDOWN);
-#endif    
-#ifdef LORA_RADIO_DIO2_PIN      
-    rt_pin_mode(LORA_RADIO_DIO2_PIN, PIN_MODE_INPUT_PULLDOWN);
-#endif    
-#else
+    if(LORA_RADIO_DIO0_PIN != -1)
+        rt_pin_mode(LORA_RADIO_DIO0_PIN, PIN_MODE_INPUT_PULLDOWN);
 
-#endif
+    if(LORA_RADIO_DIO1_PIN != -1)
+        rt_pin_mode(LORA_RADIO_DIO1_PIN, PIN_MODE_INPUT_PULLDOWN);
+  
+    if(LORA_RADIO_DIO2_PIN != -1)
+        rt_pin_mode(LORA_RADIO_DIO2_PIN, PIN_MODE_INPUT_PULLDOWN);
 }
 
 void SX127xIoIrqInit( DioIrqHandler **irqHandlers )
 {
-#ifdef USING_LORA_RADIO_DRIVER_RTOS_SUPPORT
-    #ifdef LORA_RADIO_DIO0_PIN
-    rt_pin_attach_irq(LORA_RADIO_DIO0_PIN, PIN_IRQ_MODE_RISING,SX127xOnDio0IrqEvent,(void*)"rf-dio0-int");
-    rt_pin_irq_enable(LORA_RADIO_DIO0_PIN, PIN_IRQ_ENABLE);    
-    #endif
-    #ifdef LORA_RADIO_DIO1_PIN
-    rt_pin_attach_irq(LORA_RADIO_DIO1_PIN, PIN_IRQ_MODE_RISING,SX127xOnDio1IrqEvent,(void*)"rf-dio1-int");
-    rt_pin_irq_enable(LORA_RADIO_DIO1_PIN, PIN_IRQ_ENABLE);    
-    #endif
-    #ifdef LORA_RADIO_DIO2_PIN
-    rt_pin_attach_irq(LORA_RADIO_DIO2_PIN, PIN_IRQ_MODE_RISING,SX127xOnDio2IrqEvent,(void*)"rf-dio2-int");
-    rt_pin_irq_enable(LORA_RADIO_DIO2_PIN, PIN_IRQ_ENABLE);    
-    #endif
-#else
-    #ifdef LORA_RADIO_DIO0_PIN
-    rt_pin_attach_irq(LORA_RADIO_DIO0_PIN, PIN_IRQ_MODE_RISING,irqHandlers[0],(void*)"rf-dio0-int");
-    rt_pin_irq_enable(LORA_RADIO_DIO0_PIN, PIN_IRQ_ENABLE);    
-    #endif
-    #ifdef LORA_RADIO_DIO1_PIN
-    rt_pin_attach_irq(LORA_RADIO_DIO1_PIN, PIN_IRQ_MODE_RISING,irqHandlers[1],(void*)"rf-dio1-int");
-    rt_pin_irq_enable(LORA_RADIO_DIO1_PIN, PIN_IRQ_ENABLE);    
-    #endif
-    #ifdef LORA_RADIO_DIO2_PIN
-    rt_pin_attach_irq(LORA_RADIO_DIO2_PIN, PIN_IRQ_MODE_RISING,irqHandlers[2],(void*)"rf-dio2-int");
-    rt_pin_irq_enable(LORA_RADIO_DIO2_PIN, PIN_IRQ_ENABLE);    
-    #endif
-#endif    
+    if(LORA_RADIO_DIO0_PIN != -1)
+    {
+        rt_pin_attach_irq(LORA_RADIO_DIO0_PIN, PIN_IRQ_MODE_RISING,SX127xOnDio0IrqEvent,(void*)"rf-dio0-int");
+        rt_pin_irq_enable(LORA_RADIO_DIO0_PIN, PIN_IRQ_ENABLE);
+    }
+    
+    if(LORA_RADIO_DIO1_PIN != -1)
+    {
+        rt_pin_attach_irq(LORA_RADIO_DIO1_PIN, PIN_IRQ_MODE_RISING,SX127xOnDio1IrqEvent,(void*)"rf-dio1-int");
+        rt_pin_irq_enable(LORA_RADIO_DIO1_PIN, PIN_IRQ_ENABLE);
+    }
+
+    if(LORA_RADIO_DIO2_PIN != -1)
+    {
+        rt_pin_attach_irq(LORA_RADIO_DIO2_PIN, PIN_IRQ_MODE_RISING,SX127xOnDio2IrqEvent,(void*)"rf-dio1-int");
+        rt_pin_irq_enable(LORA_RADIO_DIO2_PIN, PIN_IRQ_ENABLE);
+    }
 }
 
 void SX127xIoDeInit( void )
 {
 
 }
-
-void SX127xIoDbgInit( void )
-{
-
-}
-
 
 void SX127xReset( void )
 {
@@ -192,24 +152,11 @@ void SX127xAntSwDeInit( void )
 
 }
 
-// SX127X  TX/RX的高频开关切换
-
+// SX127X RF_SWITCH control
 void SX127xSetAntSw( uint8_t opMode )
 {
 
 }
-
-#if defined( USE_RADIO_DEBUG )
-void SX127xDbgPinTxWrite( uint8_t state )
-{
-    GpioWrite( &DbgPinTx, state );
-}
-
-void SX127xDbgPinRxWrite( uint8_t state )
-{
-    GpioWrite( &DbgPinRx, state );
-}
-#endif
 
 uint8_t SX127xGetPaSelect( int8_t power )
 {

@@ -51,7 +51,19 @@
 # 2 LoRa Radio Driver软件包使用说明
 
 ## 2.1 依赖
-
+- 必选依赖
+   - SPI_BUS使能(至少开启一个SPI BUS)
+   
+     ```
+     > Hardware Drivers Config --->
+     >     On-chip Peripheral Drivers --->
+     >     		[*]Enable SPI BUS --->
+     >        		[*] Enable SPI1 BUS
+     >        			[] Enable SPI1 TX DMA
+     >        			[] Enable SPI1 RX DMA
+     >        		[] Enable SPI2 BUS
+     >        		[] Enable SPI3 BUS
+     ```
 - 可选依赖
   - multi-rtimer软件包(若未选用multi-rtimer软件包，则默认采用rt_tick来提供定时服务，注意**要开启SOFT_TIMER**)
     - 用于提供RF驱动中的发送与接收超时服务等
@@ -74,11 +86,11 @@
 RT-Thread online packages --->
     peripheral libraries and drivers --->
         [*] lora_radio_driver: lora chipset(sx126x\sx127x.)driver. --->
-                (lora-radio0)LoRa Radio Device Name                
-                [] Select LoRa Chip \ LoRa Module --->
-                []    LoRa Transceiver [SX126X]
-                []    LoRa Transceiver [SX127X]
-                Select LoRa Radio Driver Example ---> 	
+			(spi1.1) LoRa Radio Spi Device Name
+            	select the lora rf chipset (SX127x)  --->
+            	select the SX127X model (Ra-01(SX1278))  --->
+                module settings  --->
+                [*]   Enable LoRa Radio Test  --->
                 Version (latest)  --->
 ```
 
@@ -94,6 +106,58 @@ RT-Thread online packages --->
 在 lora-radio-driver\ports\lora-module文件下，参考已有模板，增加新的lora模块驱动文件xxxx-board.c<br />
 
 # 3 使用示例
+
+### 3.1 使用指南
+
+- 挂载并配置lora radio spi device，代码如下(其中NSS/spi_bus/spi_device视具体情况进行修改):
+
+  ```c
+  #include "drv_spi.h"
+  int lora_spi_prepare(void)
+  {
+      rt_err_t res;
+      struct rt_spi_device *lora_radio_spi_device;
+  
+      #define NSS_PIN GET_PIN(B, 6)
+      
+      res = rt_hw_spi_device_attach( "spi1", "spi1.1", GPIOB, GPIO_PIN_6);
+      if (res != RT_EOK)
+      {
+          rt_kprintf("rt_spi_bus_attach_device failed!\r\n");
+          return RT_NULL;
+      }
+      
+      rt_pin_mode(NSS_PIN,PIN_MODE_OUTPUT);
+      rt_pin_write(NSS_PIN, PIN_HIGH);
+      
+      lora_radio_spi_device = (struct rt_spi_device *)rt_device_find("spi1.1");
+      if (!lora_radio_spi_device)
+      {
+          rt_kprintf("spi sample run failed! cant't find %s device!\n", "spi1.1");
+          return RT_NULL;
+      }
+      
+      /* config spi */
+      struct rt_spi_configuration cfg;
+      cfg.data_width = 8;
+      cfg.mode = RT_SPI_MASTER | RT_SPI_MODE_0 | RT_SPI_MSB; /* SPI Compatible: Mode 0. */
+      cfg.max_hz = 8 * 1000000;             /* max 10M */
+      
+      res = rt_spi_configure(lora_radio_spi_device, &cfg);
+      if (res != RT_EOK)
+      {
+          rt_kprintf("rt_spi_configure failed!\r\n");
+      }
+      
+      return 0;
+  }
+  INIT_DEVICE_EXPORT(lora_spi_prepare);
+  ```
+
+- 参考test的流程进行初始化
+
+- 进行发送、接收
+
 ## 3.1 测试平台 
 - 当前测试平台(MCU:STM32L)
    - LSD4RF-TEST2002 (STM32L476VG)

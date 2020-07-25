@@ -24,11 +24,8 @@
 #include <rtdevice.h>
 #include <board.h>
 
-//#include <string.h>
-//#include "utilities.h"
-#include "multi_rtimer.h"
 #include "lora-radio.h"
-//#include "delay.h"
+#include "lora-radio-timer.h"
 #include "sx126x.h"
 #include "sx126x-board.h"
 
@@ -111,6 +108,125 @@ void SX126xInit( DioIrqHandler dioIrq )
     SX126xSetOperatingMode( MODE_STDBY_RC );
 }
 
+
+void SX126xWakeup( void )
+{
+    uint8_t msg[2] = { RADIO_GET_STATUS, 0x00 };
+    
+    rt_spi_transfer(SX126x.Spi,msg,RT_NULL,2);
+ 
+    // Wait for chip to be ready.
+    SX126xWaitOnBusy( );    
+}
+
+void SX126xWriteCommand( RadioCommands_t command, uint8_t *buffer, uint16_t size )
+{    
+    SX126xCheckDeviceReady( );
+
+    rt_spi_send_then_send(SX126x.Spi,&command,1,buffer,size);
+    
+    if( command != RADIO_SET_SLEEP )
+    {
+        SX126xWaitOnBusy( );
+    } 
+}
+
+uint8_t SX126xReadCommand( RadioCommands_t command, uint8_t *buffer, uint16_t size )
+{
+    uint8_t status = 0;
+    uint8_t buffer_temp[16] = {0}; // command size is 2 size
+    
+    SX126xCheckDeviceReady( );
+    
+    rt_spi_send_then_recv(SX126x.Spi,&command,1,buffer_temp,size + 1);
+    
+    status = buffer_temp[0];
+    
+    rt_memcpy(buffer,buffer_temp+1,size);
+    
+    SX126xWaitOnBusy( );
+    
+    return status;  
+}
+
+void SX126xWriteRegisters( uint16_t address, uint8_t *buffer, uint16_t size )
+{
+    uint8_t msg[3] = {0};
+    
+    msg[0] = RADIO_WRITE_REGISTER;
+    msg[1] = ( address & 0xFF00 ) >> 8;
+    msg[2] = address & 0x00FF;
+    
+    SX126xCheckDeviceReady( );
+    
+    rt_spi_send_then_send(SX126x.Spi,msg,3,buffer,size);
+
+    SX126xWaitOnBusy( );   
+}
+
+void SX126xWriteRegister( uint16_t address, uint8_t value )
+{
+    SX126xWriteRegisters( address, &value, 1 );
+}
+
+void SX126xReadRegisters( uint16_t address, uint8_t *buffer, uint16_t size )
+{ 
+    uint8_t msg[4] = {0};
+    
+    msg[0] = RADIO_READ_REGISTER;
+    msg[1] = ( address & 0xFF00 ) >> 8;
+    msg[2] = address & 0x00FF;
+    msg[3] = 0;
+    
+    SX126xCheckDeviceReady( );
+
+    rt_spi_send_then_recv(SX126x.Spi,msg,4,buffer,size);
+
+    SX126xWaitOnBusy( );
+}
+
+uint8_t SX126xReadRegister( uint16_t address )
+{
+    uint8_t data;
+    SX126xReadRegisters( address, &data, 1 );
+    return data;
+}
+
+void SX126xWriteBuffer( uint8_t offset, uint8_t *buffer, uint8_t size )
+{
+    uint8_t msg[2] = {0};
+    
+    msg[0] = RADIO_WRITE_BUFFER;
+    msg[1] = offset;
+    
+    SX126xCheckDeviceReady( );
+    
+    rt_spi_send_then_send(SX126x.Spi,msg,2,buffer,size);
+    
+    SX126xWaitOnBusy( );
+}
+
+void SX126xReadBuffer( uint8_t offset, uint8_t *buffer, uint8_t size )
+{
+    uint8_t msg[3] = {0};
+    
+    msg[0] = RADIO_READ_BUFFER;
+    msg[1] = offset;
+    msg[2] = 0;
+    
+    SX126xCheckDeviceReady( );
+
+    rt_spi_send_then_recv(SX126x.Spi,msg,3,buffer,size);
+
+    SX126xWaitOnBusy( );    
+}
+
+void SX126xSetRfTxPower( int8_t power )
+{
+    SX126xSetTxParams( power, RADIO_RAMP_40_US );
+}
+
+
 RadioOperatingModes_t SX126xGetOperatingMode( void )
 {
     return OperatingMode;
@@ -119,29 +235,8 @@ RadioOperatingModes_t SX126xGetOperatingMode( void )
 void SX126xSetOperatingMode( RadioOperatingModes_t mode )
 {
     OperatingMode = mode;
-
-#if defined( LORA_RADIO_RFSW2_PIN ) && defined( LORA_RADIO_RFSW1_PIN )      
+   
     SX126xSetAntSw( mode );
-#endif
-    
-#if defined( USE_RADIO_DEBUG )
-    switch( mode )
-    {
-        case MODE_TX:
-            SX126xDbgPinTxWrite( 1 );
-            SX126xDbgPinRxWrite( 0 );
-            break;
-        case MODE_RX:
-        case MODE_RX_DC:
-            SX126xDbgPinTxWrite( 0 );
-            SX126xDbgPinRxWrite( 1 );
-            break;
-        default:
-            SX126xDbgPinTxWrite( 0 );
-            SX126xDbgPinRxWrite( 0 );
-            break;
-    }
-#endif
 }
 
 void SX126xCheckDeviceReady( void )

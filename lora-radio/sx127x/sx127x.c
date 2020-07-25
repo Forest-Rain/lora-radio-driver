@@ -167,7 +167,7 @@ void SX127xOnTimeoutIrq( void );
  */
 const RadioRegisters_t RadioRegsInit[] = RADIO_INIT_REGISTERS_VALUE;
 
-#if defined( USING_LORA_RADIO_SX1276 ) || defined( USING_LORA_RADIO_SX1278 ) 
+#if defined( USING_LORA_CHIP_SX127X ) 
 /*!
  * Constant values need to compute the RSSI value
  */
@@ -246,8 +246,6 @@ DioIrqHandler *SX127xDioIrq[] = { SX127xOnDio0Irq, SX127xOnDio1Irq,
 TimerEvent_t TxTimeoutTimer;
 TimerEvent_t RxTimeoutTimer;
 TimerEvent_t RxTimeoutSyncWord;
-
-extern struct rt_spi_device *lora_radio_spi_init(const char *bus_name, const char *lora_device_name, rt_uint8_t param);
                             
 /*
  * Radio spi check
@@ -280,9 +278,6 @@ uint8_t SX127xCheck(void)
 void SX127xInit( RadioEvents_t *events )
 {
     uint8_t i;
-    
-    // Initialize spi bus
-    SX127x.spi = lora_radio_spi_init(LORA_RADIO0_SPI_BUS_NAME, LORA_RADIO0_DEVICE_NAME, RT_NULL);
     
     RadioEvents = events;
 
@@ -1381,7 +1376,7 @@ int16_t SX127xReadRssi( RadioModems_t modem )
         rssi = -( SX127xRead( REG_RSSIVALUE ) >> 1 );
         break;
     case MODEM_LORA:
-         	USING_LORA_RADIO_SX1278
+         	
 #if defined( USING_LORA_RADIO_SX1276 ) || defined( USING_LORA_RADIO_SX1278 ) 
         if( SX127x.Settings.Channel > RF_MID_BAND_THRESH )
         {
@@ -1404,24 +1399,6 @@ int16_t SX127xReadRssi( RadioModems_t modem )
 
 void SX127xSetOpMode( uint8_t opMode )
 {
-#if defined( USE_RADIO_DEBUG )
-    switch( opMode )
-    {
-        case RF_OPMODE_TRANSMITTER:
-            SX127xDbgPinTxWrite( 1 );
-            SX127xDbgPinRxWrite( 0 );
-            break;
-        case RF_OPMODE_RECEIVER:
-        case RFLR_OPMODE_RECEIVER_SINGLE:
-            SX127xDbgPinTxWrite( 0 );
-            SX127xDbgPinRxWrite( 1 );
-            break;
-        default:
-            SX127xDbgPinTxWrite( 0 );
-            SX127xDbgPinRxWrite( 0 );
-            break;
-    }
-#endif
     if( opMode == RF_OPMODE_SLEEP )
     {
         SX127xSetAntSwLowPower( true );
@@ -1485,6 +1462,18 @@ uint8_t SX127xRead( uint16_t addr )
     uint8_t data;
     SX127xReadBuffer( addr, &data, 1 );
     return data;
+}
+
+void SX127xWriteBuffer( uint16_t addr, uint8_t *buffer, uint8_t size )
+{
+    uint8_t byte1 = addr | 0x80;
+    rt_spi_send_then_send(SX127x.Spi,&byte1,1,buffer,size);
+}
+
+void SX127xReadBuffer( uint16_t addr, uint8_t *buffer, uint8_t size )
+{
+    uint8_t byte1 = addr & 0x7F;
+    rt_spi_send_then_recv(SX127x.Spi,&byte1,1,buffer,size);    
 }
 
 void SX127xWriteFifo( uint8_t *buffer, uint8_t size )

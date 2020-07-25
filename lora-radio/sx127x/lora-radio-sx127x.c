@@ -29,14 +29,11 @@
 #include <rtthread.h>
 #include "drv_gpio.h"
 
-#ifdef USING_LORA_RADIO_DRIVER_RTOS_SUPPORT
-
 #define EV_LORA_RADIO_IRQ_MASK         0x0007 // DIO0 | DIO1 | DIO2 | DIO3 | DIO4 | DIO5 depend on board
 
 static struct rt_event lora_radio_event;
 static struct rt_thread lora_radio_thread;
 static rt_uint8_t rt_lora_radio_thread_stack[4096];
-#endif // end of USING_LORA_RADIO_DRIVER_RTOS_SUPPORT
 
 static void LoRaRadioInit( RadioEvents_t *events );
 
@@ -64,8 +61,8 @@ const struct Radio_s Radio =
     SX127xReadRssi,
     SX127xWrite,
     SX127xRead,
-    //SX127xWriteBuffer,
-    //SX127xReadBuffer,
+    SX127xWriteBuffer,
+    SX127xReadBuffer,
     SX127xSetMaxPayloadLength,
     SX127xSetPublicNetwork,
     SX127xGetWakeupTime,
@@ -75,8 +72,6 @@ const struct Radio_s Radio =
     NULL, // void ( *RxBoosted )( uint32_t timeout ) 
     NULL, // void ( *SetRxDutyCycle )( uint32_t rxTime, uint32_t sleepTime ) 
 };
-
-#ifdef USING_LORA_RADIO_DRIVER_RTOS_SUPPORT
 
 static uint8_t get_irq_index(uint32_t ev)
 {
@@ -155,12 +150,5 @@ void SX127xOnDio5IrqEvent( void *args )
     rt_event_send(&lora_radio_event, EV_LORA_RADIO_IRQ5_FIRED);
 }
 
-
-#else
-void RadioInit( RadioEvents_t *events )
-{
-    SX127xInit(events);
-}
-#endif
 
 

@@ -1,4 +1,12 @@
 /*
+ * @Author: your name
+ * @Date: 2020-07-04 16:27:36
+ * @LastEditTime: 2020-07-06 02:37:31
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: \stm32l476-st-nucleo\packages\lora_radio_driver-latest\ports\lora-module\ASR6500S\sx126x-board.c
+ */ 
+/*
  * author    Rick Zhang
  * date      2020.07.20
  */
@@ -16,7 +24,12 @@ extern void RadioOnDioIrq( void* context );
 
 void SX126xIoInit( void )
 {
-    rt_pin_mode(LORA_RADIO_NSS_PIN, PIN_MODE_OUTPUT);
+    SX126x.Spi = (struct rt_spi_device *)rt_device_find(LORA_RADIO_DEVICE_NAME);
+    if(SX126x.Spi == RT_NULL)
+    {
+        rt_kprintf("ERROR: NO SPI  DEVICE NAMED %s attached\n",LORA_RADIO_DEVICE_NAME);
+        return;
+    }    
     rt_pin_mode(LORA_RADIO_BUSY_PIN, PIN_MODE_INPUT);
     rt_pin_mode(LORA_RADIO_DIO1_PIN, PIN_MODE_INPUT);
 }
@@ -29,10 +42,6 @@ void SX126xIoIrqInit( DioIrqHandler dioIrq )
 }
 
 void SX126xIoDeInit( void )
-{
-}
-
-void SX126xIoDbgInit( void )
 {
 }
 
