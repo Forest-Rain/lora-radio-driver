@@ -33,7 +33,7 @@
 #ifdef LORA_RADIO_GPIO_SETUP_BY_PIN_NAME
     #define LORA_RADIO_NSS_PIN       stm32_pin_get(LORA_RADIO_NSS_PIN_NAME)
     #define LORA_RADIO_RESET_PIN     stm32_pin_get(LORA_RADIO_RESET_PIN_NAME)
-    #define LORA_RADIO_DIO0_PIN      stm32_pin_get(LORA_RADIO_DIO1_PIN_NAME)
+    #define LORA_RADIO_DIO0_PIN      stm32_pin_get(LORA_RADIO_DIO0_PIN_NAME)
     #if defined( LORA_RADIO_DIO1_PIN_NAME ) 
     #define LORA_RADIO_DIO1_PIN      stm32_pin_get(LORA_RADIO_DIO1_PIN_NAME)
     #endif
