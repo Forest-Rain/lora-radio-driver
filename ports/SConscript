@@ -2,24 +2,29 @@ from building import *
 
 src   = []
 cwd   = GetCurrentDir()
-include_path = [cwd+'/lora-module/inc']
+include_path = [cwd]
+include_path += [cwd+'/lora-module/inc']
 
 # add lora radio driver.
 if GetDepend('USING_LORA_MODULE_LSD4RF_2F717N20'):
     src += Split('''
-	lora-module/LSD4RF-2F717N20/sx1278-board.c
+    lora-module/stm32_adapter/lora-spi-board.c
+	lora-module/stm32_adapter/LSD4RF-2F717N20/sx1278-board.c
 	''')
 if GetDepend('USING_LORA_MODULE_LSD4RF_2R717N40'):
     src += Split('''
-	lora-module/LSD4RF-2R717N40/sx1268-board.c
+    lora-module/stm32_adapter/lora-spi-board.c
+	lora-module/stm32_adapter/LSD4RF-2R717N40/sx1268-board.c
 	''')
 if GetDepend('USING_LORA_MODULE_RA_01'):
     src += Split('''
-	lora-module/ra-01/sx1278-board.c
+    lora-module/stm32_adapter/lora-spi-board.c
+	lora-module/stm32_adapter/ra-01/sx1278-board.c
 	''')
 if GetDepend('USING_LORA_MODULE_ASR6500S'):
     src += Split('''
-	lora-module/ASR6500S/sx126x-board.c
+    lora-module/stm32_adapter/lora-spi-board.c
+	lora-module/stm32_adapter/ASR6500S/sx1278-board.c
 	''')
 
 group = DefineGroup('lora-radio-driver/board', src, depend = ['PKG_USING_LORA_RADIO_DRIVER'], CPPPATH = include_path)

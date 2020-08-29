@@ -25,10 +25,10 @@
 #ifndef __SX127x_BOARD_H__
 #define __SX127x_BOARD_H__
 
+#include "lora-radio-rtos-config.h"
 #include <stdint.h>
 #include <stdbool.h>
 #include "SX127x/SX127x.h"
-#include "rtconfig.h"
 
 #ifdef LORA_RADIO_GPIO_SETUP_BY_PIN_NAME
     #define LORA_RADIO_NSS_PIN       stm32_pin_get(LORA_RADIO_NSS_PIN_NAME)
@@ -205,6 +205,11 @@ void SX127xDbgPinTxWrite( uint8_t state );
  * \param [IN] state Debug pin state
  */
 void SX127xDbgPinRxWrite( uint8_t state );
+
+#ifdef LORA_RADIO_GPIO_SETUP_BY_PIN_NAME
+// todo PR to drv_gpio.c
+int stm32_pin_get(char *pin_name);
+#endif
 
 /*!
  * Radio hardware and global parameters

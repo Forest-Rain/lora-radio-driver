@@ -24,15 +24,12 @@
  *
  * \author    Forest-Rain
  */
-#include <rtthread.h>
-#include "drv_spi.h"
-
+#include "lora-radio-rtos-config.h"
 #include <math.h>
 #include <string.h>
 #include "lora-radio-timer.h"
 #include "lora-radio.h"
 //#include "delay.h"
-
 #include "board.h" 
 #include "sx127x.h"
 #include "sx127x-board.h"
@@ -41,16 +38,9 @@
 #define LORA_RADIO0_DEVICE_NAME  "lora-radio0"
 #endif
 
-
-#ifdef RT_USING_ULOG
-#define DRV_DEBUG
-#define LOG_TAG             "PHY.LoRa.SX127X"
-#include <drv_log.h>
-#include <ulog.h> 
-#else
-#define LOG_D(...)
-#define LOG_I(...)
-#endif
+#define LOG_TAG "PHY.LoRa.SX127X"
+#define LOG_LEVEL  LOG_LVL_DBG 
+#include "lora-radio-debug.h"
 
 /*
  * Local types definition
@@ -246,9 +236,7 @@ DioIrqHandler *SX127xDioIrq[] = { SX127xOnDio0Irq, SX127xOnDio1Irq,
 TimerEvent_t TxTimeoutTimer;
 TimerEvent_t RxTimeoutTimer;
 TimerEvent_t RxTimeoutSyncWord;
-
-extern struct rt_spi_device *lora_radio_spi_init(const char *bus_name, const char *lora_device_name, rt_uint8_t param);
-                            
+                         
 /*
  * Radio spi check
  * 0 - spi access fail                                
@@ -257,16 +245,15 @@ uint8_t SX127xCheck(void)
 {
     uint8_t test = 0;
 
-    LOG_D("LoRa Chip is SX127X, Packet Type is %s\n",( SX127x.Settings.Modem == MODEM_LORA )? "LoRa":"FSK");
+    LORA_RADIO_DEBUG_LOG(LR_DBG_SPI, LOG_LEVEL, "LoRa Chip is SX127X, Packet Type is %s",( SX127x.Settings.Modem == MODEM_LORA )? "LoRa":"FSK");
 
-    if( SX127x.Settings.Modem == MODEM_LORA ) 
     {        
         /*spi check*/
         SX127xWrite(REG_LR_PAYLOADLENGTH, 0x55); 
         test = SX127xRead(REG_LR_PAYLOADLENGTH);
+        LORA_RADIO_DEBUG_LOG(LR_DBG_SPI, LOG_LEVEL,"SPI Access Check %s, LoRa PAYLOAD LENGTH Reg(0x22) Current Value: 0x%02X, Expected Value: 0x55", ((test == 0x55)? "Success":"Fail"),test);
         if (test != 0x55)
         {
-            LOG_D("LoRa Chip is SX127X, Packet Type is %s\n");
             return 0;
         }		
     }
@@ -279,10 +266,7 @@ uint8_t SX127xCheck(void)
 
 void SX127xInit( RadioEvents_t *events )
 {
-    uint8_t i;
-    
-    // Initialize spi bus
-    SX127x.spi = lora_radio_spi_init(LORA_RADIO0_SPI_BUS_NAME, LORA_RADIO0_DEVICE_NAME, RT_NULL);
+    uint8_t i; 
     
     RadioEvents = events;
 
@@ -328,6 +312,8 @@ void SX127xSetChannel( uint32_t freq )
     SX127xWrite( REG_FRFMSB, ( uint8_t )( ( freq >> 16 ) & 0xFF ) );
     SX127xWrite( REG_FRFMID, ( uint8_t )( ( freq >> 8 ) & 0xFF ) );
     SX127xWrite( REG_FRFLSB, ( uint8_t )( freq & 0xFF ) );
+    
+    LORA_RADIO_DEBUG_LOG(LR_DBG_CHIP, LOG_LEVEL,"Set Freq:%d",SX127x.Settings.Channel);
 }
 
 bool SX127xIsChannelFree( RadioModems_t modem, uint32_t freq, int16_t rssiThresh, uint32_t maxCarrierSenseTime )
@@ -336,10 +322,7 @@ bool SX127xIsChannelFree( RadioModems_t modem, uint32_t freq, int16_t rssiThresh
     int16_t rssi = 0;
     uint32_t carrierSenseTime = 0;
 
-    if( SX127xGetStatus( ) != RF_IDLE )
-    {
-        return false;
-    }
+    SX127xSetSleep( );
 
     SX127xSetModem( modem );
 
@@ -907,83 +890,136 @@ void SX127xSetTxConfig( RadioModems_t modem, int8_t power, uint32_t fdev,
     }
 }
 
-uint32_t SX127xGetTimeOnAir( RadioModems_t modem, uint8_t pktLen )
+
+static uint32_t SX127xGetLoRaBandwidthInHz( uint32_t bw )
 {
-    uint32_t airTime = 0;
+    uint32_t bandwidthInHz = 0;
+
+    switch( bw )
+    {
+    case 0: // 125 kHz
+        bandwidthInHz = 125000UL;
+        break;
+    case 1: // 250 kHz
+        bandwidthInHz = 250000UL;
+        break;
+    case 2: // 500 kHz
+        bandwidthInHz = 500000UL;
+        break;
+    }
+
+    return bandwidthInHz;
+}
+
+static uint32_t SX127xGetGfskTimeOnAirNumerator( uint32_t datarate, uint8_t coderate,
+                              uint16_t preambleLen, bool fixLen, uint8_t payloadLen,
+                              bool crcOn )
+{
+    const uint8_t syncWordLength = 3;
+
+    return ( preambleLen << 3 ) +
+           ( ( fixLen == false ) ? 8 : 0 ) +
+             ( syncWordLength << 3 ) +
+             ( ( payloadLen +
+               ( 0 ) + // Address filter size
+               ( ( crcOn == true ) ? 2 : 0 ) 
+               ) << 3 
+             );
+}
+
+static uint32_t SX127xGetLoRaTimeOnAirNumerator( uint32_t bandwidth,
+                              uint32_t datarate, uint8_t coderate,
+                              uint16_t preambleLen, bool fixLen, uint8_t payloadLen,
+                              bool crcOn )
+{
+    int32_t crDenom           = coderate + 4;
+    bool    lowDatareOptimize = false;
+
+    // Ensure that the preamble length is at least 12 symbols when using SF5 or
+    // SF6
+    if( ( datarate == 5 ) || ( datarate == 6 ) )
+    {
+        if( preambleLen < 12 )
+        {
+            preambleLen = 12;
+        }
+    }
+
+    if( ( ( bandwidth == 0 ) && ( ( datarate == 11 ) || ( datarate == 12 ) ) ) ||
+        ( ( bandwidth == 1 ) && ( datarate == 12 ) ) )
+    {
+        lowDatareOptimize = true;
+    }
+
+    int32_t ceilDenominator;
+    int32_t ceilNumerator = ( payloadLen << 3 ) +
+                            ( crcOn ? 16 : 0 ) -
+                            ( 4 * datarate ) +
+                            ( fixLen ? 0 : 20 );
+
+    if( datarate <= 6 )
+    {
+        ceilDenominator = 4 * datarate;
+    }
+    else
+    {
+        ceilNumerator += 8;
+
+        if( lowDatareOptimize == true )
+        {
+            ceilDenominator = 4 * ( datarate - 2 );
+        }
+        else
+        {
+            ceilDenominator = 4 * datarate;
+        }
+    }
+
+    if( ceilNumerator < 0 )
+    {
+        ceilNumerator = 0;
+    }
+
+    // Perform integral ceil()
+    int32_t intermediate =
+        ( ( ceilNumerator + ceilDenominator - 1 ) / ceilDenominator ) * crDenom + preambleLen + 12;
+
+    if( datarate <= 6 )
+    {
+        intermediate += 2;
+    }
+
+    return ( uint32_t )( ( 4 * intermediate + 1 ) * ( 1 << ( datarate - 2 ) ) );
+}
+uint32_t SX127xGetTimeOnAir( RadioModems_t modem, uint32_t bandwidth,
+                              uint32_t datarate, uint8_t coderate,
+                              uint16_t preambleLen, bool fixLen, uint8_t payloadLen,
+                              bool crcOn )
+{
+  uint32_t numerator = 0;
+    uint32_t denominator = 1;
 
     switch( modem )
     {
     case MODEM_FSK:
         {
-            airTime = round( ( 8 * ( SX127x.Settings.Fsk.PreambleLen +
-                                     ( ( SX127xRead( REG_SYNCCONFIG ) & ~RF_SYNCCONFIG_SYNCSIZE_MASK ) + 1 ) +
-                                     ( ( SX127x.Settings.Fsk.FixLen == 0x01 ) ? 0.0 : 1.0 ) +
-                                     ( ( ( SX127xRead( REG_PACKETCONFIG1 ) & ~RF_PACKETCONFIG1_ADDRSFILTERING_MASK ) != 0x00 ) ? 1.0 : 0 ) +
-                                     pktLen +
-                                     ( ( SX127x.Settings.Fsk.CrcOn == 0x01 ) ? 2.0 : 0 ) ) /
-                                     SX127x.Settings.Fsk.Datarate ) * 1000 );
+            numerator   = 1000U * SX127xGetGfskTimeOnAirNumerator( datarate, coderate,
+                                                                  preambleLen, fixLen,
+                                                                  payloadLen, crcOn );
+            denominator = datarate;
         }
         break;
     case MODEM_LORA:
         {
-            double bw = 0.0;
-            // REMARK: When using LoRa modem only bandwidths 125, 250 and 500 kHz are supported
-            switch( SX127x.Settings.LoRa.Bandwidth )
-            {
-                //case 0: // 7.8 kHz
-                //    bw = 7800;
-                //    break;
-                //case 1: // 10.4 kHz
-                //    bw = 10400;
-                //    break;
-                //case 2: // 15.6 kHz
-                //    bw = 15600;
-                //    break;
-                //case 3: // 20.8 kHz
-                //    bw = 20800;
-                //    break;
-                //case 4: // 31.2 kHz
-                //    bw = 31200;
-                //    break;
-                //case 5: // 41.4 kHz
-                //    bw = 41400;
-                //    break;
-                //case 6: // 62.5 kHz
-                //    bw = 62500;
-                //    break;
-                case 7: // 125 kHz
-                    bw = 125000;
-                    break;
-                case 8: // 250 kHz
-                    bw = 250000;
-                    break;
-                case 9: // 500 kHz
-                    bw = 500000;
-                    break;
-            }
-
-            // Symbol rate : time for one symbol (secs)
-            double rs = bw / ( 1 << SX127x.Settings.LoRa.Datarate );
-            double ts = 1 / rs;
-            // time of preamble
-            double tPreamble = ( SX127x.Settings.LoRa.PreambleLen + 4.25 ) * ts;
-            // Symbol length of payload and time
-            double tmp = ceil( ( 8 * pktLen - 4 * SX127x.Settings.LoRa.Datarate +
-                                 28 + 16 * SX127x.Settings.LoRa.CrcOn -
-                                 ( SX127x.Settings.LoRa.FixLen ? 20 : 0 ) ) /
-                                 ( double )( 4 * ( SX127x.Settings.LoRa.Datarate -
-                                 ( ( SX127x.Settings.LoRa.LowDatarateOptimize > 0 ) ? 2 : 0 ) ) ) ) *
-                                 ( SX127x.Settings.LoRa.Coderate + 4 );
-            double nPayload = 8 + ( ( tmp > 0 ) ? tmp : 0 );
-            double tPayload = nPayload * ts;
-            // Time on air
-            double tOnAir = tPreamble + tPayload;
-            // return ms secs
-            airTime = floor( tOnAir * 1000 + 0.999 );
+            numerator   = 1000U * SX127xGetLoRaTimeOnAirNumerator( bandwidth, datarate,
+                                                                  coderate, preambleLen,
+                                                                  fixLen, payloadLen, crcOn );
+            denominator = SX127xGetLoRaBandwidthInHz( bandwidth );
         }
         break;
     }
-    return airTime;
+   // Perform integral ceil()
+    return ( numerator + denominator - 1 ) / denominator;
 }
 
 void SX127xSend( uint8_t *buffer, uint8_t size )
@@ -1012,8 +1048,8 @@ void SX127xSend( uint8_t *buffer, uint8_t size )
             }
             else
             {
-                //memcpy1( RxTxBuffer, buffer, size );
-                rt_memcpy( RxTxBuffer, buffer, size );
+                memcpy( RxTxBuffer, buffer, size );
+                //rt_memcpy( RxTxBuffer, buffer, size );
                 SX127x.Settings.FskPacketHandler.ChunkSize = 32;
             }
 
@@ -1055,6 +1091,8 @@ void SX127xSend( uint8_t *buffer, uint8_t size )
             SX127xWriteFifo( buffer, size );
             txTimeout = SX127x.Settings.LoRa.TxTimeout;
         }
+        break;
+        default:
         break;
     }
 
@@ -1311,6 +1349,8 @@ void SX127xSetTx( uint32_t timeout )
             }
         }
         break;
+        default:
+            break;
     }
 
     SX127x.Settings.State = RF_TX_RUNNING;
@@ -1363,12 +1403,15 @@ void SX127xSetTxContinuousWave( uint32_t freq, int8_t power, uint16_t time )
     // Disable radio interrupts
     SX127xWrite( REG_DIOMAPPING1, RF_DIOMAPPING1_DIO0_11 | RF_DIOMAPPING1_DIO1_11 );
     SX127xWrite( REG_DIOMAPPING2, RF_DIOMAPPING2_DIO4_10 | RF_DIOMAPPING2_DIO5_10 );
-
-    TimerSetValue( &TxTimeoutTimer, timeout );
-
+    
     SX127x.Settings.State = RF_TX_RUNNING;
-    TimerStart( &TxTimeoutTimer );
     SX127xSetOpMode( RF_OPMODE_TRANSMITTER );
+    
+    if(timeout)
+    {
+        TimerSetValue( &TxTimeoutTimer, timeout );
+        TimerStart( &TxTimeoutTimer );
+    }
 }
 
 int16_t SX127xReadRssi( RadioModems_t modem )
@@ -1536,6 +1579,7 @@ uint32_t SX127xGetWakeupTime( void )
     return /* SX127xGetBoardTcxoWakeupTime( ) + */ RADIO_WAKEUP_TIME;
 }
 
+
 void SX127xOnTimeoutIrq( void )
 {
     switch( SX127x.Settings.State )
@@ -1570,13 +1614,16 @@ void SX127xOnTimeoutIrq( void )
         {
             RadioEvents->RxTimeout( );
         }
-        LOG_D("PHY RxTimeout\r");
+        LORA_RADIO_DEBUG_LOG(LR_DBG_CHIP, LOG_LEVEL,"PHY RxTimeout\r");
         break;
     case RF_TX_RUNNING:
         // Tx timeout shouldn't happen.
-        // But it has been observed that when it happens it is a result of a corrupted SPI transfer
-        // it depends on the platform design.
-        //
+		// Reported issue of SPI data corruption resulting in TX TIMEOUT 
+        // is NOT related to a bug in radio transceiver.
+        // It is mainly caused by improper PCB routing of SPI lines and/or
+        // violation of SPI specifications.
+        // To mitigate redesign, Semtech offers a workaround which resets
+        // the radio transceiver and putting it into a known state.
         // The workaround is to put the radio in a known state. Thus, we re-initialize it.
 
         // BEGIN WORKAROUND
@@ -1608,7 +1655,7 @@ void SX127xOnTimeoutIrq( void )
         {
             RadioEvents->TxTimeout( );
         }
-        LOG_D("PHY TxTimeout\r");
+        LORA_RADIO_DEBUG_LOG(LR_DBG_CHIP, LOG_LEVEL,"PHY TxTimeout\r");
         break;
     default:
         break;
@@ -1656,7 +1703,7 @@ void SX127xOnDio0Irq( void )
                         {
                             RadioEvents->RxError( );
                         }
-                        LOG_D("PHY RX Error\r");
+                        LORA_RADIO_DEBUG_LOG(LR_DBG_CHIP, LOG_LEVEL,"PHY RX Error\r");
                         
                         SX127x.Settings.FskPacketHandler.PreambleDetected = false;
                         SX127x.Settings.FskPacketHandler.SyncWordDetected = false;
@@ -1704,7 +1751,7 @@ void SX127xOnDio0Irq( void )
                 {
                     RadioEvents->RxDone( RxTxBuffer, SX127x.Settings.FskPacketHandler.Size, SX127x.Settings.FskPacketHandler.RssiValue, 0 );
                 }
-                LOG_D("PHY RX Done\r");
+                LORA_RADIO_DEBUG_LOG(LR_DBG_CHIP, LOG_LEVEL,"PHY RX Done\r");
                 SX127x.Settings.FskPacketHandler.PreambleDetected = false;
                 SX127x.Settings.FskPacketHandler.SyncWordDetected = false;
                 SX127x.Settings.FskPacketHandler.NbBytes = 0;
@@ -1731,7 +1778,7 @@ void SX127xOnDio0Irq( void )
                         {
                             RadioEvents->RxError( );
                         }
-                        LOG_D("PHY RX Error\r");
+                        LORA_RADIO_DEBUG_LOG(LR_DBG_CHIP, LOG_LEVEL,"PHY RX Error\r");
                         break;
                     }
 
@@ -1772,7 +1819,7 @@ void SX127xOnDio0Irq( void )
                     {
                         RadioEvents->RxDone( RxTxBuffer, SX127x.Settings.LoRaPacketHandler.Size, SX127x.Settings.LoRaPacketHandler.RssiValue, SX127x.Settings.LoRaPacketHandler.SnrValue );
                     }
-                    LOG_D("PHY RX Done\r");
+                    LORA_RADIO_DEBUG_LOG(LR_DBG_CHIP, LOG_LEVEL,"PHY RX Done\r");
                 }
                 break;
             default:
@@ -1795,7 +1842,7 @@ void SX127xOnDio0Irq( void )
                 {
                     RadioEvents->TxDone( );
                 }
-                LOG_D("PHY TX Done\r");
+                LORA_RADIO_DEBUG_LOG(LR_DBG_CHIP, LOG_LEVEL,"PHY TX Done\r");
                 break;
             }
             break;
@@ -1858,7 +1905,7 @@ void SX127xOnDio1Irq( void )
                 {
                     RadioEvents->RxTimeout( );
                 }
-                LOG_D("PHY Single Rxtimeout\r");
+                LORA_RADIO_DEBUG_LOG(LR_DBG_CHIP, LOG_LEVEL,"PHY Single Rxtimeout\r");
                 break;
             default:
                 break;
@@ -1977,7 +2024,7 @@ void SX127xOnDio3Irq( void  )
             {
                 RadioEvents->CadDone( true );
             }
-            LOG_D("PHY CAD Done,Detected\r");
+            LORA_RADIO_DEBUG_LOG(LR_DBG_CHIP, LOG_LEVEL,"PHY CAD Done,Detected\r");
         }
         else
         {
@@ -1987,7 +2034,7 @@ void SX127xOnDio3Irq( void  )
             {
                 RadioEvents->CadDone( false );
             }
-            LOG_D("PHY CAD Done,Not Detected\r");
+            LORA_RADIO_DEBUG_LOG(LR_DBG_CHIP, LOG_LEVEL,"PHY CAD Done,Not Detected\r");
         }
         
         break;

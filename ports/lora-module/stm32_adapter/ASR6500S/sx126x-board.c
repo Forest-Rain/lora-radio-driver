@@ -2,14 +2,12 @@
  * author    Rick Zhang
  * date      2020.07.20
  */
-#include <rtthread.h>
-#include <rtdevice.h>
-#include <board.h>
-
+#include "lora-radio-rtos-config.h"
+#include "lora-radio.h"
 #include "sx126x-board.h"
 
 #define DRV_DEBUG
-#define LOG_TAG             "lora.radio.sx1262" // ASR6500S
+#define LOG_TAG             "LoRa.Board.ASR6500S(SX1262)" // ASR6500S
 #include <drv_log.h>
 
 extern void RadioOnDioIrq( void* context );

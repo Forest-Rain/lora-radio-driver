@@ -22,13 +22,13 @@
  *
  * \author    Forest-Rain
  */
-#include <rtthread.h>
-#include "drv_gpio.h"
-
+#include "lora-radio-rtos-config.h"
 #include "lora-radio.h"
 #include "sx127x-board.h"
 
-
+#define LOG_TAG "LoRa.Board.Ra-01(SX1278)"
+#define LOG_LEVEL  LOG_LVL_DBG 
+#include "lora-radio-debug.h"
 /*!
  * Flag used to set the RF switch control pins in low power mode when the radio is not active.
  */

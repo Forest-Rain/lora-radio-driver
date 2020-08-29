@@ -20,15 +20,11 @@
  *
  * \author    Gregory Cristian ( Semtech )
  */
-#include <rtthread.h>
-#include <rtdevice.h>
+ 
+#include "lora-radio-rtos-config.h"
 #include <board.h>
-
-//#include <string.h>
-//#include "utilities.h"
 #include "multi_rtimer.h"
 #include "lora-radio.h"
-//#include "delay.h"
 #include "sx126x.h"
 #include "sx126x-board.h"
 
@@ -241,31 +237,36 @@ void SX126xSetWhiteningSeed( uint16_t seed )
 
 uint32_t SX126xGetRandom( void )
 {
-    uint8_t buf[] = { 0, 0, 0, 0 };
+    uint32_t number = 0;
+    uint8_t regAnaLna = 0;
+    uint8_t regAnaMixer = 0;
+
+    regAnaLna = SX126xReadRegister( REG_ANA_LNA );
+    SX126xWriteRegister( REG_ANA_LNA, regAnaLna & ~( 1 << 0 ) );
+
+    regAnaMixer = SX126xReadRegister( REG_ANA_MIXER );
+    SX126xWriteRegister( REG_ANA_MIXER, regAnaMixer & ~( 1 << 7 ) );
 
     // Set radio in continuous reception
-    SX126xSetRx( 0 );
+    SX126xSetRx( 0xFFFFFF ); // Rx Continuous
 
-    DelayMs( 1 );
-
-    SX126xReadRegisters( RANDOM_NUMBER_GENERATORBASEADDR, buf, 4 );
+    SX126xReadRegisters( RANDOM_NUMBER_GENERATORBASEADDR, ( uint8_t* )&number, 4 );
 
     SX126xSetStandby( STDBY_RC );
 
-    return ( buf[0] << 24 ) | ( buf[1] << 16 ) | ( buf[2] << 8 ) | buf[3];
+    SX126xWriteRegister( REG_ANA_LNA, regAnaLna );
+    SX126xWriteRegister( REG_ANA_MIXER, regAnaMixer );
+
+    return number;
 }
 
 void SX126xSetSleep( SleepParams_t sleepConfig )
 {
     SX126xAntSwOff( );
-#if 1
     uint8_t value = ( ( ( uint8_t )sleepConfig.Fields.WarmStart << 2 ) |
                       ( ( uint8_t )sleepConfig.Fields.Reset << 1 ) |
                       ( ( uint8_t )sleepConfig.Fields.WakeUpRTC ) );
-    SX126xWriteCommand( RADIO_SET_SLEEP, &value, 1 );
-#else    
-    SX126xWriteCommand( RADIO_SET_SLEEP, &sleepConfig.Value, 1 );
-#endif    
+    SX126xWriteCommand( RADIO_SET_SLEEP, &value, 1 ); 
     SX126xSetOperatingMode( MODE_SLEEP );
 }
 
@@ -362,9 +363,25 @@ void SX126xSetStopRxTimerOnPreambleDetect( bool enable )
     SX126xWriteCommand( RADIO_SET_STOPRXTIMERONPREAMBLE, ( uint8_t* )&enable, 1 );
 }
 
-void SX126xSetLoRaSymbNumTimeout( uint8_t SymbNum )
+void SX126xSetLoRaSymbNumTimeout( uint8_t symbNum )
 {
-    SX126xWriteCommand( RADIO_SET_LORASYMBTIMEOUT, &SymbNum, 1 );
+    SX126xWriteCommand( RADIO_SET_LORASYMBTIMEOUT, &symbNum, 1 );
+    
+    if( symbNum >= 64 )
+    {
+        uint8_t mant = symbNum >> 1;
+        uint8_t exp  = 0;
+        uint8_t reg  = 0;
+
+        while( mant > 31 )
+        {
+            mant >>= 2;
+            exp++;
+        }
+
+        reg = exp + ( mant << 3 );
+        SX126xWriteRegister( REG_LR_SYNCH_TIMEOUT, reg );
+    }
 }
 
 void SX126xSetRegulatorMode( RadioRegulatorMode_t mode )
@@ -374,7 +391,6 @@ void SX126xSetRegulatorMode( RadioRegulatorMode_t mode )
 
 void SX126xCalibrate( CalibrationParams_t calibParam )
 {
-#if 1
     uint8_t value = ( ( ( uint8_t )calibParam.Fields.ImgEnable << 6 ) |
                       ( ( uint8_t )calibParam.Fields.ADCBulkPEnable << 5 ) |
                       ( ( uint8_t )calibParam.Fields.ADCBulkNEnable << 4 ) |
@@ -383,10 +399,7 @@ void SX126xCalibrate( CalibrationParams_t calibParam )
                       ( ( uint8_t )calibParam.Fields.RC13MEnable << 1 ) |
                       ( ( uint8_t )calibParam.Fields.RC64KEnable ) );
 
-    SX126xWriteCommand( RADIO_CALIBRATE, &value, 1 );
-#else    
-    SX126xWriteCommand( RADIO_CALIBRATE, ( uint8_t* )&calibParam, 1 );
-#endif    
+    SX126xWriteCommand( RADIO_CALIBRATE, &value, 1 );  
 }
 
 void SX126xCalibrateImage( uint32_t freq )
@@ -544,7 +557,7 @@ void SX126xSetTxParams( int8_t power, RadioRampTimes_t rampTime )
         {
             power = 22;
         }
-        else if( power < -9 ) // -3
+        else if( power < -9 ) 
         {
             power = -9;
         }

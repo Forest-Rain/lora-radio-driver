@@ -11,43 +11,44 @@
 #ifndef __LORA_RADIO_TEST_H__
 #define __LORA_RADIO_TEST_H__
 
-#if defined( REGION_AS923 )
+
+#if defined( PHY_REGION_AS923 )
 
 #define RF_FREQUENCY                                923000000 // Hz
 
-#elif defined( REGION_AU915 )
+#elif defined( PHY_REGION_AU915 )
 
 #define RF_FREQUENCY                                915000000 // Hz
 
-#elif defined( REGION_CN470 ) || defined ( REGION_CN470S )
+#elif defined( PHY_REGION_CN470 ) || defined ( PHY_REGION_CN470S )
 
 #define RF_FREQUENCY                                470300000 // Hz
 
-#elif defined( REGION_CN779 )
+#elif defined( PHY_REGION_CN779 )
 
 #define RF_FREQUENCY                                779000000 // Hz
 
-#elif defined( REGION_EU433 )
+#elif defined( PHY_REGION_EU433 )
 
 #define RF_FREQUENCY                                433000000 // Hz
 
-#elif defined( REGION_EU868 )
+#elif defined( PHY_REGION_EU868 )
 
 #define RF_FREQUENCY                                868000000 // Hz
 
-#elif defined( REGION_KR920 )
+#elif defined( PHY_REGION_KR920 )
 
 #define RF_FREQUENCY                                920000000 // Hz
 
-#elif defined( REGION_IN865 )
+#elif defined( PHY_REGION_IN865 )
 
 #define RF_FREQUENCY                                865000000 // Hz
 
-#elif defined( REGION_US915 )
+#elif defined( PHY_REGION_US915 )
 
 #define RF_FREQUENCY                                915000000 // Hz
 
-#elif defined( REGION_RU864 )
+#elif defined( PHY_REGION_RU864 )
 
 #define RF_FREQUENCY                                864000000 // Hz
 
@@ -68,7 +69,7 @@
                                                               //  4: 4/8]
 #define LORA_PREAMBLE_LENGTH                        8         // Same for Tx and Rx
 #define LORA_SYMBOL_TIMEOUT                         0         // Symbols
-#define LORA_FIX_LENGTH_PAYLOAD_ON                  false
+#define LORA_FIX_LENGTH_PAYLOAD_ON_DISABLE          false
 #define LORA_IQ_INVERSION_ON                        false
 
 
@@ -85,13 +86,16 @@
 #define FSK_BANDWIDTH                               100000    // Hz >> DSB in sx126x
 #define FSK_AFC_BANDWIDTH                           166666    // Hz >> Unused in sx126x
 
+#elif defined( USING_LORA_SOC_STM32WL )
+
+#define FSK_BANDWIDTH                               100000    // Hz >> DSB in sx126x
+#define FSK_AFC_BANDWIDTH                           166666    // Hz >> Unused in sx126x
 #else
-    #error "Please define a mbed shield in the compiler options."
+    #error "Please define a lora-shield in the compiler options."
 #endif
 
 #define FSK_PREAMBLE_LENGTH                         5         // Same for Tx and Rx
 #define FSK_FIX_LENGTH_PAYLOAD_ON                   false
-
 
 #define RX_TIMEOUT_VALUE                            1000
 #define BUFFER_SIZE                                 64 // Define the payload size here
@@ -100,7 +104,7 @@
 #define LORA_SLAVER_DEVADDR 0x01020304
 #define MAC_HEADER_OVERHEAD 13
 
-// 181225 Ping pong event
+// Ping pong event
 #define EV_RADIO_INIT            0x0001
 #define EV_RADIO_TX_START        0x0002
 #define EV_RADIO_TX_DONE         0x0004
@@ -108,11 +112,11 @@
 #define EV_RADIO_RX_DONE         0x0010
 #define EV_RADIO_RX_TIMEOUT      0x0020
 #define EV_RADIO_RX_ERROR        0x0040
-#define EV_RADIO_ALL             0x003F
+#define EV_RADIO_ALL             (EV_RADIO_INIT | EV_RADIO_TX_START | EV_RADIO_TX_DONE | EV_RADIO_TX_TIMEOUT | EV_RADIO_RX_DONE | EV_RADIO_RX_TIMEOUT | EV_RADIO_RX_ERROR)
 
 typedef struct 
 {
-    uint8_t modem; // LoRa Modem \ FSK modem
+    RadioModems_t modem; // LoRa Modem \ FSK modem
     uint32_t frequency;
     int8_t txpower;
     
@@ -127,10 +131,8 @@ typedef struct
     uint32_t fsk_bandwidth;
     uint32_t fsk_afc_bandwidth;
     uint16_t preamble_len;
-    
-    
+
 }lora_radio_test_t;
 
-
-
 #endif
+

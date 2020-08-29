@@ -1,5 +1,5 @@
 /*!
- * \file      sx126x-board.c
+ * \file      sx1268-board.c
  *
  * \brief     Target board SX126x shield driver implementation
  *
@@ -22,17 +22,13 @@
  *
  * \author    Forest-Rain
  */
-#include <rtthread.h>
-#include <rtdevice.h>
-#include <board.h>
-
+#include "lora-radio-rtos-config.h"
+#include "lora-radio.h"
 #include "sx126x-board.h"
-#include "drv_gpio.h" // for GET_PIN
 
-#define DRV_DEBUG
-#define LOG_TAG             "lora.radio.sx1268" // LSD4RF-2R717N40
-#include <drv_log.h>
-#include <ulog.h> 
+#define LOG_TAG "LoRa.Board.LSD4RF-2R717N40(SX1268)" // LSD4RF-2R717N40
+#define LOG_LEVEL  LOG_LVL_DBG 
+#include "lora-radio-debug.h"
 
 extern void RadioOnDioIrq( void* context );
 
@@ -61,11 +57,6 @@ int stm32_pin_get(char *pin_name)
 
 void SX126xIoInit( void )
 {
-////    GpioInit( &SX126x.Spi.Nss, RADIO_NSS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 1 );
-////    GpioInit( &SX126x.BUSY, RADIO_BUSY, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-////    GpioInit( &SX126x.DIO1, RADIO_DIO_1, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-////    GpioInit( &DeviceSel, RADIO_DEVICE_SEL, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-
     rt_pin_mode(LORA_RADIO_NSS_PIN, PIN_MODE_OUTPUT); 
     rt_pin_mode(LORA_RADIO_BUSY_PIN, PIN_MODE_INPUT);
     rt_pin_mode(LORA_RADIO_DIO1_PIN, PIN_MODE_INPUT_PULLDOWN);
@@ -80,9 +71,7 @@ void SX126xIoInit( void )
 }
 
 void SX126xIoIrqInit( DioIrqHandler dioIrq )
-{
-////    GpioSetInterrupt( &SX126x.DIO1, IRQ_RISING_EDGE, IRQ_HIGH_PRIORITY, dioIrq );
-   
+{ 
     rt_pin_mode(LORA_RADIO_DIO1_PIN, PIN_MODE_INPUT_PULLDOWN);
     rt_pin_attach_irq(LORA_RADIO_DIO1_PIN, PIN_IRQ_MODE_RISING, RadioOnDioIrq,(void*)"callback args");
     rt_pin_irq_enable(LORA_RADIO_DIO1_PIN, PIN_IRQ_ENABLE);  
@@ -124,13 +113,7 @@ uint32_t SX126xGetBoardTcxoWakeupTime( void )
 }
 
 void SX126xReset( void )
-{
-////    DelayMs( 10 );
-////    GpioInit( &SX126x.Reset, RADIO_RESET, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-////    DelayMs( 20 );
-////    GpioInit( &SX126x.Reset, RADIO_RESET, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 ); // internal pull-up
-////    DelayMs( 10 );
-    
+{   
     DelayMs( 10 );
     rt_pin_mode(LORA_RADIO_RESET_PIN, PIN_MODE_OUTPUT); 
     rt_pin_write(LORA_RADIO_RESET_PIN, PIN_LOW);
@@ -148,7 +131,7 @@ void SX126xWaitOnBusy( void )
 
 void SX126xAntSwOn( void )
 {
-   /// GpioInit( &AntPow, RADIO_ANT_SWITCH_POWER, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 1 );
+   // No need
 }
 
 void SX126xAntSwOff( void )
@@ -164,8 +147,7 @@ void SX126xAntSwOff( void )
 void SX126xSetAntSw( RadioOperatingModes_t mode )
 {
     if( mode == MODE_TX )
-    // Transmit
-    {
+    { // Transmit
         rt_pin_write(LORA_RADIO_RFSW1_PIN, PIN_HIGH);
         rt_pin_write(LORA_RADIO_RFSW2_PIN, PIN_LOW);
     }
@@ -174,7 +156,6 @@ void SX126xSetAntSw( RadioOperatingModes_t mode )
         rt_pin_write(LORA_RADIO_RFSW1_PIN, PIN_LOW);
         rt_pin_write(LORA_RADIO_RFSW2_PIN, PIN_HIGH);
     }
-
 }
 
 bool SX126xCheckRfFrequency( uint32_t frequency )
