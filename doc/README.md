@@ -77,8 +77,6 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
    - lora radio driver示例文件
       - lora-radio-test-shell
          - shell示例，主要实现了射频性能测试、空口数据包监听、双向通信测试等shell命令，便于日常测试
-      - ~~lora-radio-trx~~
-         - ~~单向通信示例，主要实现单向通信功能，用户可以通过该示例获悉如何调用lora-radio-driver API接口~~
 - port
    - 主要包含当前在不同MCU平台下支持的lora模块，lora-module文件夹中的xxxx-borad.c包含了与LoRa模块直接相关的主要硬件接口配置：
       - lora-module
@@ -196,10 +194,6 @@ RT-Thread online packages --->
 
 
 # 4 使用示例
-
-
-~~插入gif视频~~
-
 
 ## 4.1 硬件测试平台
 当前所使用的硬件测试平台如下所示
