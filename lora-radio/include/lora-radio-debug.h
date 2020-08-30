@@ -11,7 +11,7 @@
 #ifndef __LORA_RADIO_DEBUG_H__
 #define __LORA_RADIO_DEBUG_H__
 
-#if ( defined USING_RTOS_RT_THREAD ) || ( defined USING_RTOS_RT_THREAD_NANO )
+#if ( defined USING_LORA_RADIO_ON_RTOS_RT_THREAD ) || ( defined USING_LORA_RADIO_ON_RTOS_RT_THREAD_NANO )
 #ifdef RT_USING_ULOG
 #include <rtdbg.h>
 #include <ulog.h> 
@@ -48,7 +48,7 @@
 #define LR_DBG_SPI                          0
 #endif
 
-#if ( defined USING_RTOS_RT_THREAD ) || ( defined USING_RTOS_RT_THREAD_NANO )
+#if ( defined USING_LORA_RADIO_ON_RTOS_RT_THREAD ) || ( defined USING_LORA_RADIO_ON_RTOS_RT_THREAD_NANO )
 #if defined RT_USING_ULOG || defined RT_DEBUG
 
 #else

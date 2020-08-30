@@ -32,7 +32,7 @@
 #define LOG_LEVEL  LOG_LVL_DBG
 #include "lora-radio-debug.h"
 
-#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD_SUPPORT
+#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
 
 #define EV_LORA_RADIO_IRQ_FIRED       0x0001
 
@@ -556,7 +556,7 @@ static uint8_t RadioGetFskBandwidthRegValue( uint32_t bandwidth )
     while( 1 );
 }
 
-#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD_SUPPORT
+#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
 /**
   * @brief  lora_radio_thread_entry
   * @param  None
@@ -610,7 +610,7 @@ bool RadioInit( RadioEvents_t *events )
     TimerInit( &TxTimeoutTimer, RadioOnTxTimeoutIrq );
     TimerInit( &RxTimeoutTimer, RadioOnRxTimeoutIrq );
 
-    #ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD_SUPPORT
+    #ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
         rt_event_init(&lora_radio_event, "ev_phy", RT_IPC_FLAG_PRIO);//RT_IPC_FLAG_FIFO);
 
         rt_thread_init(&lora_radio_thread,               	  
@@ -1311,7 +1311,7 @@ void RadioOnRxTimeoutIrq( void /** context*/ )
 
 void RadioOnDioIrq( void* context )
 {
-    #ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD_SUPPORT
+    #ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
         rt_event_send(&lora_radio_event, EV_LORA_RADIO_IRQ_FIRED);      
     #else
         IrqFired = true;
@@ -1320,13 +1320,13 @@ void RadioOnDioIrq( void* context )
 
 void RadioIrqProcess( void )
 {
-#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD_SUPPORT
+#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
     CRITICAL_SECTION_BEGIN( );
 #else
     if( IrqFired == true )
 #endif    
     {
-#ifndef USING_LORA_RADIO_ON_RTOS_RT_THREAD_SUPPORT
+#ifndef USING_LORA_RADIO_ON_RTOS_RT_THREAD
         CRITICAL_SECTION_BEGIN( );
         // Clear IRQ flag
         IrqFired = false;
@@ -1460,7 +1460,7 @@ void RadioIrqProcess( void )
         }
     }
     
-#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD_SUPPORT
+#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
     CRITICAL_SECTION_END( );
 #endif
 }

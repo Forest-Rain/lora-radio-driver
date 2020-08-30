@@ -2075,8 +2075,11 @@ void SX127xOnDio5Irq( void )
     }
 }
 
+#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
 void RadioIrqProcess( uint8_t irq_index )
 {
+    CRITICAL_SECTION_BEGIN( );
     SX127xDioIrq[irq_index]();
+    CRITICAL_SECTION_END( );
 }
-
+#endif

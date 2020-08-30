@@ -44,6 +44,14 @@ void SX127xWriteBuffer( uint16_t addr, uint8_t *buffer, uint8_t size )
 
 //    //NSS = 1;
 //    GpioWrite( &SX127x.Spi.Nss, 1 );
+
+    spi_select(&sx1272_spi);
+    spi_write_byte( &sx1272_spi, addr | 0x80 );
+    for( i = 0; i < size; i++ )
+    {
+        spi_write_byte( &sx1272_spi, buffer[i] );
+    }
+    spi_deselect(&sx1272_spi);
     
 #endif
 }

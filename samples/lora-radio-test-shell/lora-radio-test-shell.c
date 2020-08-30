@@ -305,13 +305,12 @@ void lora_radio_test_thread_entry(void* parameter)
                         Radio.SetTxConfig( MODEM_LORA, lora_radio_test_paras.txpower, 0, lora_radio_test_paras.bw,
                                                        lora_radio_test_paras.sf, lora_radio_test_paras.cr,
                                                        LORA_PREAMBLE_LENGTH, LORA_FIX_LENGTH_PAYLOAD_ON_DISABLE,
-                                                       true, 0, 0, LORA_IQ_INVERSION_ON, 3000 );
+                                                       true, 0, 0, LORA_IQ_INVERSION_ON_DISABLE, 3000 );
 
                         Radio.SetRxConfig( MODEM_LORA, lora_radio_test_paras.bw, lora_radio_test_paras.sf,
                                                        lora_radio_test_paras.cr, 0, LORA_PREAMBLE_LENGTH,
                                                        LORA_SYMBOL_TIMEOUT, LORA_FIX_LENGTH_PAYLOAD_ON_DISABLE,
-                                                       0, true, 0, 0, LORA_IQ_INVERSION_ON, true );
-                                                                                     
+                                                       0, true, 0, 0, LORA_IQ_INVERSION_ON_DISABLE, true );
                     }
                     else
                     {

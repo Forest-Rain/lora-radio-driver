@@ -413,7 +413,6 @@ struct Radio_s
      * \param [in]  sleepTime     Structure describing sleep timeout value
      */
     void ( *SetRxDutyCycle ) ( uint32_t rxTime, uint32_t sleepTime );
-    
 };
 
 /*!

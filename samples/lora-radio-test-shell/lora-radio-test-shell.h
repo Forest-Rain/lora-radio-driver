@@ -70,7 +70,7 @@
 #define LORA_PREAMBLE_LENGTH                        8         // Same for Tx and Rx
 #define LORA_SYMBOL_TIMEOUT                         0         // Symbols
 #define LORA_FIX_LENGTH_PAYLOAD_ON_DISABLE          false
-#define LORA_IQ_INVERSION_ON                        false
+#define LORA_IQ_INVERSION_ON_DISABLE                false
 
 
 #define FSK_FDEV                                    25000     // Hz
