@@ -264,7 +264,7 @@ RT-Thread online packages --->
 | 序号 | finish命令 | 说明 |
 | --- | --- | --- |
 | 1 | lora probe | 测试lora设备(SPI)访问是否正常 |
-| 2 | lora cw <para1> <para2> | \<para1\>:频点，单位Hz\<para2\>:功率，单位dBm|
+| 2 | lora cw <para1> <para2> | \<para1\>:频点，单位Hz</br>\<para2\>:功率，单位dBm|
 | 3 | lora ping <para1> <para2> | \<para1\> : 主机\从机</br>-m 主机</br>-s 从机</br> \<para2\>: 发送数据包个数 |
 | 4 | lora rx  | 接收数据包，同时以16进制格式与ASCII码显示数据内容 |
 
