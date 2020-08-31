@@ -8,35 +8,35 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
 
 
 - 主要特点:
-   - 当前支持LoRa Transceiver（sx126x\sx127x ）
-      - 支持调制方式
-- [x] LoRa
-- [ ] FSK
-   - 可通过menuconfig灵活定义LoRa模块的对外接口，降低入门门槛
-   - 提供常用实例代码，可用于射频性能测试、空口数据包监听、双向通信测试等
-   - 可作为phy层对接到LoRaWAN End-Device协议栈
+- 当前支持LoRa Transceiver（sx126x\sx127x ）
+- 支持调制方式
+   - [x] LoRa
+   - [ ] FSK
+- 可通过menuconfig灵活定义LoRa模块的对外接口，降低入门门槛
+- 提供常用实例代码，可用于射频性能测试、空口数据包监听、双向通信测试等
+- 可作为phy层对接到LoRaWAN End-Device协议栈
 - 当前支持LoRa 模块\芯片
    - LoRa Transceiver (SPI)
       - SX126X (SX1262\ASR6500S\LLCC68\SX1268..)
          - SX1268
-- [x] [LSD4RF-2R717N40](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
+            - [x] [LSD4RF-2R717N40](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
          - SX1262
-- [x] ASR6500S
+          - [x] ASR6500S
          - LLCC68
          - LR1110
       - SX127X (SX1272\SX1276\SX1278..)
          - SX1278
-- [x] [LSD4RF-2F717N20](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
-- [x] [Ra-01](http://wiki.ai-thinker.com/lora/man)
-- [ ] SX1276
+            - [x] [LSD4RF-2F717N20](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
+            - [x] [Ra-01](http://wiki.ai-thinker.com/lora/man)
+      - [ ] SX1276
    - LoRa SIP\SoC
 - 当前测试的MCU平台
    - LoRa Radio Driver当前功能主要在STM32L平台测试通过，未来计划将适配更多的MCU平台（华大MCU、nRF、BK）
-- [x] STM32L0系列
-- [x] STM32L4系列
+      - [x] STM32L0系列
+      - [x] STM32L4系列
 - 当前支持的RTOS
-- [x] RT-Thread
-- [ ] RT-Thread Nano
+   - [x] RT-Thread
+   - [ ] RT-Thread Nano
 
 # 2 LoRa Radio Driver 软件包组织结构
 ![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1598742766628-ea39cbc7-119b-4a3f-a323-45ba4cee9bbd.png#align=left&display=inline&height=677&margin=%5Bobject%20Object%5D&name=image.png&originHeight=677&originWidth=1111&size=80753&status=done&style=none&width=1111)
@@ -47,8 +47,8 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
          - 对外提供了上层访问接口实现
       - lora-spi-sx126x.c 
          - sx126x芯片的spi读写接口实现，独立于MCU平台
-- [x] rt_device
-- [ ] SPI裸机方式
+            - [x] rt_device
+            - [ ] SPI裸机方式
       - sx126x.c
          - lora芯片sx126x底层驱动
    - sx127x
@@ -56,8 +56,8 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
          - 对外提供了上层访问接口
       - lora-spi-sx127x.c
          - sx127x芯片的spi读写接口实现，独立于MCU平台
-- [x] rt_device
-- [ ] SPI裸机方式
+            - [x] rt_device
+            - [ ] SPI裸机方式
       - sx127x.c
          - lora芯片sx127x底层驱动
    - common
@@ -150,7 +150,6 @@ RT-Thread Components --->
        [*] Enable ulog
            [*] Enable ISR log.
 ```
-~~注：由于在射频DIO中断服务中使用了ulog，因此需要开启 Enable ISR log.~~
 
 ## 3.2 获取软件包
 使用 lora-radio-driver 软件包，需要在 RT-Thread 的包管理中选中它，具体路径如下：
@@ -197,61 +196,11 @@ RT-Thread online packages --->
 
 ## 4.1 硬件测试平台
 当前所使用的硬件测试平台如下所示
-
 | 序号 | 硬件平台 | MCU | LoRa模块 | 主要用户接口 |
 | --- | --- | --- | --- | --- |
-| 1 | LSD4RF-TEST2002  | STM32L476VG | [LSD4RF-2R717N40](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
-[ ( SX1268 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87) | 
-- 用户接口定义
-   - VCC  - 3.3V
-   - GND
-   - SCK    - PC10 (SPI3)
-   - MISO  - PC11 (SPI3)
-   - MOSI  - PC12 (SPI3)
-   - NSS    - PA15
-   - RESET - PA7
-   - DIO0  - PB1
-   - BUSY - PB2
-   - RFSW1 - PB0
-   - RFSW2 - PC5
-- 射频开关TX trace
-   - TX: RFSW1 = 1 , RFSW2 = 0
-   - TX: RFSW1 = 0 , RFSW2 = 1
- |
-| 2 | LSD4RF-TEST2002  | STM32L476VG | [LSD4RF-2F717N20](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
-[ ( SX1278 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87) | 
-- 用户接口定义
-   - VCC   - 3.3V
-   - GND
-   - SCK    - PC10 (SPI3)
-   - MISO  - PC11 (SPI3)
-   - MOSI  - PC12 (SPI3)
-   - NSS    - PB6
-   - RESET - PA7
-   - DIO0  - PB1
-   - DIO1  - PC4
-   - DIO2  - PB2
-   - DIO3  - NC
-   - DIO4  - NC
-   - RFSW1 - PB0
-   - RFSW2 - PC5
-- 射频开关TX trace
-   - TX: RFSW1 = 1 , RFSW2 = 0
-   - TX: RFSW1 = 0 , RFSW2 = 1
- |
-| 3 | Nucleo-L476RG | STM32L476RG | [Ra-01](http://wiki.ai-thinker.com/lora/man)
-(RT-thread LoRa Adruino扩展板V1) | 
-- 用户接口定义
-   - VCC    - 3.3V
-   - GND
-   - SCK    - PA5(SPI1)
-   - MISO  - PA6(SPI1)
-   - MOSI  - PA7(SPI1)
-   - NSS    - PB6
-   - RESET - PC7
-   - DIO0  - PA9
-   - DIO1  - PA8
- |
+| 1 | LSD4RF-TEST2002  | STM32L476VG | [LSD4RF-2R717N40](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)<br />[ ( SX1268 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87) | <br />- 用户接口定义<br />   - VCC  - 3.3V<br />   - GND<br />   - SCK    - PC10 (SPI3)<br />   - MISO  - PC11 (SPI3)<br />   - MOSI  - PC12 (SPI3)<br />   - NSS    - PA15<br />   - RESET - PA7<br />   - DIO0  - PB1<br />   - BUSY - PB2<br />   - RFSW1 - PB0<br />   - RFSW2 - PC5<br />- 射频开关TX trace<br />   - TX: RFSW1 = 1 , RFSW2 = 0<br />   - TX: RFSW1 = 0 , RFSW2 = 1<br /> |
+| 2 | LSD4RF-TEST2002  | STM32L476VG | [LSD4RF-2F717N20](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)<br />[ ( SX1278 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87) | <br />- 用户接口定义<br />   - VCC   - 3.3V<br />   - GND<br />   - SCK    - PC10 (SPI3)<br />   - MISO  - PC11 (SPI3)<br />   - MOSI  - PC12 (SPI3)<br />   - NSS    - PB6<br />   - RESET - PA7<br />   - DIO0  - PB1<br />   - DIO1  - PC4<br />   - DIO2  - PB2<br />   - DIO3  - NC<br />   - DIO4  - NC<br />   - RFSW1 - PB0<br />   - RFSW2 - PC5<br />- 射频开关TX trace<br />   - TX: RFSW1 = 1 , RFSW2 = 0<br />   - TX: RFSW1 = 0 , RFSW2 = 1<br /> |
+| 3 | Nucleo-L476RG | STM32L476RG | [Ra-01](http://wiki.ai-thinker.com/lora/man)<br />(RT-thread LoRa Adruino扩展板V1) | <br />- 用户接口定义<br />   - VCC    - 3.3V<br />   - GND<br />   - SCK    - PA5(SPI1)<br />   - MISO  - PA6(SPI1)<br />   - MOSI  - PA7(SPI1)<br />   - NSS    - PB6<br />   - RESET - PC7<br />   - DIO0  - PA9<br />   - DIO1  - PA8<br /> |
 
 ## 4.2 Shell测试命令
 若使能 [* ] LoRa Radio Test Shell，则可以通过shell（finish）命令直接进行LoRa相关测试
@@ -265,14 +214,8 @@ RT-Thread online packages --->
 | 序号 | finish命令 | 说明 |
 | --- | --- | --- |
 | 1 | lora probe | 测试lora设备(SPI)访问是否正常 |
-| 2 | lora cw <para1> <para2> | <para1>:频点，单位Hz
-<para2>:功率，单位dBm
- |
-| 3 | lora ping <para1> <para2> | <para1> : 主机\从机
-- -m 主机
-- -s 从机
-
-<para2>: 发送数据包个数 |
+| 2 | lora cw <para1> <para2> | \<para1\>:频点，单位Hz<br>\<para2\>:功率，单位dBm|
+| 3 | lora ping <para1> <para2> | \<para1\> : 主机\从机<br>-m 主机<br>-s 从机<br> \<para2\>: 发送数据包个数 |
 | 4 | lora rx  | 接收数据包，同时以16进制格式与ASCII码显示数据内容 |
 
 ![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1598743470109-a54f4753-4ffd-4c7a-a3bf-30d13b8e15e1.png#align=left&display=inline&height=905&margin=%5Bobject%20Object%5D&name=image.png&originHeight=905&originWidth=1848&size=267690&status=done&style=none&width=1848)
