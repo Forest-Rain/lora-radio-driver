@@ -97,7 +97,19 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
 ## 3.1 依赖
 
 - SPI外设——用户需根据实际MCU平台，自定义LoRa模块实际所需要使用的SPI外设
-   - bsp\目标板XX\board\Kconfig,如下所示，
+   - 选择SPI外设 
+```
+  Hardware Drivers Config --->
+     On-chip Peripheral Drivers --->
+         [*] Enable SPI  --->
+                 --- Enable SPI
+                 [ ]   Enable SPI1
+                 [ ]   Enable SPI2
+                 [ ]   Enable SPI3
+                 [ ]   Enable SPI4
+                 [ ]   Enable SPI5
+```
+   - 在bsp\目标板XX\board\Kconfig增加如下定义
 ```c
   menuconfig BSP_USING_SPI
        bool "Enable SPI"
@@ -166,7 +178,6 @@ RT-Thread online packages --->
                         Select LoRa Radio Driver Sample --->  
                     Version (latest)  --->
 ```
-
 
 1. Select LoRa Chip \ LoRa Module
    1. "Setup LoRa Radio Device Name"
@@ -342,6 +353,7 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
       - 更新[lora-radio-driver\Kconfig](https://github.com/Forest-Rain/packages) 软件包配置文件
          - 区分单实例(单lora模块)与多实例（多lora模块）情况，目前支持单实例
          - 移除了Kconfig中对BSP_USING_SPIx的直接定义，BSP_USING_SPIx定义调整到[Target Platform]\Board\Kconfig)
+         - 重命名宏定义REGION_X为PHY_REGION_X(如REGION_CN470 -> PHY_REGION_CN470)，以便与LoRaWAN协议栈中缺省REGION_X共存
 
 # 6 问题和建议
 如果有什么问题或者建议欢迎提交 [Issue](https://github.com/Forest-Rain/lora-radio-driver/issues) 进行讨论。
