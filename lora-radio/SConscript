@@ -3,8 +3,7 @@ from building import *
 src   = []
 cwd   = GetCurrentDir()
 include_path = [cwd]
-
-
+include_path += [cwd+'/include']
 
 # add lora radio driver.
 if GetDepend('USING_LORA_CHIP_SX126X'):
@@ -13,7 +12,6 @@ if GetDepend('USING_LORA_CHIP_SX126X'):
 	sx126x/lora-spi-sx126x.c
 	sx126x/sx126x.c
 	''')
-    include_path += [cwd+'/sx126x']
 
 if GetDepend('USING_LORA_CHIP_SX127X'):
     src = Split('''
@@ -21,7 +19,6 @@ if GetDepend('USING_LORA_CHIP_SX127X'):
     sx127x/lora-spi-sx127x.c
 	sx127x/sx127x.c
 	''')
-    include_path += [cwd+'/sx127x']
 
 src += ['common/lora-radio-timer.c']
 include_path += [cwd+'/common']
