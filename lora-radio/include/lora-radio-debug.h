@@ -11,7 +11,7 @@
 #ifndef __LORA_RADIO_DEBUG_H__
 #define __LORA_RADIO_DEBUG_H__
 
-#if ( defined USING_LORA_RADIO_ON_RTOS_RT_THREAD ) || ( defined USING_LORA_RADIO_ON_RTOS_RT_THREAD_NANO )
+#if ( defined LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD ) || ( defined LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD_NANO )
 #ifdef RT_USING_ULOG
 #include <rtdbg.h>
 #include <ulog.h> 
@@ -24,7 +24,7 @@
 
 
 /* Using this macro to control all LoRa Radio Driver debug features. */
-#ifdef USING_LORA_RADIO_DEBUG
+#ifdef LORA_RADIO_DRIVER_USING_LORA_RADIO_DEBUG
 
 /* Turn on some of these (set to non-zero) to debug LORa Radio */
 
@@ -48,7 +48,7 @@
 #define LR_DBG_SPI                          0
 #endif
 
-#if ( defined USING_LORA_RADIO_ON_RTOS_RT_THREAD ) || ( defined USING_LORA_RADIO_ON_RTOS_RT_THREAD_NANO )
+#if ( defined LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD ) || ( defined LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD_NANO )
 #if defined RT_USING_ULOG || defined RT_DEBUG
 
 #else

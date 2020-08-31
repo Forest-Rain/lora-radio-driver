@@ -105,7 +105,7 @@ typedef struct
      */
     void ( *CadDone ) ( bool channelActivityDetected );
 	
-#ifdef USING_LORA_CHIP_LR1110
+#ifdef LORA_RADIO_DRIVER_USING_LORA_CHIP_LR1110
     /*!
      * \brief  Gnss Done Done callback prototype.
     */

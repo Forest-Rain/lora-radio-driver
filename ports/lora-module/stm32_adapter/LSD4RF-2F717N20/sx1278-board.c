@@ -35,7 +35,7 @@
  */
 static bool RadioIsActive = false;
 
-#ifdef USING_RTOS_RT_THREAD
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
 /*!
  * \brief DIO 0 IRQ callback
  */
@@ -92,7 +92,7 @@ int stm32_pin_get(char *pin_name)
 
 void SX127xIoInit( void )
 {
-#ifdef USING_RTOS_RT_THREAD
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
     rt_pin_mode(LORA_RADIO_NSS_PIN, PIN_MODE_OUTPUT);
     
     rt_pin_mode(LORA_RADIO_DIO0_PIN, PIN_MODE_INPUT_PULLDOWN);
@@ -113,7 +113,7 @@ void SX127xIoInit( void )
 
 void SX127xIoIrqInit( DioIrqHandler **irqHandlers )
 {
-#ifdef USING_RTOS_RT_THREAD
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
         #ifdef LORA_RADIO_DIO0_PIN
         rt_pin_attach_irq(LORA_RADIO_DIO0_PIN, PIN_IRQ_MODE_RISING,SX127xOnDio0IrqEvent,(void*)"rf-dio0-int");
         rt_pin_irq_enable(LORA_RADIO_DIO0_PIN, PIN_IRQ_ENABLE);    
@@ -150,7 +150,7 @@ void SX127xIoIrqInit( DioIrqHandler **irqHandlers )
 
 void SX127xIoDeInit( void )
 {
-#ifdef USING_RTOS_RT_THREAD
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
     //    rt_pin_mode(LORA_RADIO_DIO0_PIN, PIN_MODE_INPUT);
 //    rt_pin_mode(LORA_RADIO_DIO1_PIN, PIN_MODE_INPUT);
 //    rt_pin_mode(LORA_RADIO_DIO2_PIN, PIN_MODE_INPUT);

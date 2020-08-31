@@ -69,7 +69,7 @@ typedef struct
  * Private functions prototypes
  */
 
-#if defined( USING_LORA_RADIO_SX1276 ) 
+#if defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1276 ) 
 /*!
  * Performs the Rx chain calibration for LF and HF bands
  * \remark Must be called just after the reset so all registers are at their
@@ -157,14 +157,14 @@ void SX127xOnTimeoutIrq( void );
  */
 const RadioRegisters_t RadioRegsInit[] = RADIO_INIT_REGISTERS_VALUE;
 
-#if defined( USING_LORA_RADIO_SX1276 ) || defined( USING_LORA_RADIO_SX1278 ) 
+#if defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1276 ) || defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1278 ) 
 /*!
  * Constant values need to compute the RSSI value
  */
 #define RSSI_OFFSET_LF                              -164
 #define RSSI_OFFSET_HF                              -157
 
-#elif defined( USING_LORA_RADIO_SX1272 )
+#elif defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1272 )
 
 #define RSSI_OFFSET_HF                              -139
 
@@ -281,7 +281,7 @@ void SX127xInit( RadioEvents_t *events )
 
     SX127xReset( );
     
-#if defined( USING_LORA_RADIO_SX1276 ) 
+#if defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1276 ) 
     RxChainCalibration( );
 #endif    
 
@@ -385,7 +385,7 @@ uint32_t SX127xRandom( void )
     return rnd;
 }
 
-#if defined( USING_LORA_RADIO_SX1276 )
+#if defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1276 )
 /*!
  * Performs the Rx chain calibration for LF and HF bands
  * \remark Must be called just after the reset so all registers are at their
@@ -508,7 +508,7 @@ void SX127xSetRxConfig( RadioModems_t modem, uint32_t bandwidth,
                 // Fatal error: When using LoRa modem only bandwidths 125, 250 and 500 kHz are supported
                 while( 1 );
             }
-#if defined( USING_LORA_RADIO_SX1276 ) || defined( USING_LORA_RADIO_SX1278 ) 			
+#if defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1276 ) || defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1278 ) 			
             bandwidth += 7;
 #endif
             SX127x.Settings.LoRa.Bandwidth = bandwidth;
@@ -531,7 +531,7 @@ void SX127xSetRxConfig( RadioModems_t modem, uint32_t bandwidth,
             {
                 datarate = 6;
             }
-#if defined( USING_LORA_RADIO_SX1276 ) || defined( USING_LORA_RADIO_SX1278 ) 
+#if defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1276 ) || defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1278 ) 
             if( ( ( bandwidth == 7 ) && ( ( datarate == 11 ) || ( datarate == 12 ) ) ) ||
                 ( ( bandwidth == 8 ) && ( datarate == 12 ) ) )
             {
@@ -563,7 +563,7 @@ void SX127xSetRxConfig( RadioModems_t modem, uint32_t bandwidth,
                            RFLR_MODEMCONFIG3_LOWDATARATEOPTIMIZE_MASK ) |
                            ( SX127x.Settings.LoRa.LowDatarateOptimize << 3 ) );
 
-#elif defined( USING_LORA_RADIO_SX1272 )
+#elif defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1272 )
       		if( ( ( bandwidth == 0 ) && ( ( datarate == 11 ) || ( datarate == 12 ) ) ) ||
                 ( ( bandwidth == 1 ) && ( datarate == 12 ) ) )
             {
@@ -610,7 +610,7 @@ void SX127xSetRxConfig( RadioModems_t modem, uint32_t bandwidth,
                 SX127xWrite( REG_LR_HOPPERIOD, SX127x.Settings.LoRa.HopPeriod );
             }
 			
-#if defined( USING_LORA_RADIO_SX1276 ) || defined( USING_LORA_RADIO_SX1278 ) 
+#if defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1276 ) || defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1278 ) 
             if( ( bandwidth == 9 ) && ( SX127x.Settings.Channel > RF_MID_BAND_THRESH ) )
             {
                 // ERRATA 2.1 - Sensitivity Optimization with a 500 kHz Bandwidth
@@ -774,7 +774,7 @@ void SX127xSetTxConfig( RadioModems_t modem, int8_t power, uint32_t fdev,
                 // Fatal error: When using LoRa modem only bandwidths 125, 250 and 500 kHz are supported
                 while( 1 );
             }
-#if defined( USING_LORA_RADIO_SX1276 ) || defined( USING_LORA_RADIO_SX1278 ) 
+#if defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1276 ) || defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1278 ) 
             bandwidth += 7;
 #endif
             SX127x.Settings.LoRa.Bandwidth = bandwidth;
@@ -796,7 +796,7 @@ void SX127xSetTxConfig( RadioModems_t modem, int8_t power, uint32_t fdev,
             {
                 datarate = 6;
             }
-#if defined( USING_LORA_RADIO_SX1276 ) || defined( USING_LORA_RADIO_SX1278 ) 
+#if defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1276 ) || defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1278 ) 
             if( ( ( bandwidth == 7 ) && ( ( datarate == 11 ) || ( datarate == 12 ) ) ) ||
                 ( ( bandwidth == 8 ) && ( datarate == 12 ) ) )
             {
@@ -1177,7 +1177,7 @@ void SX127xSetRx( uint32_t timeout )
                 SX127xWrite( REG_LR_INVERTIQ2, RFLR_INVERTIQ2_OFF );
             }
 			
-#if defined( USING_LORA_RADIO_SX1276 ) || defined( USING_LORA_RADIO_SX1278 ) 
+#if defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1276 ) || defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1278 ) 
             // ERRATA 2.3 - Receiver Spurious Reception of a LoRa Signal
             if( SX127x.Settings.LoRa.Bandwidth < 9 )
             {
@@ -1424,8 +1424,7 @@ int16_t SX127xReadRssi( RadioModems_t modem )
         rssi = -( SX127xRead( REG_RSSIVALUE ) >> 1 );
         break;
     case MODEM_LORA:
-         	USING_LORA_RADIO_SX1278
-#if defined( USING_LORA_RADIO_SX1276 ) || defined( USING_LORA_RADIO_SX1278 ) 
+#if defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1276 ) || defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1278 ) 
         if( SX127x.Settings.Channel > RF_MID_BAND_THRESH )
         {
             rssi = RSSI_OFFSET_HF + SX127xRead( REG_LR_RSSIVALUE );
@@ -1434,7 +1433,7 @@ int16_t SX127xReadRssi( RadioModems_t modem )
         {
             rssi = RSSI_OFFSET_LF + SX127xRead( REG_LR_RSSIVALUE );
         }
-#elif defined( USING_LORA_RADIO_SX1272 )  
+#elif defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1272 )  
 			rssi = RSSI_OFFSET_HF + SX127xRead( REG_LR_RSSIVALUE );
 #endif		
         break;
@@ -1631,7 +1630,7 @@ void SX127xOnTimeoutIrq( void )
         // Reset the radio
         SX127xReset( );
     
-#if defined( USING_LORA_RADIO_SX1276 ) 
+#if defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1276 ) 
         // Calibrate Rx chain
         RxChainCalibration( );
 #endif
@@ -1789,7 +1788,7 @@ void SX127xOnDio0Irq( void )
 					
 					int16_t rssi_offset = RSSI_OFFSET_HF;
 					
-#if defined( USING_LORA_RADIO_SX1276 ) || defined( USING_LORA_RADIO_SX1278 ) 
+#if defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1276 ) || defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1278 ) 
 					if( SX127x.Settings.Channel <= RF_MID_BAND_THRESH )
 					{
 						rssi_offset = RSSI_OFFSET_LF;
@@ -2075,7 +2074,7 @@ void SX127xOnDio5Irq( void )
     }
 }
 
-#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
 void RadioIrqProcess( uint8_t irq_index )
 {
     CRITICAL_SECTION_BEGIN( );

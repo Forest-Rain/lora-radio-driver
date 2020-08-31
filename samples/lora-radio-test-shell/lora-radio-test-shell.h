@@ -76,17 +76,12 @@
 #define FSK_FDEV                                    25000     // Hz
 #define FSK_DATARATE                                50000     // bps
 
-#if defined( USING_LORA_CHIP_SX127X )
+#if defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX127X )
 
 #define FSK_BANDWIDTH                               50000     // Hz >> SSB in sx127x
 #define FSK_AFC_BANDWIDTH                           83333     // Hz
 
-#elif defined( USING_LORA_CHIP_SX126X)
-
-#define FSK_BANDWIDTH                               100000    // Hz >> DSB in sx126x
-#define FSK_AFC_BANDWIDTH                           166666    // Hz >> Unused in sx126x
-
-#elif defined( USING_LORA_SOC_STM32WL )
+#elif defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX126X)
 
 #define FSK_BANDWIDTH                               100000    // Hz >> DSB in sx126x
 #define FSK_AFC_BANDWIDTH                           166666    // Hz >> Unused in sx126x

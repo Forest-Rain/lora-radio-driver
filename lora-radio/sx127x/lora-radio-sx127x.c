@@ -32,11 +32,11 @@
 #define LOG_LEVEL  LOG_LVL_DBG
 #include "lora-radio-debug.h"
 
-#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
 
 #define EV_LORA_RADIO_IRQ_MASK         0x0007 // DIO0 | DIO1 | DIO2 | DIO3 | DIO4 | DIO5 depend on board
 
-#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
 static struct rt_event lora_radio_event;
 static struct rt_thread lora_radio_thread;
 static rt_uint8_t rt_lora_radio_thread_stack[4096];
@@ -45,7 +45,7 @@ extern struct rt_spi_device *lora_radio_spi_init(const char *bus_name, const cha
 
 #endif
 
-#endif // end of USING_LORA_RADIO_ON_RTOS_RT_THREAD
+#endif // end of LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
 
 static bool SX127xRadioInit( RadioEvents_t *events );
 
@@ -85,7 +85,7 @@ const struct Radio_s Radio =
     NULL, // void ( *SetRxDutyCycle )( uint32_t rxTime, uint32_t sleepTime ) 
 };
 
-#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
 
 static uint8_t get_irq_index(uint32_t ev)
 {
@@ -101,7 +101,7 @@ static uint8_t get_irq_index(uint32_t ev)
     return i;
 }
 
-#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
 /**
   * @brief  lora_radio_thread_entry
   * @param  None
@@ -127,7 +127,7 @@ bool SX127xRadioInit( RadioEvents_t *events )
 {
     SX127xIoInit();
     
-    #ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
+    #ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
     // Initialize spi bus
     SX127x.spi = lora_radio_spi_init(LORA_RADIO0_SPI_BUS_NAME, LORA_RADIO0_DEVICE_NAME, RT_NULL);
     if (SX127x.spi == RT_NULL)
@@ -139,7 +139,7 @@ bool SX127xRadioInit( RadioEvents_t *events )
     LORA_RADIO_DEBUG_LOG(LR_DBG_INTERFACE, LOG_LEVEL, "SX127x SPI Init Succeed\n");
     
     SX127xInit(events);
-#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
     rt_event_init(&lora_radio_event, "ev_lora_phy", RT_IPC_FLAG_FIFO);
 
     rt_thread_init(&lora_radio_thread,               	  
@@ -158,37 +158,37 @@ bool SX127xRadioInit( RadioEvents_t *events )
 
 void SX127xOnDio0IrqEvent( void *args )
 {
-#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
     rt_event_send(&lora_radio_event, EV_LORA_RADIO_IRQ0_FIRED);
 #endif
     }
 void SX127xOnDio1IrqEvent( void *args )
 {
-#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
     rt_event_send(&lora_radio_event, EV_LORA_RADIO_IRQ1_FIRED);
 #endif    
 }
 void SX127xOnDio2IrqEvent( void *args )
 {
-#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
     rt_event_send(&lora_radio_event, EV_LORA_RADIO_IRQ2_FIRED);
 #endif  
 }
 void SX127xOnDio3IrqEvent( void *args )
 {
-#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
     rt_event_send(&lora_radio_event, EV_LORA_RADIO_IRQ3_FIRED);
 #endif    
 }
 void SX127xOnDio4IrqEvent( void *args )
 {
-#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
     rt_event_send(&lora_radio_event, EV_LORA_RADIO_IRQ4_FIRED);
 #endif
 }
 void SX127xOnDio5IrqEvent( void *args )
 {
-#ifdef USING_LORA_RADIO_ON_RTOS_RT_THREAD
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
     rt_event_send(&lora_radio_event, EV_LORA_RADIO_IRQ5_FIRED);
 #endif
 }

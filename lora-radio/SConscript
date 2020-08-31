@@ -6,14 +6,14 @@ include_path = [cwd]
 include_path += [cwd+'/include']
 
 # add lora radio driver.
-if GetDepend('USING_LORA_CHIP_SX126X'):
+if GetDepend('LORA_RADIO_DRIVER_USING_LORA_CHIP_SX126X'):
     src = Split('''
 	sx126x/lora-radio-sx126x.c
 	sx126x/lora-spi-sx126x.c
 	sx126x/sx126x.c
 	''')
 
-if GetDepend('USING_LORA_CHIP_SX127X'):
+if GetDepend('LORA_RADIO_DRIVER_USING_LORA_CHIP_SX127X'):
     src = Split('''
     sx127x/lora-radio-sx127x.c
     sx127x/lora-spi-sx127x.c
