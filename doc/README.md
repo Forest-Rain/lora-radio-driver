@@ -327,6 +327,7 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 # 5 版本更新历史
 
 - V1.0.0 版本 2020-06-20
+   - 基于lorawan4.4.2 release版本的radio
    - 主体功能实现基于STM32平台
       - 支持SX126x、SX127x系列芯片
          - 测试LoRa芯片支持LSD4RF-2R717N40(SX1268)、SX1278、ASR6500S @ [**zyk6271**](https://github.com/zyk6271)
