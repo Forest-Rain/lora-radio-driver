@@ -9,13 +9,15 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
 
 - 主要特点:
    - 当前支持LoRa Transceiver（sx126x\sx127x ）
-   - 支持调制方式
-      - [x] LoRa
-      - [ ] FSK
-   - 可通过menuconfig灵活定义LoRa模块的对外接口，降低入门门槛
+      - 支持调制方式
+         - [x] LoRa
+         - [ ] FSK
+   - 可通过EVN工具menuconfig直接定义LoRa模块的对外接口，降低入门门槛
+     - 支持使用引脚号来定义GPIO
+     - 支持使用引脚名来定义GPIO
    - 提供常用实例代码，可用于射频性能测试、空口数据包监听、双向通信测试等
    - 可作为phy层对接到LoRaWAN End-Device协议栈
-   - 当前支持LoRa 模块\芯片
+   - 当前测试的LoRa 模块\芯片
       - LoRa Transceiver (SPI)
          - SX126X (SX1262\ASR6500S\LLCC68\SX1268..)
             - SX1268
