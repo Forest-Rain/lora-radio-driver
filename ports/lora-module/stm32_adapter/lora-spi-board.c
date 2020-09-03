@@ -34,19 +34,19 @@ struct rt_spi_device *lora_radio_spi_init(const char *bus_name, const char *lora
         
         if (res != RT_EOK)
         {
-            LOG_D("rt_spi_bus_attach_device failed!\r\n");
+            LORA_RADIO_DEBUG_LOG(LR_DBG_SPI, LOG_LEVEL, "rt_spi_bus_attach_device failed!\n");
             return RT_NULL;
         }
         
         lora_radio_spi_device = (struct rt_spi_device *)rt_device_find(lora_device_name);
         if (!lora_radio_spi_device)
         {
-            LOG_D("spi sample run failed! cant't find %s device!\n", lora_device_name);
+            LORA_RADIO_DEBUG_LOG(LR_DBG_SPI, LOG_LEVEL, "spi sample run failed! cant't find %s device!\n", lora_device_name);
             return RT_NULL;
         }
     }
     
-    LOG_D("find %s device!\n", lora_device_name);
+    LORA_RADIO_DEBUG_LOG(LR_DBG_SPI, LOG_LEVEL, "find %s device!\n", lora_device_name);
     
     /* config spi */
     {
@@ -59,19 +59,19 @@ struct rt_spi_device *lora_radio_spi_init(const char *bus_name, const char *lora
         
         if (res != RT_EOK)
         {
-            LOG_D("rt_spi_configure failed!\r\n");
+            LORA_RADIO_DEBUG_LOG(LR_DBG_SPI, LOG_LEVEL, "rt_spi_configure failed!\n");
         }
         res = rt_spi_take_bus(lora_radio_spi_device);
         if (res != RT_EOK)
         {
-            LOG_D("rt_spi_take_bus failed!\r\n");
+            LORA_RADIO_DEBUG_LOG(LR_DBG_SPI, LOG_LEVEL, "rt_spi_take_bus failed!\n");
         }
         
         res = rt_spi_release_bus(lora_radio_spi_device);
         
         if(res != RT_EOK)
         {
-            LOG_D("rt_spi_release_bus failed!\r\n");
+            LORA_RADIO_DEBUG_LOG(LR_DBG_SPI, LOG_LEVEL, "rt_spi_release_bus failed!\n");
         }
     }
 	

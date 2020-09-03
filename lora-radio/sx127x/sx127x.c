@@ -2077,8 +2077,8 @@ void SX127xOnDio5Irq( void )
 #ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
 void RadioIrqProcess( uint8_t irq_index )
 {
-    CRITICAL_SECTION_BEGIN( );
+    LORA_RADIO_CRITICAL_SECTION_BEGIN( );
     SX127xDioIrq[irq_index]();
-    CRITICAL_SECTION_END( );
+    LORA_RADIO_CRITICAL_SECTION_END( );
 }
 #endif

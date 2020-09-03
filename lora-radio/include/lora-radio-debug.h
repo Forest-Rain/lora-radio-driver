@@ -18,17 +18,16 @@
 #else
 
 #endif
-#elif defined USING_RTOS_CONTIKI_NG
-#include "log.h"
+
 #endif
 
 
 /* Using this macro to control all LoRa Radio Driver debug features. */
 #ifdef LORA_RADIO_DRIVER_USING_LORA_RADIO_DEBUG
 
-/* Turn on some of these (set to non-zero) to debug LORa Radio */
+/* Turn on some of these (set to non-zero) to debug LoRa Radio */
 
-/* applicaiton */
+/* application */
 #ifndef LR_DBG_APP
 #define LR_DBG_APP                          0
 #endif
@@ -38,24 +37,20 @@
 #define LR_DBG_INTERFACE                    0
 #endif
 
-/*lora chip driver, eg sx126x.c¡¢sx27x.c*/
+/*lora chip driver, eg: sx126x.c\sx27x.c*/
 #ifndef LR_DBG_CHIP
 #define LR_DBG_CHIP                         0
 #endif
 
-/* spi driver ,eg lora-spi.c*/
+/* spi driver ,eg: lora-spi.c*/
 #ifndef LR_DBG_SPI
 #define LR_DBG_SPI                          0
 #endif
 
 #if ( defined LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD ) || ( defined LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD_NANO )
-#if defined RT_USING_ULOG || defined RT_DEBUG
 
-#else
-    #define ulog_output(level,...)  rt_kprintf(__VA_ARGS__)
-#endif
-
-#define LORA_RADIO_DEBUG_LOG(type, level, ...)                                 \
+#if defined RT_USING_ULOG
+#define LORA_RADIO_DEBUG_LOG(type, level, ...)                                \
 do                                                                            \
 {                                                                             \
     if (type)                                                                 \
@@ -65,17 +60,21 @@ do                                                                            \
 }                                                                             \
 while (0)
 
-#elif defined USING_RTOS_CONTIKI_NG
+#else
+
 #define LORA_RADIO_DEBUG_LOG(type, level, ...)                                \
 do                                                                            \
 {                                                                             \
     if (type)                                                                 \
     {                                                                         \
-        LOG(1, level, "DBG", __VA_ARGS__);                                    \
-        LOG_OUTPUT("\r\n");                                                   \
+        rt_kprintf(__VA_ARGS__);                                              \
+        rt_kprintf("\r\n");                                                   \
     }                                                                         \
 }                                                                             \
 while (0)
+
+#endif
+
 #endif
 
 

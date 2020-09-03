@@ -57,7 +57,7 @@ int stm32_pin_get(char *pin_name)
 
 void SX126xIoInit( void )
 {
-    rt_pin_mode(LORA_RADIO_NSS_PIN, PIN_MODE_OUTPUT); 
+    rt_pin_mode(LORA_RADIO_NSS_PIN, PIN_MODE_OUTPUT);
     rt_pin_mode(LORA_RADIO_BUSY_PIN, PIN_MODE_INPUT);
     rt_pin_mode(LORA_RADIO_DIO1_PIN, PIN_MODE_INPUT_PULLDOWN);
 #if defined( LORA_RADIO_DIO2_PIN ) 
@@ -125,7 +125,6 @@ void SX126xReset( void )
 
 void SX126xWaitOnBusy( void )
 {
-////    while( GpioRead( &SX126x.BUSY ) == 1 );
     while( rt_pin_read( LORA_RADIO_BUSY_PIN ) == PIN_HIGH );
 }
 

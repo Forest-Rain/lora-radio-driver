@@ -23,7 +23,7 @@
  
 #include "lora-radio-rtos-config.h"
 #include <board.h>
-#include "multi_rtimer.h"
+#include "lora-radio-timer.h"
 #include "lora-radio.h"
 #include "sx126x.h"
 #include "sx126x-board.h"

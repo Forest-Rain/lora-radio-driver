@@ -18,19 +18,6 @@
 #include "lora-radio-debug.h"
 
 
-#ifndef RT_USING_SPI
-//uint16_t SpiInOut( Spi_t *obj, uint16_t outData )
-uint16_t SpiInOut( SPI_TypeDef *spi,uint16_t outData )
-{   
-    uint32_t timeout = 32000;
-	while((spi->SR&SPI_SR_TXE) != SPI_SR_TXE && timeout--){};
-    spi->DR = outData;
-    timeout = 32000;
-    while((spi->SR&SPI_SR_RXNE) != SPI_SR_RXNE && timeout--){};
-    return spi->DR;
-}
-#endif
-
 void SX126xWakeup( void )
 {
 #ifdef RT_USING_SPI

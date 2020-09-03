@@ -548,9 +548,6 @@ static int lora(int argc, char *argv[])
         LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "Usage:\n");
         for (i = 0; i < sizeof(lora_help_info) / sizeof(char*); i++) {
             LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "%s", lora_help_info[i]);
-            #ifndef RT_USING_ULOG
-            LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "\n");
-            #endif
         }
         LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "\n");
     } 
@@ -657,13 +654,13 @@ static int lora(int argc, char *argv[])
             }
             
             // frequency,txPower,sf,bw...
-            LOG_D("Frequency: %d\n",lora_radio_test_paras.frequency);
+            LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "Frequency: %d\n",lora_radio_test_paras.frequency);
         
-            LOG_D("TxPower  : %d\n",lora_radio_test_paras.txpower);
+            LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "TxPower  : %d\n",lora_radio_test_paras.txpower);
 
-            LOG_D("SF: %d\n",lora_radio_test_paras.sf);
+            LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "SF: %d\n",lora_radio_test_paras.sf);
             
-            LOG_D("BW: %d\n",lora_radio_test_paras.bw);
+            LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "BW: %d\n",lora_radio_test_paras.bw);
         }
     }
     return 1;

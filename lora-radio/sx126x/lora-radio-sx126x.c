@@ -718,7 +718,7 @@ uint32_t RadioRandom( void )
     // Set LoRa modem ON
     RadioSetModem( MODEM_LORA );
 
-    // Disable LoRa modem interrupts ( RxDone¡¢RXTimeout )
+    // Disable LoRa modem interrupts ( RxDoneï¿½ï¿½RXTimeout )
     SX126xSetDioIrqParams( IRQ_RADIO_NONE, IRQ_RADIO_NONE, IRQ_RADIO_NONE, IRQ_RADIO_NONE );
 
     rnd = SX126xGetRandom( );
@@ -1321,16 +1321,16 @@ void RadioOnDioIrq( void* context )
 void RadioIrqProcess( void )
 {
 #ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
-    CRITICAL_SECTION_BEGIN( );
+    LORA_RADIO_CRITICAL_SECTION_BEGIN( );
 #else
     if( IrqFired == true )
 #endif    
     {
 #ifndef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
-        CRITICAL_SECTION_BEGIN( );
+        LORA_RADIO_CRITICAL_SECTION_BEGIN( );
         // Clear IRQ flag
         IrqFired = false;
-        CRITICAL_SECTION_END( );
+        LORA_RADIO_CRITICAL_SECTION_END( );
 #endif
 
         uint16_t irqRegs = SX126xGetIrqStatus( );
@@ -1461,7 +1461,7 @@ void RadioIrqProcess( void )
     }
     
 #ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
-    CRITICAL_SECTION_END( );
+    LORA_RADIO_CRITICAL_SECTION_END( );
 #endif
 }
 

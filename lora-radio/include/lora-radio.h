@@ -26,6 +26,17 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+
+/*!
+ * Begins critical section
+ */
+#define LORA_RADIO_CRITICAL_SECTION_BEGIN( ) register rt_base_t level; level = rt_hw_interrupt_disable()
+
+/*!
+ * Ends critical section
+ */
+#define LORA_RADIO_CRITICAL_SECTION_END( ) rt_hw_interrupt_enable(level)
+
 /*!
  * Radio driver supported modems
  */
