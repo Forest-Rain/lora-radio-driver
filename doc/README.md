@@ -36,10 +36,12 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
       - LoRa Radio Driver当前功能主要在STM32L平台测试通过，未来计划将适配更多的MCU平台（华大MCU、nRF、BK）
          - [x] STM32L0系列
          - [x] STM32L4系列
+   - 当前测试的IDE
+      - [x] MDK5.29
+      - [x] RT-Thread Studio 1.3.0
    - 当前支持的RTOS
       - [x] RT-Thread
       - [ ] RT-Thread Nano
-
 # 2 LoRa Radio Driver 软件包组织结构
 ![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1598742766628-ea39cbc7-119b-4a3f-a323-45ba4cee9bbd.png#align=left&display=inline&height=677&margin=%5Bobject%20Object%5D&name=image.png&originHeight=677&originWidth=1111&size=80753&status=done&style=none&width=1111)
 
@@ -344,7 +346,7 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
             - sx126x更新 RadioRandom 与 SX126xGetRandom
             - 更新 RadioIrqProcess
             - 更新RadioTimeOnAir
-         - RadioIrqProcess 增加 临界区保护，防止出现硬件异常
+         - RadioIrqProcess 增加 临界区保护，优先完成RF中断回调服务函数，防止出现硬件异常
       - 调整lora-radio-driver软件包架构，便于未来适配不同的MCU平台
          - port目录下新增mcu平台适配层，如stm32_adapter
    - lora-radio-test-shell
@@ -357,6 +359,6 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
          - 区分单实例(单lora模块)与多实例（多lora模块）情况，目前支持单实例
          - 移除了Kconfig中对BSP_USING_SPIx的直接定义，BSP_USING_SPIx定义调整到[Target Platform]\Board\Kconfig)
          - 重命名宏定义REGION_X为PHY_REGION_X(如REGION_CN470 -> PHY_REGION_CN470)，以便与LoRaWAN协议栈中缺省REGION_X共存
-
+         
 # 6 问题和建议
 如果有什么问题或者建议欢迎提交 [Issue](https://github.com/Forest-Rain/lora-radio-driver/issues) 进行讨论。
