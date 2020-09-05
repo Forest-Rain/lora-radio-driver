@@ -334,7 +334,7 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
       - 支持SX126x、SX127x系列芯片
          - 测试LoRa芯片支持LSD4RF-2R717N40(SX1268)、SX1278、ASR6500S @ [**zyk6271**](https://github.com/zyk6271)
    - 支持基于RT-Thread内核rt_timer的lora-radio-timer接口@ [**AnswerInTheWind** ](https://github.com/AnswerInTheWind)
-   - 优化日志换行功能@[**zyk6271**](https://github.com/zyk6271)
+   - 优化日志换行功能、sx126x.c的multi-rtimer.h包含问题@[**zyk6271**](https://github.com/zyk6271)
 - V1.1.0 版本 2020-08-30
    - 完善用户使用指南
    - .lora-radio-driver软件包
