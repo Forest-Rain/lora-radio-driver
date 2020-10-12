@@ -359,6 +359,10 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
          - 区分单实例(单lora模块)与多实例（多lora模块）情况，目前支持单实例
          - 移除了Kconfig中对BSP_USING_SPIx的直接定义，BSP_USING_SPIx定义调整到[Target Platform]\Board\Kconfig)
          - 重命名宏定义REGION_X为PHY_REGION_X(如REGION_CN470 -> PHY_REGION_CN470)，以便与LoRaWAN协议栈中缺省REGION_X共存
-         
+- V1.1.2 版本 2020-10-12
+   - 修复Ra-01未同步与v1.1.1更新导致的问题
+   - 优化 drv_gpio.h使用，兼容RT-Thread Studio
+   - 优化 lora-radio-test-shell.c 功能
+     - 新增接收超时时间设置
 # 6 问题和建议
 如果有什么问题或者建议欢迎提交 [Issue](https://github.com/Forest-Rain/lora-radio-driver/issues) 进行讨论。
