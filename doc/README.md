@@ -224,7 +224,7 @@ RT-Thread online packages --->
      Select the RF frequency (Region CN470)  --->                                                                            │ │
      Select RF Modem (Modem LoRa)  --->
 ```
-![image.png](https://github.com/Forest-Rain/lora-radio-driver/blob/master/doc/pics/02_lora-radio-test-shell-cmdlist.png)
+![image.png](https://github.com/Forest-Rain/lora-radio-driver/raw/master/doc/pics/02_lora-radio-test-shell-cmdlist.png)
 
 | 序号 | finish命令 | 说明 |
 | --- | --- | --- |
@@ -233,9 +233,9 @@ RT-Thread online packages --->
 | 3 | lora ping <para1> <para2> | \<para1\> : 主机\从机<br>-m 主机<br>-s 从机<br> \<para2\>: 发送数据包个数 |
 | 4 | lora rx  | 接收数据包，同时以16进制格式与ASCII码显示数据内容 |
 
-![image.png](https://github.com/Forest-Rain/lora-radio-driver/blob/master/doc/pics/03_lora-ping_SX1278-SX1268-TRX-test.png)
+![image.png](https://github.com/Forest-Rain/lora-radio-driver/raw/master/doc/pics/03_lora-ping_SX1278-SX1268-TRX-test.png)
 lora ping 双向通信测试示例(SX1278 <-> SX1268)
-![image.png](https://github.com/Forest-Rain/lora-radio-driver/blob/master/doc/pics/04_lora-rx_sniffer-test.png)
+![image.png](https://github.com/Forest-Rain/lora-radio-driver/raw/master/doc/pics/04_lora-rx_sniffer-test.png)
 lora rx 单向接收(监听)lora数据包测试示例 (SX1278 <- 或-> SX1268)
 
 ## 4.3 应用层调用说明
