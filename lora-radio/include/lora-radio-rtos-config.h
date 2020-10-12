@@ -24,7 +24,6 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "drv_spi.h"
-#include "drv_gpio.h"
 
 #define LOG_LVL_ASSERT                 0
 #define LOG_LVL_ERROR                  3

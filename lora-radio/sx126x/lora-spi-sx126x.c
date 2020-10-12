@@ -17,7 +17,6 @@
 #define LOG_LEVEL  LOG_LVL_DBG 
 #include "lora-radio-debug.h"
 
-
 void SX126xWakeup( void )
 {
 #ifdef RT_USING_SPI
@@ -25,27 +24,18 @@ void SX126xWakeup( void )
     
     rt_spi_transfer(SX126x.spi,msg,RT_NULL,2);
     
-    //rt_spi_send_then_send(SX126x.spi,&msg1,1,&msg2,1);
- 
     // Wait for chip to be ready.
     SX126xWaitOnBusy( );
 #else
-    rt_pin_write(LORA_RADIO_NSS_PIN, PIN_LOW);
-    SpiInOut( SPI3, RADIO_GET_STATUS );
-    SpiInOut( SPI3, 0x00 );
-    rt_pin_write(LORA_RADIO_NSS_PIN, PIN_HIGH);
 
-    // Wait for chip to be ready.
-    SX126xWaitOnBusy( );
+//CRITICAL_SECTION_BEGIN( );
+//    GpioWrite( &SX126x.Spi.Nss, 0 ); 
 
-    /////CRITICAL_SECTION_BEGIN( );
-    //////    GpioWrite( &SX126x.Spi.Nss, 0 ); 
+//    SpiInOut( &SX126x.Spi, RADIO_GET_STATUS );
+//    SpiInOut( &SX126x.Spi, 0x00 );
 
-    //////    SpiInOut( &SX126x.Spi, RADIO_GET_STATUS );
-    //////    SpiInOut( &SX126x.Spi, 0x00 );
-
-    //////    GpioWrite( &SX126x.Spi.Nss, 1 );
-    /////CRITICAL_SECTION_END( );
+//    GpioWrite( &SX126x.Spi.Nss, 1 );
+//CRITICAL_SECTION_END( );
 #endif
     
 }
@@ -62,15 +52,6 @@ void SX126xWriteCommand( RadioCommands_t command, uint8_t *buffer, uint16_t size
         SX126xWaitOnBusy( );
     }
 #else
-    SX126xCheckDeviceReady( );
-
-    rt_pin_write(LORA_RADIO_NSS_PIN, PIN_LOW);
-    SpiInOut( SPI3, ( uint8_t )command );
-    for( uint16_t i = 0; i < size; i++ )
-    {
-        SpiInOut( SPI3, buffer[i] );
-    }
-    rt_pin_write(LORA_RADIO_NSS_PIN, PIN_HIGH);
    
 ////    GpioWrite( &SX126x.Spi.Nss, 0 );
 
@@ -83,10 +64,10 @@ void SX126xWriteCommand( RadioCommands_t command, uint8_t *buffer, uint16_t size
 
 ////    GpioWrite( &SX126x.Spi.Nss, 1 );
 
-    if( command != RADIO_SET_SLEEP )
-    {
-        SX126xWaitOnBusy( );
-    }    
+////    if( command != RADIO_SET_SLEEP )
+////    {
+////        SX126xWaitOnBusy( );
+////    }    
 #endif    
 }
 
@@ -108,17 +89,6 @@ uint8_t SX126xReadCommand( RadioCommands_t command, uint8_t *buffer, uint16_t si
     
     return status;
 #else
-    uint8_t status = 0;
-
-    SX126xCheckDeviceReady( );
-
-    rt_pin_write(LORA_RADIO_NSS_PIN, PIN_LOW);
-    SpiInOut( SPI3, ( uint8_t )command );
-    for( uint16_t i = 0; i < size; i++ )
-    {
-        buffer[i] = SpiInOut( SPI3, 0 );
-    }
-    rt_pin_write(LORA_RADIO_NSS_PIN, PIN_HIGH);
     
 ////    GpioWrite( &SX126x.Spi.Nss, 0 );
 
@@ -150,20 +120,6 @@ void SX126xWriteRegisters( uint16_t address, uint8_t *buffer, uint16_t size )
 
     SX126xWaitOnBusy( );
 #else
-    SX126xCheckDeviceReady( );
-
-    rt_pin_write(LORA_RADIO_NSS_PIN, PIN_LOW);
-
-    SpiInOut( SPI3, RADIO_WRITE_REGISTER );
-    SpiInOut( SPI3, ( address & 0xFF00 ) >> 8 );
-    SpiInOut( SPI3, address & 0x00FF );
-    
-    for( uint16_t i = 0; i < size; i++ )
-    {
-        SpiInOut( SPI3, buffer[i] );
-    }
-    
-    rt_pin_write(LORA_RADIO_NSS_PIN, PIN_HIGH);
     
 ////    GpioWrite( &SX126x.Spi.Nss, 0 ); 
 ////    SpiInOut( &SX126x.Spi, RADIO_WRITE_REGISTER );
@@ -201,21 +157,7 @@ void SX126xReadRegisters( uint16_t address, uint8_t *buffer, uint16_t size )
 
     SX126xWaitOnBusy( );
 #else
-    SX126xCheckDeviceReady( );
 
-    rt_pin_write(LORA_RADIO_NSS_PIN, PIN_LOW);
-
-    SpiInOut( SPI3, RADIO_READ_REGISTER );
-    SpiInOut( SPI3, ( address & 0xFF00 ) >> 8 );
-    SpiInOut( SPI3, address & 0x00FF );
-    SpiInOut( SPI3, 0 );
-    
-    for( uint16_t i = 0; i < size; i++ )
-    {
-        buffer[i] = SpiInOut( SPI3, 0 );
-    }
-    
-    rt_pin_write(LORA_RADIO_NSS_PIN, PIN_HIGH);
     
 ////    GpioWrite( &SX126x.Spi.Nss, 0 );
 
@@ -257,20 +199,6 @@ void SX126xWriteBuffer( uint8_t offset, uint8_t *buffer, uint8_t size )
 
 #else    
 
-    SX126xCheckDeviceReady( );
-
-    
-    rt_pin_write(LORA_RADIO_NSS_PIN, PIN_LOW);
-
-    SpiInOut( SPI3, RADIO_WRITE_BUFFER );
-    SpiInOut( SPI3, offset );
-    
-    for( uint16_t i = 0; i < size; i++ )
-    {
-        SpiInOut( SPI3, buffer[i] );
-    }
-    
-    rt_pin_write(LORA_RADIO_NSS_PIN, PIN_HIGH);
     
 ////    GpioWrite( &SX126x.Spi.Nss, 0 );
 
@@ -302,20 +230,7 @@ void SX126xReadBuffer( uint8_t offset, uint8_t *buffer, uint8_t size )
 
     SX126xWaitOnBusy( );
 #else    
-    SX126xCheckDeviceReady( );
 
-    rt_pin_write(LORA_RADIO_NSS_PIN, PIN_LOW);
-
-    SpiInOut( SPI3, RADIO_READ_BUFFER );
-    SpiInOut( SPI3, offset );
-    SpiInOut( SPI3, 0 );
-    
-    for( uint16_t i = 0; i < size; i++ )
-    {
-        buffer[i] = SpiInOut( SPI3, 0 );
-    }
-    
-    rt_pin_write(LORA_RADIO_NSS_PIN, PIN_HIGH);
     
 ////    GpioWrite( &SX126x.Spi.Nss, 0 );
 

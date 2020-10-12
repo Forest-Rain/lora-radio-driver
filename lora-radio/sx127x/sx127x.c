@@ -214,6 +214,19 @@ static RadioEvents_t *RadioEvents;
  */
 static uint8_t RxTxBuffer[RX_BUFFER_SIZE];
 
+/*!
+ * Hardware DIO IRQ callback initialization
+ */
+static DioIrqHandler *SX127xDioIrq[] = { SX127xOnDio0Irq, SX127xOnDio1Irq,
+                                          SX127xOnDio2Irq, SX127xOnDio3Irq,
+                                          SX127xOnDio4Irq, NULL };
+/*!
+ * Tx and Rx timers
+ */
+static TimerEvent_t TxTimeoutTimer;
+static TimerEvent_t RxTimeoutTimer;
+static TimerEvent_t RxTimeoutSyncWord;
+
 /*
  * Public global variables
  */
@@ -222,24 +235,11 @@ static uint8_t RxTxBuffer[RX_BUFFER_SIZE];
  * Radio hardware and global parameters
  */
 SX127x_t SX127x;
-
-/*!
- * Hardware DIO IRQ callback initialization
- */
-DioIrqHandler *SX127xDioIrq[] = { SX127xOnDio0Irq, SX127xOnDio1Irq,
-                                  SX127xOnDio2Irq, SX127xOnDio3Irq,
-                                  SX127xOnDio4Irq, NULL };
-
-/*!
- * Tx and Rx timers
- */
-TimerEvent_t TxTimeoutTimer;
-TimerEvent_t RxTimeoutTimer;
-TimerEvent_t RxTimeoutSyncWord;
-                         
+                                          
 /*
  * Radio spi check
- * 0 - spi access fail                                
+ * 0     - spi access fail 
+ * non 0 - spi access success 
  */
 uint8_t SX127xCheck(void)
 {
@@ -247,16 +247,15 @@ uint8_t SX127xCheck(void)
 
     LORA_RADIO_DEBUG_LOG(LR_DBG_SPI, LOG_LEVEL, "LoRa Chip is SX127X, Packet Type is %s",( SX127x.Settings.Modem == MODEM_LORA )? "LoRa":"FSK");
 
-    {        
-        /*spi check*/
-        SX127xWrite(REG_LR_PAYLOADLENGTH, 0x55); 
-        test = SX127xRead(REG_LR_PAYLOADLENGTH);
-        LORA_RADIO_DEBUG_LOG(LR_DBG_SPI, LOG_LEVEL,"SPI Access Check %s, LoRa PAYLOAD LENGTH Reg(0x22) Current Value: 0x%02X, Expected Value: 0x55", ((test == 0x55)? "Success":"Fail"),test);
-        if (test != 0x55)
-        {
-            return 0;
-        }		
+    /* SPI Access Check */
+    SX127xWrite(REG_LR_PAYLOADLENGTH, 0x55); 
+    test = SX127xRead(REG_LR_PAYLOADLENGTH);
+    LORA_RADIO_DEBUG_LOG(LR_DBG_SPI, LOG_LEVEL,"SPI Access Check %s, LoRa PAYLOAD LENGTH Reg(0x22) Current Value: 0x%02X, Expected Value: 0x55", ((test == 0x55)? "Success":"Fail"),test);
+    if (test != 0x55)
+    {
+        return 0;
     }
+   
     return test;
 }
 
@@ -270,9 +269,9 @@ void SX127xInit( RadioEvents_t *events )
     
     RadioEvents = events;
 
-    #ifdef PKG_USING_MULTI_RTIMER
+#ifdef PKG_USING_MULTI_RTIMER
     hw_rtc_init();
-    #endif
+#endif
     
     // Initialize driver timeout timers
     TimerInit( &TxTimeoutTimer, SX127xOnTimeoutIrq );
@@ -1424,6 +1423,7 @@ int16_t SX127xReadRssi( RadioModems_t modem )
         rssi = -( SX127xRead( REG_RSSIVALUE ) >> 1 );
         break;
     case MODEM_LORA:
+         	LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1278
 #if defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1276 ) || defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1278 ) 
         if( SX127x.Settings.Channel > RF_MID_BAND_THRESH )
         {
@@ -1434,8 +1434,8 @@ int16_t SX127xReadRssi( RadioModems_t modem )
             rssi = RSSI_OFFSET_LF + SX127xRead( REG_LR_RSSIVALUE );
         }
 #elif defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1272 )  
-			rssi = RSSI_OFFSET_HF + SX127xRead( REG_LR_RSSIVALUE );
-#endif		
+        rssi = RSSI_OFFSET_HF + SX127xRead( REG_LR_RSSIVALUE );
+#endif
         break;
     default:
         rssi = -1;
@@ -1577,7 +1577,6 @@ uint32_t SX127xGetWakeupTime( void )
 {
     return /* SX127xGetBoardTcxoWakeupTime( ) + */ RADIO_WAKEUP_TIME;
 }
-
 
 void SX127xOnTimeoutIrq( void )
 {

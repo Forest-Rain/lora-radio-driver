@@ -73,7 +73,7 @@ void SX126xIoInit( void )
 void SX126xIoIrqInit( DioIrqHandler dioIrq )
 { 
     rt_pin_mode(LORA_RADIO_DIO1_PIN, PIN_MODE_INPUT_PULLDOWN);
-    rt_pin_attach_irq(LORA_RADIO_DIO1_PIN, PIN_IRQ_MODE_RISING, RadioOnDioIrq,(void*)"callback args");
+    rt_pin_attach_irq(LORA_RADIO_DIO1_PIN, PIN_IRQ_MODE_RISING, RadioOnDioIrq,(void*)"rf-dio1");
     rt_pin_irq_enable(LORA_RADIO_DIO1_PIN, PIN_IRQ_ENABLE);  
 }
 
@@ -125,6 +125,7 @@ void SX126xReset( void )
 
 void SX126xWaitOnBusy( void )
 {
+////    while( GpioRead( &SX126x.BUSY ) == 1 );
     while( rt_pin_read( LORA_RADIO_BUSY_PIN ) == PIN_HIGH );
 }
 

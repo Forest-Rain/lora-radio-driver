@@ -469,10 +469,10 @@ void RadioOnRxTimeoutIrq( void/** context*/);
  * \brief spi initilize
  */
 extern struct rt_spi_device *lora_radio_spi_init(const char *bus_name,const char *lora_device_name, rt_uint8_t param);
+
 /*
  * Private global variables
  */
-
 
 /*!
  * Holds the current network type for the radio
@@ -502,31 +502,30 @@ SX126x_t SX126x;
 /*!
  * Tx and Rx timers
  */
-TimerEvent_t TxTimeoutTimer;
-TimerEvent_t RxTimeoutTimer;
-
+static TimerEvent_t TxTimeoutTimer;
+static TimerEvent_t RxTimeoutTimer;
 
 /*
  * Radio spi check
+ * 0     - spi access fail  
+ * non 0 - spi access success 
  */
-uint8_t RadioCheck(void)
+static uint8_t RadioCheck(void)
 {
     uint8_t test = 0;
 
-    if( SX126x.PacketParams.PacketType == PACKET_TYPE_LORA )
+    LORA_RADIO_DEBUG_LOG(LR_DBG_INTERFACE, LOG_LEVEL, "Packet Type is %s\n",( SX126x.PacketParams.PacketType == PACKET_TYPE_LORA )? "LoRa":"FSK");
+    
+    /* SPI Access Check */
+    SX126xWriteRegister(REG_LR_PAYLOADLENGTH, 0x55); 
+    test = SX126xReadRegister(REG_LR_PAYLOADLENGTH);
+    LORA_RADIO_DEBUG_LOG(LR_DBG_CHIP, LOG_LEVEL,"SPI Access Check %s, LoRa PAYLOAD LENGTH Reg(0x22) Current Value: 0x%02X, Expected Value: 0x55", ((test == 0x55)? "Success":"Fail"),test);
+    if (test != 0x55)
     {
-        LORA_RADIO_DEBUG_LOG(LR_DBG_INTERFACE, LOG_LEVEL, "Packet Type is %s\n",( SX126x.PacketParams.PacketType == PACKET_TYPE_LORA )? "LoRa":"FSK");
-        
-        /*SPI Check*/
-        SX126xWriteRegister(REG_LR_PAYLOADLENGTH, 0x55); 
-        test = SX126xReadRegister(REG_LR_PAYLOADLENGTH);
-        LORA_RADIO_DEBUG_LOG(LR_DBG_CHIP, LOG_LEVEL,"SPI Access Check %s, LoRa PAYLOAD LENGTH Reg(0x22) Current Value: 0x%02X, Expected Value: 0x55", ((test == 0x55)? "Success":"Fail"),test);
-        if (test != 0x55)
-        {
-            return 0;
-        }		
-    }
-    return 1;
+        return 0;
+    }       
+    
+    return test;
 }
 
 
@@ -602,31 +601,30 @@ bool RadioInit( RadioEvents_t *events )
     SX126xSetTxParams( 0, RADIO_RAMP_200_US );
     SX126xSetDioIrqParams( IRQ_RADIO_ALL, IRQ_RADIO_ALL, IRQ_RADIO_NONE, IRQ_RADIO_NONE );
 
-    #ifdef PKG_USING_MULTI_RTIMER
+#ifdef PKG_USING_MULTI_RTIMER
     hw_rtc_init();
-    #endif
+#endif
 
     // Initialize driver timeout timers
     TimerInit( &TxTimeoutTimer, RadioOnTxTimeoutIrq );
     TimerInit( &RxTimeoutTimer, RadioOnRxTimeoutIrq );
 
-    #ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
         rt_event_init(&lora_radio_event, "ev_phy", RT_IPC_FLAG_PRIO);//RT_IPC_FLAG_FIFO);
 
-        rt_thread_init(&lora_radio_thread,               	  
-                       "lora-phy",                     	  
-                       lora_radio_thread_entry,          	  
-                       RT_NULL,                    	  
+        rt_thread_init(&lora_radio_thread,                    
+                       "lora-phy",                        
+                       lora_radio_thread_entry,               
+                       RT_NULL,                       
                        &rt_lora_radio_thread_stack[0],       
                        sizeof(rt_lora_radio_thread_stack),  
-                       0,                          	  
+                       0,                             
                        20);                           
                                    
-        rt_thread_startup(&lora_radio_thread);    
-                               
-    #else
+        rt_thread_startup(&lora_radio_thread);                         
+#else
         IrqFired = false;
-    #endif
+#endif
                        
     return true;
 }
@@ -718,7 +716,7 @@ uint32_t RadioRandom( void )
     // Set LoRa modem ON
     RadioSetModem( MODEM_LORA );
 
-    // Disable LoRa modem interrupts ( RxDone��RXTimeout )
+    // Disable LoRa modem interrupts ( RxDone RXTimeout )
     SX126xSetDioIrqParams( IRQ_RADIO_NONE, IRQ_RADIO_NONE, IRQ_RADIO_NONE, IRQ_RADIO_NONE );
 
     rnd = SX126xGetRandom( );
@@ -1311,11 +1309,11 @@ void RadioOnRxTimeoutIrq( void /** context*/ )
 
 void RadioOnDioIrq( void* context )
 {
-    #ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
-        rt_event_send(&lora_radio_event, EV_LORA_RADIO_IRQ_FIRED);      
-    #else
-        IrqFired = true;
-    #endif
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
+    rt_event_send(&lora_radio_event, EV_LORA_RADIO_IRQ_FIRED);      
+#else
+    IrqFired = true;
+#endif
 }
 
 void RadioIrqProcess( void )

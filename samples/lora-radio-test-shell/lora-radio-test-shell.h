@@ -1,5 +1,5 @@
 /*!
- * \file      lora_radio_test.h
+ * \file      lora-radio-test-shell.h
  *
  * \brief     lora radio test implementation
  *
@@ -8,8 +8,8 @@
  * \author    Forest-Rain
  */
 
-#ifndef __LORA_RADIO_TEST_H__
-#define __LORA_RADIO_TEST_H__
+#ifndef __LORA_RADIO_TEST_SHELL_H__
+#define __LORA_RADIO_TEST_SHELL_H__
 
 
 #if defined( PHY_REGION_AS923 )
@@ -85,6 +85,7 @@
 
 #define FSK_BANDWIDTH                               100000    // Hz >> DSB in sx126x
 #define FSK_AFC_BANDWIDTH                           166666    // Hz >> Unused in sx126x
+
 #else
     #error "Please define a lora-shield in the compiler options."
 #endif

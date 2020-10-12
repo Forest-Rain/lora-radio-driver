@@ -127,7 +127,7 @@ bool SX127xRadioInit( RadioEvents_t *events )
 {
     SX127xIoInit();
     
-    #ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
     // Initialize spi bus
     SX127x.spi = lora_radio_spi_init(LORA_RADIO0_SPI_BUS_NAME, LORA_RADIO0_DEVICE_NAME, RT_NULL);
     if (SX127x.spi == RT_NULL)
@@ -135,7 +135,7 @@ bool SX127xRadioInit( RadioEvents_t *events )
         LORA_RADIO_DEBUG_LOG(LR_DBG_INTERFACE, LOG_LEVEL, "SX127x SPI Init Failed\n");
         return false;
     }
-    #endif   
+#endif
     LORA_RADIO_DEBUG_LOG(LR_DBG_INTERFACE, LOG_LEVEL, "SX127x SPI Init Succeed\n");
     
     SX127xInit(events);
@@ -193,12 +193,9 @@ void SX127xOnDio5IrqEvent( void *args )
 #endif
 }
 
-
 #else
 void RadioInit( RadioEvents_t *events )
 {
     SX127xInit(events);
 }
 #endif
-
-

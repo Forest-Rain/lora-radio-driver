@@ -34,7 +34,7 @@
  */
 static bool RadioIsActive = false;
 
-#ifdef USING_LORA_RADIO_DRIVER_RTOS_SUPPORT
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
 /*!
  * \brief DIO 0 IRQ callback
  */
@@ -91,7 +91,7 @@ int stm32_pin_get(char *pin_name)
 
 void SX127xIoInit( void )
 {
-#ifdef USING_LORA_RADIO_DRIVER_RTOS_SUPPORT
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
     // RT-Thread
     rt_pin_mode(LORA_RADIO_NSS_PIN, PIN_MODE_OUTPUT);
     
@@ -109,30 +109,30 @@ void SX127xIoInit( void )
 
 void SX127xIoIrqInit( DioIrqHandler **irqHandlers )
 {
-#ifdef USING_LORA_RADIO_DRIVER_RTOS_SUPPORT
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
     #ifdef LORA_RADIO_DIO0_PIN
-    rt_pin_attach_irq(LORA_RADIO_DIO0_PIN, PIN_IRQ_MODE_RISING,SX127xOnDio0IrqEvent,(void*)"rf-dio0-int");
+    rt_pin_attach_irq(LORA_RADIO_DIO0_PIN, PIN_IRQ_MODE_RISING,SX127xOnDio0IrqEvent,(void*)"rf-dio0");
     rt_pin_irq_enable(LORA_RADIO_DIO0_PIN, PIN_IRQ_ENABLE);    
     #endif
     #ifdef LORA_RADIO_DIO1_PIN
-    rt_pin_attach_irq(LORA_RADIO_DIO1_PIN, PIN_IRQ_MODE_RISING,SX127xOnDio1IrqEvent,(void*)"rf-dio1-int");
+    rt_pin_attach_irq(LORA_RADIO_DIO1_PIN, PIN_IRQ_MODE_RISING,SX127xOnDio1IrqEvent,(void*)"rf-dio1");
     rt_pin_irq_enable(LORA_RADIO_DIO1_PIN, PIN_IRQ_ENABLE);    
     #endif
     #ifdef LORA_RADIO_DIO2_PIN
-    rt_pin_attach_irq(LORA_RADIO_DIO2_PIN, PIN_IRQ_MODE_RISING,SX127xOnDio2IrqEvent,(void*)"rf-dio2-int");
+    rt_pin_attach_irq(LORA_RADIO_DIO2_PIN, PIN_IRQ_MODE_RISING,SX127xOnDio2IrqEvent,(void*)"rf-dio2");
     rt_pin_irq_enable(LORA_RADIO_DIO2_PIN, PIN_IRQ_ENABLE);    
     #endif
 #else
     #ifdef LORA_RADIO_DIO0_PIN
-    rt_pin_attach_irq(LORA_RADIO_DIO0_PIN, PIN_IRQ_MODE_RISING,irqHandlers[0],(void*)"rf-dio0-int");
+    rt_pin_attach_irq(LORA_RADIO_DIO0_PIN, PIN_IRQ_MODE_RISING,irqHandlers[0],(void*)"rf-dio0");
     rt_pin_irq_enable(LORA_RADIO_DIO0_PIN, PIN_IRQ_ENABLE);    
     #endif
     #ifdef LORA_RADIO_DIO1_PIN
-    rt_pin_attach_irq(LORA_RADIO_DIO1_PIN, PIN_IRQ_MODE_RISING,irqHandlers[1],(void*)"rf-dio1-int");
+    rt_pin_attach_irq(LORA_RADIO_DIO1_PIN, PIN_IRQ_MODE_RISING,irqHandlers[1],(void*)"rf-dio1");
     rt_pin_irq_enable(LORA_RADIO_DIO1_PIN, PIN_IRQ_ENABLE);    
     #endif
     #ifdef LORA_RADIO_DIO2_PIN
-    rt_pin_attach_irq(LORA_RADIO_DIO2_PIN, PIN_IRQ_MODE_RISING,irqHandlers[2],(void*)"rf-dio2-int");
+    rt_pin_attach_irq(LORA_RADIO_DIO2_PIN, PIN_IRQ_MODE_RISING,irqHandlers[2],(void*)"rf-dio2");
     rt_pin_irq_enable(LORA_RADIO_DIO2_PIN, PIN_IRQ_ENABLE);    
     #endif
 #endif    
@@ -184,19 +184,16 @@ void SX127xSetAntSwLowPower( bool status )
 
 void SX127xAntSwInit( void )
 {
-
 }
 
 void SX127xAntSwDeInit( void )
 {
-
 }
 
-// SX127X  TX/RX的高频开关切换
+/* TX and RX ANT switch */
 
 void SX127xSetAntSw( uint8_t opMode )
 {
-
 }
 
 #if defined( USE_RADIO_DEBUG )
