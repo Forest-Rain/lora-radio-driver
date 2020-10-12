@@ -364,5 +364,7 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
    - 优化 drv_gpio.h使用，兼容RT-Thread Studio
    - 优化 lora-radio-test-shell.c 功能
      - 新增接收超时时间设置
+   - 新增硬件测试平台
+      - ART-Pi+LSD4RF-2R717N40(SX1268)模块平台
 # 6 问题和建议
 如果有什么问题或者建议欢迎提交 [Issue](https://github.com/Forest-Rain/lora-radio-driver/issues) 进行讨论。
