@@ -39,7 +39,9 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
    - 当前支持的RTOS
       - [x] RT-Thread
       - [ ] RT-Thread Nano
-
+   - 当前测试的IDE
+      - [x] MDK5.29
+      - [x] RT-Thread Studio 1.1.3
 # 2 LoRa Radio Driver 软件包组织结构
 ![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1598742766628-ea39cbc7-119b-4a3f-a323-45ba4cee9bbd.png#align=left&display=inline&height=677&margin=%5Bobject%20Object%5D&name=image.png&originHeight=677&originWidth=1111&size=80753&status=done&style=none&width=1111)
 
@@ -332,7 +334,7 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
       - 支持SX126x、SX127x系列芯片
          - 测试LoRa芯片支持LSD4RF-2R717N40(SX1268)、SX1278、ASR6500S @ [**zyk6271**](https://github.com/zyk6271)
    - 支持基于RT-Thread内核rt_timer的lora-radio-timer接口@ [**AnswerInTheWind** ](https://github.com/AnswerInTheWind)
-   - 优化日志换行功能@[**zyk6271**](https://github.com/zyk6271)
+   - 优化日志换行功能、sx126x.c的multi-rtimer.h包含问题@[**zyk6271**](https://github.com/zyk6271)
 - V1.1.0 版本 2020-08-30
    - 完善用户使用指南
    - .lora-radio-driver软件包
@@ -344,7 +346,7 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
             - sx126x更新 RadioRandom 与 SX126xGetRandom
             - 更新 RadioIrqProcess
             - 更新RadioTimeOnAir
-         - RadioIrqProcess 增加 临界区保护，防止出现硬件异常
+         - RadioIrqProcess 增加 临界区保护，优先完成RF中断回调服务函数，防止出现硬件异常
       - 调整lora-radio-driver软件包架构，便于未来适配不同的MCU平台
          - port目录下新增mcu平台适配层，如stm32_adapter
    - lora-radio-test-shell
@@ -357,6 +359,6 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
          - 区分单实例(单lora模块)与多实例（多lora模块）情况，目前支持单实例
          - 移除了Kconfig中对BSP_USING_SPIx的直接定义，BSP_USING_SPIx定义调整到[Target Platform]\Board\Kconfig)
          - 重命名宏定义REGION_X为PHY_REGION_X(如REGION_CN470 -> PHY_REGION_CN470)，以便与LoRaWAN协议栈中缺省REGION_X共存
-
+         
 # 6 问题和建议
 如果有什么问题或者建议欢迎提交 [Issue](https://github.com/Forest-Rain/lora-radio-driver/issues) 进行讨论。
