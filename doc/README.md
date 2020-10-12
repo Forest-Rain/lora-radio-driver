@@ -43,7 +43,7 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
       - [x] MDK5.29
       - [x] RT-Thread Studio 1.1.3
 # 2 LoRa Radio Driver 软件包组织结构
-![image.png](https://github.com/Forest-Rain/lora-radio-driver/blob/master/doc/pics/01_lora-radio-driver_pkgs_struction.png)
+![image.png](https://github.com/Forest-Rain/lora-radio-driver/raw/master/doc/pics/01_lora-radio-driver_pkgs_struction.png)
 
 - lora-radio
    - sx126x
