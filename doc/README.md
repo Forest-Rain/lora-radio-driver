@@ -21,15 +21,15 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
       - LoRa Transceiver (SPI)
          - SX126X (SX1262\ASR6500S\LLCC68\SX1268..)
             - SX1268
-               - [x] [LSD4RF-2R717N40](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
+               - [x] [LSD4RF-2R717N40 (CN470频段)](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
             - SX1262
-             - [x] ASR6500S
-             - [x] [LSD4RF-2R822N300](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
+               - [x] ASR6500S
+               - [x] [LSD4RF-2R822N300 (868/915MHz频段)](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
             - LLCC68
             - LR1110
          - SX127X (SX1272\SX1276\SX1278..)
             - SX1278
-               - [x] [LSD4RF-2F717N20](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
+               - [x] [LSD4RF-2F717N20(CN470频段)](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
                - [x] [Ra-01](http://wiki.ai-thinker.com/lora/man)
          - [ ] SX1276
       - LoRa SIP\SoC
@@ -90,6 +90,7 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
                - STM32平台的SPI外设初始化等通用接口
             - LSD4RF-2F717N20 （SX1278 LoRa模块）
             - LSD4RF-2R717N40 （SX1268 LoRa模块）
+            - LSD4RF-2R822N30 （SX1262 LoRa模块）
             - Ra-01 （SX1278 LoRa模块）
                - xxxx-borad.c
                   - LoRa模块功率输出方式（PA\RFO...）
@@ -366,7 +367,10 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
    - 优化 drv_gpio.h使用，兼容RT-Thread Studio
    - 优化 lora-radio-test-shell.c 功能
      - 新增接收超时时间设置
+ - V1.2 版本 2020-10-14
    - 新增硬件测试平台
-      - ART-Pi+LSD4RF-2R717N40(SX1268)模块平台
+      - ART-Pi+LSD4RF-2F717N20(SX1268)模块平台 (470~510MHz频段)
+      - ART-Pi+LSD4RF-2R717N40(SX1268)模块平台 (470~510MHz频段)
+      - ART-Pi+LSD4RF-2R822N30(SX1262)模块平台 (868/915MHz频段)
 # 6 问题和建议
 如果有什么问题或者建议欢迎提交 [Issue](https://github.com/Forest-Rain/lora-radio-driver/issues) 进行讨论。
