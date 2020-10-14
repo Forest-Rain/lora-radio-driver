@@ -17,7 +17,7 @@
         - [x] ASR6500S ( SX1262 )
       - SX127X (SX1272\SX1276\SX1278..)
         - [x] [LSD4RF-2F717N30 ( SX1278，470~510MHz频段 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
-        - [x] Ra-01 ( SX1278 )
+        - [x] [Ra-01](http://wiki.ai-thinker.com/lora/man)
    - LoRa SIP\SoC
 
 更多详细信息请查看[LoRa-Radio-Driver/doc](https://github.com/Forest-Rain/lora-radio-driver/tree/master/doc)
