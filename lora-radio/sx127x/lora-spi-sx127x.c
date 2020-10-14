@@ -7,9 +7,8 @@
  *
  * \author    Forest-Rain
  */
-
+#include "sx127x\sx127x.h"
 #include "sx127x-board.h"
-
 
 void SX127xWriteBuffer( uint16_t addr, uint8_t *buffer, uint8_t size )
 {   
@@ -44,7 +43,6 @@ void SX127xWriteBuffer( uint16_t addr, uint8_t *buffer, uint8_t size )
 
 //    //NSS = 1;
 //    GpioWrite( &SX127x.Spi.Nss, 1 );
-    
 #endif
 }
 

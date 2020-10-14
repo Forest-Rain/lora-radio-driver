@@ -24,6 +24,7 @@
  */
 #include "lora-radio-rtos-config.h"
 #include "lora-radio.h"
+#include "sx127x\sx127x.h"
 #include "sx127x-board.h"
 
 #define LOG_TAG "LoRa.Board.Ra-01(SX1278)"
@@ -75,19 +76,21 @@ Gpio_t DbgPinRx;
 #endif
 
 #ifdef LORA_RADIO_GPIO_SETUP_BY_PIN_NAME
+#if ( RT_VER_NUM <= 0x40004 )
 int stm32_pin_get(char *pin_name)
 {
-    //eg: pin_name : "A4"  ( GPIOA, GPIO_PIN_4 )--> drv_gpio.c pin
-    char pin_index = strtol(&pin_name[1],0,10);
+    /* eg: pin_name : "PA.4"  ( GPIOA, GPIO_PIN_4 )--> drv_gpio.c pin */
+    char pin_index = strtol(&pin_name[3],0,10);
     
-    if(pin_name[0] < 'A' || pin_name[0] > 'Z')
+    if(pin_name[1] < 'A' || pin_name[1] > 'Z')
     {
         return -1;
     }
 
-    return (16 * (pin_name[0]-'A') + pin_index);
+    return (16 * (pin_name[1]-'A') + pin_index);
 }
-#endif
+#endif 
+#endif /* LORA_RADIO_GPIO_SETUP_BY_PIN_NAME */
 
 void SX127xIoInit( void )
 {

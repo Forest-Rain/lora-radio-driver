@@ -34,7 +34,7 @@
 
 #ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
 
-#define EV_LORA_RADIO_IRQ_MASK         0x0007 // DIO0 | DIO1 | DIO2 | DIO3 | DIO4 | DIO5 depend on board
+#define EV_LORA_RADIO_IRQ_MASK         0x0007 // DIO0 | DIO1 | DIO2 depend on board
 
 #ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
 static struct rt_event lora_radio_event;

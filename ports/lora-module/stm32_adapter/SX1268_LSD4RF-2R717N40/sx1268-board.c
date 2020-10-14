@@ -30,8 +30,6 @@
 #define LOG_LEVEL  LOG_LVL_DBG 
 #include "lora-radio-debug.h"
 
-extern void RadioOnDioIrq( void* context );
-
 /*!
  * Debug GPIO pins objects
  */
@@ -41,19 +39,21 @@ Gpio_t DbgPinRx;
 #endif
 
 #ifdef LORA_RADIO_GPIO_SETUP_BY_PIN_NAME
+#if ( RT_VER_NUM <= 0x40004 )
 int stm32_pin_get(char *pin_name)
 {
-    //eg: pin_name : "A4"  ( GPIOA, GPIO_PIN_4 )--> drv_gpio.c pin
-    char pin_index = strtol(&pin_name[1],0,10);
+    /* eg: pin_name : "PA.4"  ( GPIOA, GPIO_PIN_4 )--> drv_gpio.c pin */
+    char pin_index = strtol(&pin_name[3],0,10);
     
-    if(pin_name[0] < 'A' || pin_name[0] > 'Z')
+    if(pin_name[1] < 'A' || pin_name[1] > 'Z')
     {
         return -1;
     }
 
-    return (16 * (pin_name[0]-'A') + pin_index);
+    return (16 * (pin_name[1]-'A') + pin_index);
 }
-#endif
+#endif 
+#endif /* LORA_RADIO_GPIO_SETUP_BY_PIN_NAME */
 
 void SX126xIoInit( void )
 {
@@ -73,7 +73,7 @@ void SX126xIoInit( void )
 void SX126xIoIrqInit( DioIrqHandler dioIrq )
 { 
     rt_pin_mode(LORA_RADIO_DIO1_PIN, PIN_MODE_INPUT_PULLDOWN);
-    rt_pin_attach_irq(LORA_RADIO_DIO1_PIN, PIN_IRQ_MODE_RISING, RadioOnDioIrq,(void*)"rf-dio1");
+    rt_pin_attach_irq(LORA_RADIO_DIO1_PIN, PIN_IRQ_MODE_RISING, dioIrq,(void*)"rf-dio1");
     rt_pin_irq_enable(LORA_RADIO_DIO1_PIN, PIN_IRQ_ENABLE);  
 }
 
@@ -125,7 +125,6 @@ void SX126xReset( void )
 
 void SX126xWaitOnBusy( void )
 {
-////    while( GpioRead( &SX126x.BUSY ) == 1 );
     while( rt_pin_read( LORA_RADIO_BUSY_PIN ) == PIN_HIGH );
 }
 

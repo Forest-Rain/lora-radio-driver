@@ -669,19 +669,8 @@ typedef union
  */
 typedef struct SX126x_s
 {
-////    Gpio_t        Reset;
-////    Gpio_t        BUSY;
-////    Gpio_t        DIO1;
-////    Gpio_t        DIO2;
-////    Gpio_t        DIO3;
-////    Spi_t         Spi;
-    
- ////   #ifdef RT_USING_SPI
     struct rt_spi_device *spi;
-////    #else
-////    //SPI_TypeDef *spi;
-////    #endif
-    
+
     PacketParams_t PacketParams;
     PacketStatus_t PacketStatus;
     ModulationParams_t ModulationParams;
@@ -890,6 +879,13 @@ void SX126xSetRxDutyCycle( uint32_t rxTime, uint32_t sleepTime );
 void SX126xSetCad( void );
 
 /*!
+ * \brief Sets the radio output power.
+ *
+ * \param [IN] power Sets the RF output power
+ */
+void SX126xSetRfTxPower( int8_t power );
+
+/*!
  * \brief Sets the radio in continuous wave transmission mode
  */
 void SX126xSetTxContinuousWave( void );
@@ -958,42 +954,6 @@ void SX126xSetPaConfig( uint8_t paDutyCycle, uint8_t hpMax, uint8_t deviceSel, u
  * \param [in]  fallbackMode    The mode in which the radio goes
  */
 void SX126xSetRxTxFallbackMode( uint8_t fallbackMode );
-
-/*!
- * \brief Write data to the radio memory
- *
- * \param [in]  address       The address of the first byte to write in the radio
- * \param [in]  buffer        The data to be written in radio's memory
- * \param [in]  size          The number of bytes to write in radio's memory
- */
-void SX126xWriteRegisters( uint16_t address, uint8_t *buffer, uint16_t size );
-
-/*!
- * \brief Read data from the radio memory
- *
- * \param [in]  address       The address of the first byte to read from the radio
- * \param [out] buffer        The buffer that holds data read from radio
- * \param [in]  size          The number of bytes to read from radio's memory
- */
-void SX126xReadRegisters( uint16_t address, uint8_t *buffer, uint16_t size );
-
-/*!
- * \brief Write data to the buffer holding the payload in the radio
- *
- * \param [in]  offset        The offset to start writing the payload
- * \param [in]  buffer        The data to be written (the payload)
- * \param [in]  size          The number of byte to be written
- */
-void SX126xWriteBuffer( uint8_t offset, uint8_t *buffer, uint8_t size );
-
-/*!
- * \brief Read data from the buffer holding the payload in the radio
- *
- * \param [in]  offset        The offset to start reading the payload
- * \param [out] buffer        A pointer to a buffer holding the data from the radio
- * \param [in]  size          The number of byte to be read
- */
-void SX126xReadBuffer( uint8_t offset, uint8_t *buffer, uint8_t size );
 
 /*!
  * \brief   Sets the IRQ mask and DIO masks

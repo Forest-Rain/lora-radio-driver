@@ -26,6 +26,7 @@
 #include <string.h>
 #include "lora-radio-timer.h"
 #include "lora-radio.h"
+#include "lora-spi-sx126x.h"
 #include "sx126x-board.h"
 
 #define LOG_TAG "PHY.LoRa.SX126X"
@@ -34,7 +35,7 @@
 
 #ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
 
-#define EV_LORA_RADIO_IRQ_FIRED       0x0001
+#define EV_LORA_RADIO_DIO_IRQ_FIRED       0x0001
 
 static struct rt_event lora_radio_event;
 static struct rt_thread lora_radio_thread;
@@ -510,7 +511,7 @@ static TimerEvent_t RxTimeoutTimer;
  * 0     - spi access fail  
  * non 0 - spi access success 
  */
-static uint8_t RadioCheck(void)
+uint8_t RadioCheck(void)
 {
     uint8_t test = 0;
 
@@ -523,7 +524,7 @@ static uint8_t RadioCheck(void)
     if (test != 0x55)
     {
         return 0;
-    }       
+    }		
     
     return test;
 }
@@ -567,7 +568,7 @@ static void lora_radio_thread_entry(void* parameter)
     
     while(1)
     {
-        if (rt_event_recv(&lora_radio_event, EV_LORA_RADIO_IRQ_FIRED,
+        if (rt_event_recv(&lora_radio_event, EV_LORA_RADIO_DIO_IRQ_FIRED,
                                 RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
                                 RT_WAITING_FOREVER, &ev) == RT_EOK)
         {
@@ -612,14 +613,14 @@ bool RadioInit( RadioEvents_t *events )
 #ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
         rt_event_init(&lora_radio_event, "ev_phy", RT_IPC_FLAG_PRIO);//RT_IPC_FLAG_FIFO);
 
-        rt_thread_init(&lora_radio_thread,                    
-                       "lora-phy",                        
-                       lora_radio_thread_entry,               
-                       RT_NULL,                       
-                       &rt_lora_radio_thread_stack[0],       
-                       sizeof(rt_lora_radio_thread_stack),  
-                       0,                             
-                       20);                           
+        rt_thread_init(&lora_radio_thread,
+                       "lora-phy",
+                       lora_radio_thread_entry,
+                       RT_NULL,
+                       &rt_lora_radio_thread_stack[0],
+                       sizeof(rt_lora_radio_thread_stack),
+                       0,
+                       20);
                                    
         rt_thread_startup(&lora_radio_thread);                         
 #else
@@ -1310,7 +1311,7 @@ void RadioOnRxTimeoutIrq( void /** context*/ )
 void RadioOnDioIrq( void* context )
 {
 #ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
-    rt_event_send(&lora_radio_event, EV_LORA_RADIO_IRQ_FIRED);      
+    rt_event_send(&lora_radio_event, EV_LORA_RADIO_DIO_IRQ_FIRED);      
 #else
     IrqFired = true;
 #endif

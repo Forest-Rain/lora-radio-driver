@@ -106,7 +106,7 @@ static void OnRxTimeout( void );
 /*!
  * \brief Function executed on Radio Rx Error event
  */
-void OnRxError( void );
+static void OnRxError( void );
 
 /*!
  * \brief thread for ping ping
@@ -126,8 +126,7 @@ static void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr 
     rt_memcpy( Buffer, payload, BufferSize );
     rssi_value = rssi;
     snr_value = snr;
-    rt_event_send(&radio_event, EV_RADIO_RX_DONE);
-    
+ 
     // first rxdone
     if( rssi_value_max == -255 )
     {
@@ -160,6 +159,8 @@ static void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr 
     rssi_value_total += rssi_value;
     snr_value_total += snr_value;
     rx_timestamp = TimerGetCurrentTime();
+    
+    rt_event_send(&radio_event, EV_RADIO_RX_DONE);
 }
 
 static void OnTxTimeout( void )
@@ -171,9 +172,8 @@ static void OnTxTimeout( void )
 static void OnRxTimeout( void )
 {
     Radio.Sleep( );
-    rt_event_send(&radio_event, EV_RADIO_RX_TIMEOUT);
- 
     rx_timestamp = TimerGetCurrentTime();
+    rt_event_send(&radio_event, EV_RADIO_RX_TIMEOUT);
 }
 
 static void OnRxError( void )
@@ -493,13 +493,14 @@ static void lora_radio_test_thread_entry(void* parameter)
                                 avg_rssi = rssi_value_total / (int32_t)rx_correct_cnt;
                                 avg_snr = snr_value_total / (int32_t)rx_correct_cnt;
                             }
-                            LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL,"\r\n");
-                            LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "Ping statistics for [MA=0x%X <-> SA=0x%X]:",master_address, slaver_address);
+                            /* wait for PHY log output done */
+                            rt_thread_mdelay(10);
+                            LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "\r\n====== Ping statistics for [MA=0x%X <-> SA=0x%X] with [TxPower=%d,SF=%d] ======",master_address, slaver_address, lora_radio_test_paras.txpower, lora_radio_test_paras.sf);
                             LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "-> Tx pakcets: sent = %d, tx_total = %d.%d KByte",tx_seq_cnt, tx_total_kbyte_integer, tx_total_kbyte_decimal);       
                             LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "-> Rx pakcets: received = %d, lost = %d, per = %d%, rx_total = %d.%d KByte",rx_correct_cnt, rx_timeout_cnt + rx_error_cnt, per,rx_total_kbyte_integer,rx_total_kbyte_decimal);   
                             LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "--> Rx rssi: max_rssi = %d, min_rssi = %d, avg_rssi = %d",rssi_value_max,rssi_value_min,avg_rssi);       
-                            LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "--> Rx snr : max_snr  = %d, min_snr  = %d, avg_snr  = %d",snr_value_max,snr_value_min,avg_snr);    
-                            LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "====== Ping Test Finished ======\r\n");
+                            LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "--> Rx snr: max_snr  = %d, min_snr  = %d, avg_snr  = %d",snr_value_max,snr_value_min,avg_snr);
+                            LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "====== LoRa Ping Test Finished ======\r\n");
                         }
                     }
                     else

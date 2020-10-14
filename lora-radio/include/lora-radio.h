@@ -19,6 +19,8 @@
  * \author    Miguel Luis ( Semtech )
  *
  * \author    Gregory Cristian ( Semtech )
+  *
+ * \author    forest-rain
  */
 #ifndef __LORA_RADIO_H__
 #define __LORA_RADIO_H__
@@ -26,11 +28,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-
 /*!
  * Begins critical section
  */
-#define LORA_RADIO_CRITICAL_SECTION_BEGIN( ) register rt_base_t level; level = rt_hw_interrupt_disable()
+#define LORA_RADIO_CRITICAL_SECTION_BEGIN( )  register rt_base_t level; level = rt_hw_interrupt_disable()
 
 /*!
  * Ends critical section
@@ -115,18 +116,6 @@ typedef struct
      * \param [IN] channelDetected    Channel Activity detected during the CAD
      */
     void ( *CadDone ) ( bool channelActivityDetected );
-	
-#ifdef LORA_RADIO_DRIVER_USING_LORA_CHIP_LR1110
-    /*!
-     * \brief  Gnss Done Done callback prototype.
-    */
-    void    ( *GnssDone )( void );
-    
-    /*!
-     * \brief  Gnss Done Done callback prototype.
-    */
-    void    ( *WifiDone )( void );
-#endif	
 }RadioEvents_t;
 
 /*!

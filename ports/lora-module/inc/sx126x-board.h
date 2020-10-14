@@ -23,12 +23,13 @@
 #ifndef __SX126x_BOARD_H__
 #define __SX126x_BOARD_H__
 
+#include "lora-radio-rtos-config.h"
 #include <stdint.h>
 #include <stdbool.h>
 #include "sx126x/sx126x.h"
-#include "rtconfig.h"
 
 #ifdef LORA_RADIO_GPIO_SETUP_BY_PIN_NAME
+#if ( RT_VER_NUM <= 0x40002 )
     #define LORA_RADIO_NSS_PIN       stm32_pin_get(LORA_RADIO_NSS_PIN_NAME)
     #define LORA_RADIO_BUSY_PIN      stm32_pin_get(LORA_RADIO_BUSY_PIN_NAME)
     #define LORA_RADIO_DIO1_PIN      stm32_pin_get(LORA_RADIO_DIO1_PIN_NAME)
@@ -41,7 +42,21 @@
     #define LORA_RADIO_RFSW2_PIN     stm32_pin_get(LORA_RADIO_RFSW2_PIN_NAME)
     #endif
 #else
-    // 若未使用menuconfig,可根据实际使用的LoRa模块，直接设置该参数
+    #define LORA_RADIO_NSS_PIN       rt_pin_get(LORA_RADIO_NSS_PIN_NAME)
+    #define LORA_RADIO_BUSY_PIN      rt_pin_get(LORA_RADIO_BUSY_PIN_NAME)
+    #define LORA_RADIO_DIO1_PIN      rt_pin_get(LORA_RADIO_DIO1_PIN_NAME)
+    #define LORA_RADIO_RESET_PIN     rt_pin_get(LORA_RADIO_RESET_PIN_NAME)
+    #if defined( LORA_RADIO_DIO2_PIN_NAME ) 
+    #define LORA_RADIO_DIO2_PIN      rt_pin_get(LORA_RADIO_DIO2_PIN_NAME)
+    #endif
+    #if defined( LORA_RADIO_RFSW1_PIN_NAME ) && defined ( LORA_RADIO_RFSW2_PIN_NAME )  
+    #define LORA_RADIO_RFSW1_PIN     rt_pin_get(LORA_RADIO_RFSW1_PIN_NAME)
+    #define LORA_RADIO_RFSW2_PIN     rt_pin_get(LORA_RADIO_RFSW2_PIN_NAME)
+    #endif
+#endif/* ( RT_VER_NUM <= 0x40002) */
+
+#else
+    /* if not use env\menuconfig,define Radio GPIO directly.*/
     #ifndef LORA_RADIO_NSS_PIN
     #define LORA_RADIO_NSS_PIN    GET_PIN(A,15)
     #endif
@@ -107,55 +122,6 @@ void SX126xReset( void );
  * \brief Blocking loop to wait while the Busy pin in high
  */
 void SX126xWaitOnBusy( void );
-
-/*!
- * \brief Wakes up the radio
- */
-void SX126xWakeup( void );
-
-/*!
- * \brief Send a command that write data to the radio
- *
- * \param [in]  opcode        Opcode of the command
- * \param [in]  buffer        Buffer to be send to the radio
- * \param [in]  size          Size of the buffer to send
- */
-void SX126xWriteCommand( RadioCommands_t opcode, uint8_t *buffer, uint16_t size );
-
-/*!
- * \brief Send a command that read data from the radio
- *
- * \param [in]  opcode        Opcode of the command
- * \param [out] buffer        Buffer holding data from the radio
- * \param [in]  size          Size of the buffer
- *
- * \retval status Return command radio status
- */
-uint8_t SX126xReadCommand( RadioCommands_t opcode, uint8_t *buffer, uint16_t size );
-
-/*!
- * \brief Write a single byte of data to the radio memory
- *
- * \param [in]  address       The address of the first byte to write in the radio
- * \param [in]  value         The data to be written in radio's memory
- */
-void SX126xWriteRegister( uint16_t address, uint8_t value );
-
-/*!
- * \brief Read a single byte of data from the radio memory
- *
- * \param [in]  address       The address of the first byte to write in the radio
- *
- * \retval      value         The value of the byte at the given address in radio's memory
- */
-uint8_t SX126xReadRegister( uint16_t address );
-
-/*!
- * \brief Sets the radio output power.
- *
- * \param [IN] power Sets the RF output power
- */
-void SX126xSetRfTxPower( int8_t power );
 
 /*!
  * \brief Initializes the RF Switch I/Os pins interface

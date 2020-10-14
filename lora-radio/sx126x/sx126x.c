@@ -25,7 +25,7 @@
 #include <board.h>
 #include "lora-radio-timer.h"
 #include "lora-radio.h"
-#include "sx126x.h"
+#include "lora-spi-sx126x.h"
 #include "sx126x-board.h"
 
 /*!
@@ -566,6 +566,11 @@ void SX126xSetTxParams( int8_t power, RadioRampTimes_t rampTime )
     buf[0] = power;
     buf[1] = ( uint8_t )rampTime;
     SX126xWriteCommand( RADIO_SET_TXPARAMS, buf, 2 );
+}
+
+void SX126xSetRfTxPower( int8_t power )
+{
+    SX126xSetTxParams( power, RADIO_RAMP_40_US );
 }
 
 void SX126xSetModulationParams( ModulationParams_t *modulationParams )

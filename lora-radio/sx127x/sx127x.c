@@ -27,11 +27,11 @@
 #include "lora-radio-rtos-config.h"
 #include <math.h>
 #include <string.h>
+#include "board.h"
 #include "lora-radio-timer.h"
 #include "lora-radio.h"
-//#include "delay.h"
-#include "board.h" 
-#include "sx127x.h"
+#include "lora-spi-sx127x.h"
+#include "sx127x\sx127x.h"
 #include "sx127x-board.h"
 
 #ifndef LORA_RADIO0_DEVICE_NAME
@@ -329,7 +329,7 @@ bool SX127xIsChannelFree( RadioModems_t modem, uint32_t freq, int16_t rssiThresh
 
     SX127xSetOpMode( RF_OPMODE_RECEIVER );
 
-    DelayMs( 1 );
+    SX127X_DELAY_MS( 1 );
 
     carrierSenseTime = TimerGetCurrentTime( );
 
@@ -374,7 +374,7 @@ uint32_t SX127xRandom( void )
 
     for( i = 0; i < 32; i++ )
     {
-        DelayMs( 1 );
+        SX127X_DELAY_MS( 1 );
         // Unfiltered RSSI value reading. Only takes the LSB value
         rnd |= ( ( uint32_t )SX127xRead( REG_LR_RSSIWIDEBAND ) & 0x01 ) << i;
     }
@@ -1084,7 +1084,7 @@ void SX127xSend( uint8_t *buffer, uint8_t size )
             if( ( SX127xRead( REG_OPMODE ) & ~RF_OPMODE_MASK ) == RF_OPMODE_SLEEP )
             {
                 SX127xSetStby( );
-                DelayMs( 1 );
+                SX127X_DELAY_MS( 1 );
             }
             // Write payload buffer
             SX127xWriteFifo( buffer, size );
@@ -1434,7 +1434,7 @@ int16_t SX127xReadRssi( RadioModems_t modem )
             rssi = RSSI_OFFSET_LF + SX127xRead( REG_LR_RSSIVALUE );
         }
 #elif defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX1272 )  
-        rssi = RSSI_OFFSET_HF + SX127xRead( REG_LR_RSSIVALUE );
+            rssi = RSSI_OFFSET_HF + SX127xRead( REG_LR_RSSIVALUE );
 #endif
         break;
     default:
