@@ -29,7 +29,7 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
             - LR1110
          - SX127X (SX1272\SX1276\SX1278..)
             - SX1278
-               - [x] [LSD4RF-2F717N20(CN470频段)](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
+               - [x] [LSD4RF-2F717N30(CN470频段)](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
                - [x] [Ra-01](http://wiki.ai-thinker.com/lora/man)
          - [ ] SX1276
       - LoRa SIP\SoC
@@ -88,7 +88,7 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
          - stm32_adapter 
             - lora-board-spi.c
                - STM32平台的SPI外设初始化等通用接口
-            - LSD4RF-2F717N20 （SX1278 LoRa模块）
+            - LSD4RF-2F717N30 （SX1278 LoRa模块）
             - LSD4RF-2R717N40 （SX1268 LoRa模块）
             - LSD4RF-2R822N30 （SX1262 LoRa模块）
             - Ra-01 （SX1278 LoRa模块）
@@ -216,7 +216,7 @@ RT-Thread online packages --->
 | 序号 | 硬件平台 | MCU | LoRa模块 | 主要用户接口 |
 | --- | --- | --- | --- | --- |
 | 1 | LSD4RF-TEST2002  | STM32L476VG | [LSD4RF-2R717N40](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)<br />[ ( SX1268 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87) | <br />- 用户接口定义<br />   - VCC  - 3.3V<br />   - GND<br />   - SCK    - PC10 (SPI3)<br />   - MISO  - PC11 (SPI3)<br />   - MOSI  - PC12 (SPI3)<br />   - NSS    - PA15<br />   - RESET - PA7<br />   - DIO0  - PB1<br />   - BUSY - PB2<br />   - RFSW1 - PB0<br />   - RFSW2 - PC5<br />- 射频开关TX trace<br />   - TX: RFSW1 = 1 , RFSW2 = 0<br />   - TX: RFSW1 = 0 , RFSW2 = 1<br /> |
-| 2 | LSD4RF-TEST2002  | STM32L476VG | [LSD4RF-2F717N20](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)<br />[ ( SX1278 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87) | <br />- 用户接口定义<br />   - VCC   - 3.3V<br />   - GND<br />   - SCK    - PC10 (SPI3)<br />   - MISO  - PC11 (SPI3)<br />   - MOSI  - PC12 (SPI3)<br />   - NSS    - PB6<br />   - RESET - PA7<br />   - DIO0  - PB1<br />   - DIO1  - PC4<br />   - DIO2  - PB2<br />   - DIO3  - NC<br />   - DIO4  - NC<br />   - RFSW1 - PB0<br />   - RFSW2 - PC5<br />- 射频开关TX trace<br />   - TX: RFSW1 = 1 , RFSW2 = 0<br />   - TX: RFSW1 = 0 , RFSW2 = 1<br /> |
+| 2 | LSD4RF-TEST2002  | STM32L476VG | [LSD4RF-2F717N30](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)<br />[ ( SX1278 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87) | <br />- 用户接口定义<br />   - VCC   - 3.3V<br />   - GND<br />   - SCK    - PC10 (SPI3)<br />   - MISO  - PC11 (SPI3)<br />   - MOSI  - PC12 (SPI3)<br />   - NSS    - PB6<br />   - RESET - PA7<br />   - DIO0  - PB1<br />   - DIO1  - PC4<br />   - DIO2  - PB2<br />   - DIO3  - NC<br />   - DIO4  - NC<br />   - RFSW1 - PB0<br />   - RFSW2 - PC5<br />- 射频开关TX trace<br />   - TX: RFSW1 = 1 , RFSW2 = 0<br />   - TX: RFSW1 = 0 , RFSW2 = 1<br /> |
 | 3 | Nucleo-L476RG | STM32L476RG | [Ra-01](http://wiki.ai-thinker.com/lora/man)<br />(RT-thread LoRa Adruino扩展板V1) | <br />- 用户接口定义<br />   - VCC    - 3.3V<br />   - GND<br />   - SCK    - PA5(SPI1)<br />   - MISO  - PA6(SPI1)<br />   - MOSI  - PA7(SPI1)<br />   - NSS    - PB6<br />   - RESET - PC7<br />   - DIO0  - PA9<br />   - DIO1  - PA8<br /> |
 | 4 | ART-Pi  | STM32H750XB | [LSD4RF-2R717N40](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)<br />[ ( SX1268 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87) | <br />- 用户接口定义<br />   - VCC  - 3.3V<br />   - GND<br />   - SCK    - PI1 (SPI2)<br />   - MISO  - PI2 (SPI2)<br />   - MOSI  - PI3 (SPI2)<br />   - NSS    - PI0<br />   - RESET - PA15<br />   - DIO1  - PG7<br />   - BUSY - PH15<br />   - RFSW1 - PH14<br />   - RFSW2 - PH13<br />- 射频开关TX trace<br />   - TX: RFSW1 = 1 , RFSW2 = 0<br />   - TX: RFSW1 = 0 , RFSW2 = 1<br /> |
 | 4 | ART-Pi  | STM32H750XB | [LSD4RF-2R822N30](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)<br />[ ( SX1262 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87) | |
@@ -369,7 +369,7 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
      - 新增接收超时时间设置
  - V1.2 版本 2020-10-14
    - 新增硬件测试平台
-      - ART-Pi+LSD4RF-2F717N20(SX1268)模块平台 (470~510MHz频段)
+      - ART-Pi+LSD4RF-2F717N30(SX1268)模块平台 (470~510MHz频段)
       - ART-Pi+LSD4RF-2R717N40(SX1268)模块平台 (470~510MHz频段)
       - ART-Pi+LSD4RF-2R822N30(SX1262)模块平台 (868/915MHz频段)
 # 6 问题和建议

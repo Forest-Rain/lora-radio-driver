@@ -27,7 +27,7 @@
 #include "sx127x\sx127x.h"
 #include "sx127x-board.h"
 
-#define LOG_TAG "LoRa.Board.LSD4RF-2F717N20(SX1278)"
+#define LOG_TAG "LoRa.Board.LSD4RF-2F717N30(SX1278)"
 #define LOG_LEVEL  LOG_LVL_DBG 
 #include "lora-radio-debug.h"
 

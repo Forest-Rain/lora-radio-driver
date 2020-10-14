@@ -16,7 +16,7 @@
         - [x] [LSD4RF-2R822N30 ( SX1262 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
         - [x] ASR6500S ( SX1262 )
       - SX127X (SX1272\SX1276\SX1278..)
-        - [x] [LSD4RF-2F717N20 ( SX1278 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
+        - [x] [LSD4RF-2F717N30 ( SX1278 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
         - [x] Ra-01 ( SX1278 )
    - LoRa SIP\SoC
 

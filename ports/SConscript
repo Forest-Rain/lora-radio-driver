@@ -6,10 +6,10 @@ include_path = [cwd]
 include_path += [cwd+'/lora-module/inc']
 
 # add lora radio driver.
-if GetDepend('LORA_RADIO_DRIVER_USING_LORA_MODULE_LSD4RF_2F717N20'):
+if GetDepend('LORA_RADIO_DRIVER_USING_LORA_MODULE_LSD4RF_2F717N30'):
     src += Split('''
     lora-module/stm32_adapter/lora-spi-board.c
-    lora-module/stm32_adapter/SX1278_LSD4RF-2F717N20/sx1278-board.c
+    lora-module/stm32_adapter/SX1278_LSD4RF-2F717N30/sx1278-board.c
     ''')
 
 if GetDepend('LORA_RADIO_DRIVER_USING_LORA_MODULE_LSD4RF_2R822N30'):
