@@ -37,6 +37,7 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
       - LoRa Radio Driver当前功能主要在STM32L平台测试通过，未来计划将适配更多的MCU平台（华大MCU、nRF、BK）
          - [x] STM32L0系列
          - [x] STM32L4系列
+         - [x] STM32H7系列
    - 当前支持的RTOS
       - [x] RT-Thread
       - [ ] RT-Thread Nano
