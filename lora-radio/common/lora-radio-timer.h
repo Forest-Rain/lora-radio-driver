@@ -8,7 +8,7 @@
 #ifdef PKG_USING_MULTI_RTIMER
 
 #include "multi_rtimer.h"
-#include "hw_rtc_stm32l.h"
+#include "hw_rtc_stm32.h"
 
 #else
 
