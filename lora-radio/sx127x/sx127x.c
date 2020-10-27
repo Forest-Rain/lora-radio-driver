@@ -649,6 +649,8 @@ void SX127xSetRxConfig( RadioModems_t modem, uint32_t bandwidth,
             }
         }
         break;
+        default:
+            break;
     }
 }
 

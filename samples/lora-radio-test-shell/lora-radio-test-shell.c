@@ -224,7 +224,7 @@ static void send_ping_packet(uint32_t src_addr,uint32_t dst_addr,uint8_t len)
     Radio.Send( Buffer, len );
 }
 
-static bool lora_init(void)
+static bool lora_radio_test_init(void)
 {
     if( lora_chip_initialized == false )
     {
@@ -495,7 +495,7 @@ static void lora_radio_test_thread_entry(void* parameter)
                             }
                             /* wait for PHY log output done */
                             rt_thread_mdelay(10);
-                            LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "\r\n====== Ping statistics for [MA=0x%X <-> SA=0x%X] with [TxPower=%d,SF=%d] ======",master_address, slaver_address, lora_radio_test_paras.txpower, lora_radio_test_paras.sf);
+                            LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "\r\n====== LoRa Ping statistics for [MA=0x%X <-> SA=0x%X] with [TxPower=%d,SF=%d] ======",master_address, slaver_address, lora_radio_test_paras.txpower, lora_radio_test_paras.sf);
                             LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "-> Tx pakcets: sent = %d, tx_total = %d.%d KByte",tx_seq_cnt, tx_total_kbyte_integer, tx_total_kbyte_decimal);       
                             LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "-> Rx pakcets: received = %d, lost = %d, per = %d%, rx_total = %d.%d KByte",rx_correct_cnt, rx_timeout_cnt + rx_error_cnt, per,rx_total_kbyte_integer,rx_total_kbyte_decimal);   
                             LORA_RADIO_DEBUG_LOG(LR_DBG_APP, LOG_LEVEL, "--> Rx rssi: max_rssi = %d, min_rssi = %d, avg_rssi = %d",rssi_value_max,rssi_value_min,avg_rssi);       
@@ -551,7 +551,7 @@ static int lora(int argc, char *argv[])
     {
         const char *cmd = argv[1];
 				
-        if( lora_init() == false )
+        if( lora_radio_test_init() == false )
         {
             rt_kprintf("LoRa Chip Init Failed\n");
             return 0;
