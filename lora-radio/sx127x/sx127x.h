@@ -490,6 +490,13 @@ uint32_t SX127xGetWakeupTime( void );
 uint8_t SX127xCheck( void );
 
 /*!
+ * \brief Initializes DIO IRQ handlers
+ *
+ * \param [IN] irqHandlers Array containing the IRQ callback functions
+ */
+void SX127xIoIrqInit( DioIrqHandler **irqHandlers );
+
+/*!
  * \brief Process radio irq
  */
 void RadioIrqProcess( uint8_t irq_index );

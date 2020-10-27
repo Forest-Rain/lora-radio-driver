@@ -441,12 +441,11 @@ uint32_t RxTimeout = 0;
 
 bool RxContinuous = false;
 
-
 PacketStatus_t RadioPktStatus;
 uint8_t RadioRxPayload[255];
 
 bool IrqFired = false;
-
+static bool lora_radio_init = false;
 /*
  * SX126x DIO IRQ callback functions prototype
  */
@@ -581,36 +580,18 @@ static void lora_radio_thread_entry(void* parameter)
 
 bool RadioInit( RadioEvents_t *events )
 {
-    RadioEvents = events;
-
-    SX126x.spi = lora_radio_spi_init(LORA_RADIO0_SPI_BUS_NAME, LORA_RADIO0_DEVICE_NAME, RT_NULL);
-    if (SX126x.spi == RT_NULL)
-    {
-        LORA_RADIO_DEBUG_LOG(LR_DBG_INTERFACE, LOG_LEVEL, "SX126x SPI Init Failed\n");
-        return false;
-    }
-    
-    LORA_RADIO_DEBUG_LOG(LR_DBG_INTERFACE, LOG_LEVEL, "SX126x SPI Init Succeed\n");
-
-    SX126xIoInit();
-
-    SX126xInit( RadioOnDioIrq );
-    SX126xSetStandby( STDBY_RC );
-    SX126xSetRegulatorMode( USE_DCDC );
-
-    SX126xSetBufferBaseAddress( 0x00, 0x00 );
-    SX126xSetTxParams( 0, RADIO_RAMP_200_US );
-    SX126xSetDioIrqParams( IRQ_RADIO_ALL, IRQ_RADIO_ALL, IRQ_RADIO_NONE, IRQ_RADIO_NONE );
-
-#ifdef PKG_USING_MULTI_RTIMER
-    hw_rtc_init();
-#endif
-
-    // Initialize driver timeout timers
-    TimerInit( &TxTimeoutTimer, RadioOnTxTimeoutIrq );
-    TimerInit( &RxTimeoutTimer, RadioOnRxTimeoutIrq );
-
 #ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
+    if( lora_radio_init == false )
+    {
+        SX126x.spi = lora_radio_spi_init(LORA_RADIO0_SPI_BUS_NAME, LORA_RADIO0_DEVICE_NAME, RT_NULL);
+        if (SX126x.spi == RT_NULL)
+        {
+            LORA_RADIO_DEBUG_LOG(LR_DBG_INTERFACE, LOG_LEVEL, "SX126x SPI Init Failed\n");
+            return false;
+        }
+        
+        LORA_RADIO_DEBUG_LOG(LR_DBG_INTERFACE, LOG_LEVEL, "SX126x SPI Init Succeed\n");
+        
         rt_event_init(&lora_radio_event, "ev_phy", RT_IPC_FLAG_PRIO);//RT_IPC_FLAG_FIFO);
 
         rt_thread_init(&lora_radio_thread,
@@ -619,14 +600,36 @@ bool RadioInit( RadioEvents_t *events )
                        RT_NULL,
                        &rt_lora_radio_thread_stack[0],
                        sizeof(rt_lora_radio_thread_stack),
-                       0,
+                       1, // highest priority 
                        20);
                                    
         rt_thread_startup(&lora_radio_thread);                         
+
+        lora_radio_init = true;
+    } 
 #else
         IrqFired = false;
 #endif
-                       
+    
+    RadioEvents = events;
+
+#ifdef PKG_USING_MULTI_RTIMER
+    hw_rtc_init();
+#endif
+    // Initialize driver timeout timers
+    TimerInit( &TxTimeoutTimer, RadioOnTxTimeoutIrq );
+    TimerInit( &RxTimeoutTimer, RadioOnRxTimeoutIrq );
+    
+    SX126xIoInit();
+
+    SX126xInit( RadioOnDioIrq );
+    SX126xSetStandby( STDBY_RC );
+    SX126xSetRegulatorMode( USE_DCDC );
+
+    SX126xSetBufferBaseAddress( 0x00, 0x00 );
+    SX126xSetTxParams( 0, RADIO_RAMP_200_US );
+    SX126xSetDioIrqParams( IRQ_RADIO_ALL, IRQ_RADIO_ALL, IRQ_RADIO_NONE, IRQ_RADIO_NONE );    
+    
     return true;
 }
 

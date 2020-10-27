@@ -26,6 +26,7 @@
 
 #include <stdlib.h>
 #include "lora-radio.h"
+#include "sx127x\sx127x.h"
 #include "sx127x-board.h"
 
 #define LOG_TAG "PHY.LoRa.SX127X"
@@ -85,6 +86,8 @@ const struct Radio_s Radio =
     NULL, // void ( *SetRxDutyCycle )( uint32_t rxTime, uint32_t sleepTime ) 
 };
 
+static bool lora_radio_init = false;
+
 #ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
 
 static uint8_t get_irq_index(uint32_t ev)
@@ -114,7 +117,7 @@ void lora_radio_thread_entry(void* parameter)
     while(1)
     {
         if (rt_event_recv(&lora_radio_event, EV_LORA_RADIO_IRQ_MASK,
-                                RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
+                                (RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR),
                                 RT_WAITING_FOREVER, &ev) == RT_EOK)
         {
             RadioIrqProcess(get_irq_index(ev));
@@ -125,34 +128,39 @@ void lora_radio_thread_entry(void* parameter)
 
 bool SX127xRadioInit( RadioEvents_t *events )
 {
-    SX127xIoInit();
-    
 #ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
-    // Initialize spi bus
-    SX127x.spi = lora_radio_spi_init(LORA_RADIO0_SPI_BUS_NAME, LORA_RADIO0_DEVICE_NAME, RT_NULL);
-    if (SX127x.spi == RT_NULL)
+    if( lora_radio_init == false )
     {
-        LORA_RADIO_DEBUG_LOG(LR_DBG_INTERFACE, LOG_LEVEL, "SX127x SPI Init Failed\n");
-        return false;
-    }
-#endif
-    LORA_RADIO_DEBUG_LOG(LR_DBG_INTERFACE, LOG_LEVEL, "SX127x SPI Init Succeed\n");
-    
-    SX127xInit(events);
-#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
-    rt_event_init(&lora_radio_event, "ev_lora_phy", RT_IPC_FLAG_FIFO);
+        // Initialize spi bus
+        SX127x.spi = lora_radio_spi_init(LORA_RADIO0_SPI_BUS_NAME, LORA_RADIO0_DEVICE_NAME, RT_NULL);
+        if (SX127x.spi == RT_NULL)
+        {
+            LORA_RADIO_DEBUG_LOG(LR_DBG_INTERFACE, LOG_LEVEL, "SX127x SPI Init Failed\n");
+            return false;
+        }
 
-    rt_thread_init(&lora_radio_thread,               	  
-                   "lora-phy",                     	  
-                   lora_radio_thread_entry,          	  
-                   RT_NULL,                    	  
-                   &rt_lora_radio_thread_stack[0],       
-                   sizeof(rt_lora_radio_thread_stack),  
-                   1,   // highest priority                       	  
-                   20);                           
-                               
-    rt_thread_startup(&lora_radio_thread);   
-#endif  
+        LORA_RADIO_DEBUG_LOG(LR_DBG_INTERFACE, LOG_LEVEL, "SX127x SPI Init Succeed\n");
+
+        rt_event_init(&lora_radio_event, "ev_lora_phy", RT_IPC_FLAG_PRIO);//RT_IPC_FLAG_FIFO);
+
+        rt_thread_init(&lora_radio_thread,               	  
+                       "lora-phy",                     	  
+                       lora_radio_thread_entry,          	  
+                       RT_NULL,                    	  
+                       &rt_lora_radio_thread_stack[0],       
+                       sizeof(rt_lora_radio_thread_stack),  
+                       1,   // highest priority                       	  
+                       20);                           
+                                   
+        rt_thread_startup(&lora_radio_thread);   
+                       
+       lora_radio_init = true;
+   }
+#endif /* LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD */ 
+   
+   SX127xIoInit();   
+   SX127xInit(events);
+   
    return true;
 }
 

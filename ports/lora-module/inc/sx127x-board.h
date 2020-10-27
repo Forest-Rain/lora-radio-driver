@@ -105,13 +105,6 @@
 void SX127xIoInit( void );
 
 /*!
- * \brief Initializes DIO IRQ handlers
- *
- * \param [IN] irqHandlers Array containing the IRQ callback functions
- */
-void SX127xIoIrqInit( DioIrqHandler **irqHandlers );
-
-/*!
  * \brief De-initializes the radio I/Os pins interface.
  *
  * \remark Useful when going in MCU low power modes
