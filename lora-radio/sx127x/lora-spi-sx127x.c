@@ -13,22 +13,11 @@
 void SX127xWriteBuffer( uint16_t addr, uint8_t *buffer, uint8_t size )
 {   
 #ifdef RT_USING_SPI
-    struct rt_spi_message msg1, msg2;
-    uint8_t    data = (addr | 0x80);
-    msg1.send_buf   = &data;
-    msg1.recv_buf   = RT_NULL;
-    msg1.length     = 1;
-    msg1.cs_take    = 1;
-    msg1.cs_release = 0;
-    msg1.next       = &msg2;
+    uint8_t msg[1] = {0};
+    
+    msg[0] = (addr | 0x80);
 
-    msg2.send_buf   = buffer;
-    msg2.recv_buf   = RT_NULL;
-    msg2.length     = size;
-    msg2.cs_take    = 0;
-    msg2.cs_release = 1;
-    msg2.next       = RT_NULL;
-    rt_spi_transfer_message(SX127x.spi, &msg1);
+    rt_spi_send_then_send(SX127x.spi,msg,1,buffer,size);
 #else
 //    uint8_t i;
 
@@ -49,22 +38,11 @@ void SX127xWriteBuffer( uint16_t addr, uint8_t *buffer, uint8_t size )
 void SX127xReadBuffer( uint16_t addr, uint8_t *buffer, uint8_t size )
 {
 #ifdef RT_USING_SPI
-    struct rt_spi_message msg1, msg2;
-    uint8_t    data = (addr & 0x7F);
-    msg1.send_buf   = &data;
-    msg1.recv_buf   = RT_NULL;
-    msg1.length     = 1;
-    msg1.cs_take    = 1;
-    msg1.cs_release = 0;
-    msg1.next       = &msg2;
+    uint8_t msg[1] = {0};
+    
+    msg[0] = (addr & 0x7F);
 
-    msg2.send_buf   = RT_NULL;
-    msg2.recv_buf   = buffer;
-    msg2.length     = size;
-    msg2.cs_take    = 0;
-    msg2.cs_release = 1;
-    msg2.next       = RT_NULL;
-    rt_spi_transfer_message(SX127x.spi, &msg1);    
+    rt_spi_send_then_recv(SX127x.spi,msg,1,buffer,size);
 #else
 //    uint8_t i;
 
