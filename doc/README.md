@@ -24,7 +24,7 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
                - [x] [LSD4RF-2R717N40 (CN470频段)](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
             - SX1262
                - [x] ASR6500S
-               - [x] [LSD4RF-2R822N300 (868/915MHz频段)](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
+               - [x] [LSD4RF-2R822N30 (868/915MHz频段)](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
             - LLCC68
             - LR1110
          - SX127X (SX1272\SX1276\SX1278..)
