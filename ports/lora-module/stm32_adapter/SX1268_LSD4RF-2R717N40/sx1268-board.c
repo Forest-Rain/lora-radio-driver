@@ -114,13 +114,13 @@ uint32_t SX126xGetBoardTcxoWakeupTime( void )
 
 void SX126xReset( void )
 {   
-    DelayMs( 10 );
+    SX126X_DELAY_MS( 10 );
     rt_pin_mode(LORA_RADIO_RESET_PIN, PIN_MODE_OUTPUT); 
     rt_pin_write(LORA_RADIO_RESET_PIN, PIN_LOW);
-    DelayMs( 20 );
+    SX126X_DELAY_MS( 20 );
      // internal pull-up
     rt_pin_mode(LORA_RADIO_RESET_PIN, PIN_MODE_INPUT); 
-    DelayMs( 10 ); 
+    SX126X_DELAY_MS( 10 ); 
 }
 
 void SX126xWaitOnBusy( void )

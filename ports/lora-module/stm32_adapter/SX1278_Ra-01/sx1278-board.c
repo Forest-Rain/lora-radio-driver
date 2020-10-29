@@ -159,13 +159,13 @@ void SX127xReset( void )
     rt_pin_write(LORA_RADIO_RESET_PIN, PIN_LOW);
     
     // Wait 1 ms
-    DelayMs( 1 );
+    SX127X_DELAY_MS( 1 );
 
     // Configure RESET as input
     rt_pin_mode(LORA_RADIO_RESET_PIN, PIN_MODE_INPUT);
 
     // Wait 6 ms
-    DelayMs( 6 );
+    SX127X_DELAY_MS( 6 );
 }
 
 void SX127xSetAntSwLowPower( bool status )

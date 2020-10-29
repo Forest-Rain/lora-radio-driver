@@ -82,7 +82,8 @@
  */
 #define BOARD_TCXO_WAKEUP_TIME                          2
 
-#define DelayMs( ms )                                   rt_thread_mdelay(ms) 
+#define SX126X_DELAY_MS( ms )                           rt_thread_mdelay(ms) 
+#define SX126X_BLOCK_DELAY_1MS()                        rt_hw_us_delay(999)
 
 /*!
  * \brief Initializes the radio I/Os pins interface

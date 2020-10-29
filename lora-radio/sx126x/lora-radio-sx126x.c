@@ -690,7 +690,7 @@ bool RadioIsChannelFree( RadioModems_t modem, uint32_t freq, int16_t rssiThresh,
 
     RadioRx( 0 );
 
-    DelayMs( 1 );
+    SX126X_DELAY_MS( 1 );
 
     carrierSenseTime = TimerGetCurrentTime( );
 
@@ -1152,7 +1152,7 @@ void RadioSleep( void )
     params.Fields.WarmStart = 1;
     SX126xSetSleep( params );
 
-    DelayMs(2);
+    SX126X_BLOCK_DELAY_1MS();
 }
 
 void RadioStandby( void )

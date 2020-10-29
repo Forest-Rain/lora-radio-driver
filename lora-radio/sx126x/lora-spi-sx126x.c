@@ -23,6 +23,9 @@ void SX126xWakeup( void )
     
     // Wait for chip to be ready.
     SX126xWaitOnBusy( );
+    
+    // Update operating mode context variable
+    SX126xSetOperatingMode( MODE_STDBY_RC );
 #else
 #endif
     
