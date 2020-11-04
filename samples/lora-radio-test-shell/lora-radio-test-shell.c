@@ -496,9 +496,9 @@ static void lora_radio_test_thread_entry(void* parameter)
                             /* wait for PHY log output done */
                             rt_thread_mdelay(10);
                             rt_kprintf("\r\n====== LoRa Ping statistics for [MA=0x%X <-> SA=0x%X] with [TxPower=%d,SF=%d] ======\n",master_address, slaver_address, lora_radio_test_paras.txpower, lora_radio_test_paras.sf);
-                            rt_kprintf("-> Tx pakcets: sent = %d, tx_total = %d.%d KByte\n",tx_seq_cnt, tx_total_kbyte_integer, tx_total_kbyte_decimal);       
-                            rt_kprintf("-> Rx pakcets: received = %d, lost = %d, per = %d%, rx_total = %d.%d KByte\n",rx_correct_cnt, rx_timeout_cnt + rx_error_cnt, per,rx_total_kbyte_integer,rx_total_kbyte_decimal);   
-                            rt_kprintf("--> Rx rssi: max_rssi = %d, min_rssi = %d, avg_rssi = %d\n",rssi_value_max,rssi_value_min,avg_rssi);       
+                            rt_kprintf("-> Tx pakcets: sent = %d, tx_total = %d.%d KByte\n",tx_seq_cnt, tx_total_kbyte_integer, tx_total_kbyte_decimal);
+                            rt_kprintf("-> Rx pakcets: received = %d, lost = %d, per = %d%, rx_total = %d.%d KByte\n",rx_correct_cnt, rx_timeout_cnt + rx_error_cnt, per,rx_total_kbyte_integer,rx_total_kbyte_decimal);
+                            rt_kprintf("--> Rx rssi: max_rssi = %d, min_rssi = %d, avg_rssi = %d\n",rssi_value_max,rssi_value_min,avg_rssi);
                             rt_kprintf("--> Rx snr: max_snr  = %d, min_snr  = %d, avg_snr  = %d\n",snr_value_max,snr_value_min,avg_snr);
                             rt_kprintf("====== LoRa Ping Test Finished ======\r\n");
                         }
@@ -550,13 +550,13 @@ static int lora(int argc, char *argv[])
     else 
     {
         const char *cmd = argv[1];
-				
+
         if( lora_radio_test_init() == false )
         {
             rt_kprintf("LoRa Chip Init Failed\n");
             return 0;
         }
-			
+
         if (!rt_strcmp(cmd, "probe")) 
         {   
             rt_kprintf("LoRa Chip start to test\n");
@@ -631,7 +631,7 @@ static int lora(int argc, char *argv[])
             
             rt_event_send(&radio_event, EV_RADIO_INIT);
         }
-		else if (!rt_strcmp(cmd, "config")) 
+        else if (!rt_strcmp(cmd, "config"))
         {
             /* config radio paramters, such as frequency,txPower,sf,bw...*/
             if (argc >= 3) 
