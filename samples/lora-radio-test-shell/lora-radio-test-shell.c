@@ -342,7 +342,7 @@ static void lora_radio_test_thread_entry(void* parameter)
                     {
                         if( rx_only_flag == false )
                         {
-                            rt_kprintf("Slaver Address(SA):[0x%X]",slaver_address);
+                            rt_kprintf("Slaver Address(SA):[0x%X]\n",slaver_address);
                         }
                         rt_kprintf("Stay to Rx Continuous with freq=%d, SF=%d, CR=%d, BW=%d\n", lora_radio_test_paras.frequency, lora_radio_test_paras.sf, lora_radio_test_paras.cr, lora_radio_test_paras.bw);
                         
@@ -377,7 +377,7 @@ static void lora_radio_test_thread_entry(void* parameter)
                                 received_seqno |= Buffer[11] << 16;
                                 received_seqno |= Buffer[12] << 24;
                                 
-                               rt_kprintf("Reply from [0x%X]:seqno=%d, bytes=%d,total time=%d ms,rssi=%d,snr=%d",slaver_addr, received_seqno, BufferSize,( rx_timestamp - tx_timestamp ),rssi_value,snr_value );
+                               rt_kprintf("Reply from [0x%X]:seqno=%d, bytes=%d,total time=%d ms,rssi=%d,snr=%d\n",slaver_addr, received_seqno, BufferSize,( rx_timestamp - tx_timestamp ),rssi_value,snr_value );
                              
                                /* Send the next PING frame */
                                rt_event_send(&radio_event, EV_RADIO_TX_START);
@@ -424,7 +424,7 @@ static void lora_radio_test_thread_entry(void* parameter)
                                 /* RX continuous */
                                 Radio.Rx( 0 ); 
               
-                                rt_kprintf("Received: Totals=%d,bytes=%d,timestamp=%d ms,rssi=%d,snr=%d",rx_correct_cnt, BufferSize,rx_timestamp,rssi_value,snr_value );
+                                rt_kprintf("Received: Totals=%d,bytes=%d,timestamp=%d ms,rssi=%d,snr=%d\n",rx_correct_cnt, BufferSize,rx_timestamp,rssi_value,snr_value );
 
 #ifdef RT_USING_ULOG
                                 ulog_hexdump(LOG_TAG,16,Buffer,BufferSize);
@@ -457,7 +457,7 @@ static void lora_radio_test_thread_entry(void* parameter)
                 break;
             case EV_RADIO_RX_TIMEOUT:
                 rx_timeout_cnt++;
-                rt_kprintf("Request [SA=0x%X] timed out: seqno=%d, time=%d ms", slaver_address, tx_seq_cnt, ( rx_timestamp - tx_timestamp ) );
+                rt_kprintf("Request [SA=0x%X] timed out: seqno=%d, time=%d ms\n", slaver_address, tx_seq_cnt, ( rx_timestamp - tx_timestamp ) );
              case EV_RADIO_RX_ERROR:
              case EV_RADIO_TX_START:
                     if( master_flag == true )
@@ -469,8 +469,8 @@ static void lora_radio_test_thread_entry(void* parameter)
                             if( !tx_seq_cnt ) 
                             {
                                 uint32_t packet_toa = Radio.TimeOnAir(lora_radio_test_paras.modem,lora_radio_test_paras.bw,lora_radio_test_paras.sf,lora_radio_test_paras.cr,LORA_PREAMBLE_LENGTH, LORA_FIX_LENGTH_PAYLOAD_ON_DISABLE,payload_len,true);
-                                rt_kprintf("Master Address(MA):[0x%X]",master_address);
-                                rt_kprintf("Pinging [SA=0x%X] with %d bytes(ToA=%d ms) of data for %d counters:", slaver_address, payload_len, packet_toa, max_tx_nbtrials);
+                                rt_kprintf("Master Address(MA):[0x%X]\n",master_address);
+                                rt_kprintf("Pinging [SA=0x%X] with %d bytes(ToA=%d ms) of data for %d counters:\n", slaver_address, payload_len, packet_toa, max_tx_nbtrials);
                                 rt_kprintf("With radio parameters: freq=%d, TxPower=%d, SF=%d, CR=%d, BW=%d\n", lora_radio_test_paras.frequency, lora_radio_test_paras.txpower, lora_radio_test_paras.sf, lora_radio_test_paras.cr, lora_radio_test_paras.bw);
                             }
     
@@ -495,11 +495,11 @@ static void lora_radio_test_thread_entry(void* parameter)
                             }
                             /* wait for PHY log output done */
                             rt_thread_mdelay(10);
-                            rt_kprintf("\r\n====== LoRa Ping statistics for [MA=0x%X <-> SA=0x%X] with [TxPower=%d,SF=%d] ======",master_address, slaver_address, lora_radio_test_paras.txpower, lora_radio_test_paras.sf);
-                            rt_kprintf("-> Tx pakcets: sent = %d, tx_total = %d.%d KByte",tx_seq_cnt, tx_total_kbyte_integer, tx_total_kbyte_decimal);       
-                            rt_kprintf("-> Rx pakcets: received = %d, lost = %d, per = %d%, rx_total = %d.%d KByte",rx_correct_cnt, rx_timeout_cnt + rx_error_cnt, per,rx_total_kbyte_integer,rx_total_kbyte_decimal);   
-                            rt_kprintf("--> Rx rssi: max_rssi = %d, min_rssi = %d, avg_rssi = %d",rssi_value_max,rssi_value_min,avg_rssi);       
-                            rt_kprintf("--> Rx snr: max_snr  = %d, min_snr  = %d, avg_snr  = %d",snr_value_max,snr_value_min,avg_snr);
+                            rt_kprintf("\r\n====== LoRa Ping statistics for [MA=0x%X <-> SA=0x%X] with [TxPower=%d,SF=%d] ======\n",master_address, slaver_address, lora_radio_test_paras.txpower, lora_radio_test_paras.sf);
+                            rt_kprintf("-> Tx pakcets: sent = %d, tx_total = %d.%d KByte\n",tx_seq_cnt, tx_total_kbyte_integer, tx_total_kbyte_decimal);       
+                            rt_kprintf("-> Rx pakcets: received = %d, lost = %d, per = %d%, rx_total = %d.%d KByte\n",rx_correct_cnt, rx_timeout_cnt + rx_error_cnt, per,rx_total_kbyte_integer,rx_total_kbyte_decimal);   
+                            rt_kprintf("--> Rx rssi: max_rssi = %d, min_rssi = %d, avg_rssi = %d\n",rssi_value_max,rssi_value_min,avg_rssi);       
+                            rt_kprintf("--> Rx snr: max_snr  = %d, min_snr  = %d, avg_snr  = %d\n",snr_value_max,snr_value_min,avg_snr);
                             rt_kprintf("====== LoRa Ping Test Finished ======\r\n");
                         }
                     }
