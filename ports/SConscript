@@ -33,7 +33,7 @@ if GetDepend('LORA_RADIO_DRIVER_USING_LORA_MODULE_RA_01'):
 if GetDepend('LORA_RADIO_DRIVER_USING_LORA_MODULE_ASR6500S'):
     src += Split('''
     lora-module/stm32_adapter/lora-spi-board.c
-    lora-module/stm32_adapter/SX1262_ASR6500S/sx1278-board.c
+    lora-module/stm32_adapter/SX1262_ASR6500S/sx126x-board.c
     ''')
 
 group = DefineGroup('lora-radio-driver/board', src, depend = ['PKG_USING_LORA_RADIO_DRIVER'], CPPPATH = include_path)
