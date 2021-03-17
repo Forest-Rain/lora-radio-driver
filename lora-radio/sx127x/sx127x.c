@@ -146,6 +146,12 @@ void SX127xOnDio5Irq( void  );
  */
 void SX127xOnTimeoutIrq( void );
 
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD  
+/*!
+ * \brief Tx & Rx timeout timer Event
+ */
+extern void SX127xOnTimeoutIrqEvent( void );
+#endif
 /*
  * Private global constants
  */
@@ -219,7 +225,8 @@ static uint8_t RxTxBuffer[RX_BUFFER_SIZE];
  */
 static DioIrqHandler *SX127xDioIrq[] = { SX127xOnDio0Irq, SX127xOnDio1Irq,
                                           SX127xOnDio2Irq, SX127xOnDio3Irq,
-                                          SX127xOnDio4Irq, NULL };
+                                          SX127xOnDio4Irq, NULL, 
+                                          SX127xOnTimeoutIrq };
 /*!
  * Tx and Rx timers
  */
@@ -274,9 +281,15 @@ void SX127xInit( RadioEvents_t *events )
 #endif
     
     // Initialize driver timeout timers
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD    
+    TimerInit( &TxTimeoutTimer, SX127xOnTimeoutIrqEvent );
+    TimerInit( &RxTimeoutTimer, SX127xOnTimeoutIrqEvent );
+    TimerInit( &RxTimeoutSyncWord, SX127xOnTimeoutIrqEvent );
+#else
     TimerInit( &TxTimeoutTimer, SX127xOnTimeoutIrq );
     TimerInit( &RxTimeoutTimer, SX127xOnTimeoutIrq );
     TimerInit( &RxTimeoutSyncWord, SX127xOnTimeoutIrq );
+#endif  
 
     SX127xReset( );
     

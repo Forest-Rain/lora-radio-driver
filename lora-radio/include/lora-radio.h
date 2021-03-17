@@ -63,12 +63,13 @@ typedef enum
  */
 typedef enum
 {
-    EV_LORA_RADIO_IRQ0_FIRED    =   0x0001,
-    EV_LORA_RADIO_IRQ1_FIRED    =   0x0002,
-    EV_LORA_RADIO_IRQ2_FIRED    =   0x0004,
-    EV_LORA_RADIO_IRQ3_FIRED    =   0x0008,
-    EV_LORA_RADIO_IRQ4_FIRED    =   0x0010,
-    EV_LORA_RADIO_IRQ5_FIRED    =   0x0020,
+    EV_LORA_RADIO_IRQ0_FIRED       =   0x0001,
+    EV_LORA_RADIO_IRQ1_FIRED       =   0x0002,
+    EV_LORA_RADIO_IRQ2_FIRED       =   0x0004,
+    EV_LORA_RADIO_IRQ3_FIRED       =   0x0008,
+    EV_LORA_RADIO_IRQ4_FIRED       =   0x0010,
+    EV_LORA_RADIO_IRQ5_FIRED       =   0x0020,
+    EV_LORA_RADIO_TIMEOUT_FIRED    =   0x0040, /* sx127x tx\rx timeout*/
 }RadioDioIrqEvent_t;
 
 /*!

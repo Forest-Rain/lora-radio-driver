@@ -200,6 +200,12 @@ void SX127xOnDio5IrqEvent( void *args )
     rt_event_send(&lora_radio_event, EV_LORA_RADIO_IRQ5_FIRED);
 #endif
 }
+void SX127xOnTimeoutIrqEvent( void )
+{
+#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
+    rt_event_send(&lora_radio_event, EV_LORA_RADIO_TIMEOUT_FIRED);
+#endif
+}
 
 #else
 void RadioInit( RadioEvents_t *events )
