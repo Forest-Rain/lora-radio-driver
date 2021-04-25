@@ -662,11 +662,7 @@ static int lora(int argc, char *argv[])
 		else if (!rt_strcmp(cmd0, "config")) 
         {
             const char *cmd1 = argv[2];
-#ifdef LORA_RADIO_DRIVER_USING_LORA_HARDWARE_DEBUG  
-            extern uint8_t board_radio_tcxo_config;
-            extern uint8_t board_radio_rfo_config;
-            const char *rfo_config[3] = { "AUTO", "LP", "HP"};
-#endif            
+          
             /* config radio paramters, such as frequency,txPower,sf,bw...*/
             if (!rt_strcmp(cmd1, "freq"))  
             {

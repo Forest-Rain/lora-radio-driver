@@ -236,6 +236,7 @@ RT-Thread online packages --->
 | 2 | lora cw <para1> <para2> | \<para1\>:频点，单位Hz<br>\<para2\>:功率，单位dBm|
 | 3 | lora ping <para1> <para2> | \<para1\> : 主机\从机<br>-m 主机<br>-s 从机<br> \<para2\>: 发送数据包个数 |
 | 4 | lora rx  | 接收数据包，同时以16进制格式与ASCII码显示数据内容 |
+| 5 | lora config <para1> <para2> | \<para1\>:radio参数，字符表示<br/>  freq 表示频率，单位Hz<br/>  power 表示发射功率，单位dbm<br/>  sf 表示扩频因子，有效值: 7~12<br/>  bw表示带宽，有效值: 0 (125kHz)、1 (250KHz)、2 (500KHz)<br/>  public表示同步字，有效值: 0 （sync = 0x12), 1  (sync = 0x34)<br/>  iq 表示iq反转，有效值: 0 (iq不反转)，1 (iq反转)<br/>\<para2\>:radio参数的具体值 |
 
 ![image.png](https://github.com/Forest-Rain/lora-radio-driver/raw/master/doc/pics/03_lora-ping_SX1278-SX1268-TRX-test.png)
 lora ping 双向通信测试示例(SX1278 <-> SX1268)
@@ -369,9 +370,14 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
    - 优化 lora-radio-test-shell.c 功能
      - 新增接收超时时间设置
  - V1.2 版本 2020-10-14
-   - 新增硬件测试平台
+    - 新增硬件测试平台
       - ART-Pi+LSD4RF-2F717N30(SX1268)模块平台 (470~510MHz频段)
       - ART-Pi+LSD4RF-2R717N40(SX1268)模块平台 (470~510MHz频段)
       - ART-Pi+LSD4RF-2R822N30(SX1262)模块平台 (868/915MHz频段)
+ - V1.4.0 版本 2021-04-25
+   - 重设计lora config命令，便于快速配置单个radio参数
+   - ping数据包长度最大支持255Byte，可通过shell自定义ping测试数据包长度
+   - shell新增加iq version、public network参数设置
+   - 使用LORA_RADIO_DEBUG_LOG代替rt_kprintf
 # 6 问题和建议
 如果有什么问题或者建议欢迎提交 [Issue](https://github.com/Forest-Rain/lora-radio-driver/issues) 进行讨论。
