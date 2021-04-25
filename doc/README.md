@@ -234,7 +234,7 @@ RT-Thread online packages --->
 | --- | --- | --- |
 | 1 | lora probe | 测试lora设备(SPI)访问是否正常 |
 | 2 | lora cw <para1> <para2> | \<para1\>:频点，单位Hz<br>\<para2\>:功率，单位dBm|
-| 3 | lora ping <para1> <para2> | \<para1\> : 主机\从机<br>-m 主机<br>-s 从机<br> \<para2\>: 发送数据包个数 |
+| 3 | lora ping <para1> <para2><para3> | \<para1\> : 主机\从机<br>-m 主机<br>-s 从机<br> \<para2\>: 发送数据包个数<br>\<para3\>: pingc测试数据包长度,最大支持255Byte |
 | 4 | lora rx  | 接收数据包，同时以16进制格式与ASCII码显示数据内容 |
 | 5 | lora config <para1> <para2> | \<para1\>:radio参数，字符表示<br/>  freq 表示频率，单位Hz<br/>  power 表示发射功率，单位dbm<br/>  sf 表示扩频因子，有效值: 7~12<br/>  bw表示带宽，有效值: 0 (125kHz)、1 (250KHz)、2 (500KHz)<br/>  public表示同步字，有效值: 0 （sync = 0x12), 1  (sync = 0x34)<br/>  iq 表示iq反转，有效值: 0 (iq不反转)，1 (iq反转)<br/>\<para2\>:radio参数的具体值 |
 
