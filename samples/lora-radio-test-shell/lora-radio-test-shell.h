@@ -11,6 +11,10 @@
 #ifndef __LORA_RADIO_TEST_SHELL_H__
 #define __LORA_RADIO_TEST_SHELL_H__
 
+/* application debug */
+#ifndef LR_DBG_SHELL
+#define LR_DBG_SHELL                          0
+#endif
 
 #if defined( PHY_REGION_AS923 )
 
@@ -81,11 +85,19 @@
 #define FSK_BANDWIDTH                               50000     // Hz >> SSB in sx127x
 #define FSK_AFC_BANDWIDTH                           83333     // Hz
 
-#elif defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX126X)
+#elif defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX126X) || defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_LLCC68 )
+
+#define FSK_BANDWIDTH                               100000    // Hz >> DSB in sx126x 
+#define FSK_AFC_BANDWIDTH                           166666    // Hz >> Unused in sx126x
+
+#elif defined( LORA_RADIO_DRIVER_USING_LORA_SOC_STM32WL )
 
 #define FSK_BANDWIDTH                               100000    // Hz >> DSB in sx126x
 #define FSK_AFC_BANDWIDTH                           166666    // Hz >> Unused in sx126x
+#elif defined( LORA_RADIO_DRIVER_USING_LORA_CHIP_SX128X )
 
+#define FSK_BANDWIDTH                               100000    // Hz >> DSB in sx126x
+#define FSK_AFC_BANDWIDTH                           166666    // Hz >> Unused in sx126x
 #else
     #error "Please define a lora-shield in the compiler options."
 #endif
@@ -93,8 +105,9 @@
 #define FSK_PREAMBLE_LENGTH                         5         // Same for Tx and Rx
 #define FSK_FIX_LENGTH_PAYLOAD_ON                   false
 
+#define TX_TIMEOUT_VALUE                            1000
 #define RX_TIMEOUT_VALUE                            1000
-#define BUFFER_SIZE                                 64 // Define the payload size here
+#define BUFFER_SIZE                                 256 // Define the payload size here
 
 #define LORA_MASTER_DEVADDR 0x11223344
 #define LORA_SLAVER_DEVADDR 0x01020304
@@ -120,6 +133,8 @@ typedef struct
     uint8_t sf;    // spreadfactor
     uint8_t bw;    // bandwidth
     uint8_t cr;    // coderate
+    uint8_t iq_inversion;
+    bool public_network;
 
     // FSK
     uint32_t fdev;
