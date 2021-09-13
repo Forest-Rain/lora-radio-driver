@@ -60,7 +60,9 @@
     #error "Please define a frequency band in the compiler options."
 #endif
 
-#define TX_OUTPUT_POWER                             14        // dBm
+#define TX_RX_FREQUENCE_OFFSET                      0   // 0           TX = RX
+                                                        // 1800000     RX = TX+1.8M
+#define TX_OUTPUT_POWER                             15//14    // dBm
 
 #define LORA_BANDWIDTH                              0         // [0: 125 kHz,
                                                               //  1: 250 kHz,
@@ -108,6 +110,7 @@
 #define TX_TIMEOUT_VALUE                            1000
 #define RX_TIMEOUT_VALUE                            1000
 #define BUFFER_SIZE                                 256 // Define the payload size here
+#define MIN_TETS_APP_DATA_SIZE                      17 // for PING protocol
 
 #define LORA_MASTER_DEVADDR 0x11223344
 #define LORA_SLAVER_DEVADDR 0x01020304
@@ -126,7 +129,9 @@
 typedef struct 
 {
     RadioModems_t modem; // LoRa Modem \ FSK modem
-    uint32_t frequency;
+    uint32_t tx_frequency;
+    uint32_t rx_frequency;
+    int32_t trx_frequency_offset;
     int8_t txpower;
     
     // LoRa

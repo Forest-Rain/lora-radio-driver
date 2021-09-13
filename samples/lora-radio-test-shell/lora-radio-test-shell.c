@@ -23,6 +23,8 @@
 #define RX_LED_ON
 #define RX_LED_OFF
 
+#define LORA_RADIO_TIMESTAMP_TO_MS(x) ((x) * 1000 / RT_TICK_PER_SECOND)
+
 static struct rt_event radio_event;
 
 const static uint8_t PingMsg[] = "PING";
@@ -42,7 +44,7 @@ static int32_t snr_value_total = 0;
 
 static uint32_t master_address = LORA_MASTER_DEVADDR;
 static uint32_t slaver_address = LORA_SLAVER_DEVADDR;
-static uint8_t payload_len = 32; // max support 255
+static uint8_t payload_len = 32;//1~255
 
 static uint32_t tx_seq_cnt = 0;
 static uint16_t max_tx_nbtrials = 10;
@@ -61,8 +63,11 @@ static bool rx_only_flag = false;
 
 static lora_radio_test_t lora_radio_test_paras = 
 {
-    .frequency = RF_FREQUENCY,
-    .txpower   = TX_OUTPUT_POWER,
+    .tx_frequency = RF_FREQUENCY,
+    .trx_frequency_offset = TX_RX_FREQUENCE_OFFSET,
+    .rx_frequency = RF_FREQUENCY + TX_RX_FREQUENCE_OFFSET,
+    
+    .txpower      = TX_OUTPUT_POWER,
     
     // lora
     .modem     = MODEM_LORA,
@@ -141,7 +146,7 @@ static void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr 
         snr_value_min = snr_value_max = snr;
     }
     
-    // update
+    // update link info
     if( rssi_value < rssi_value_min )
     {
         rssi_value_min = rssi_value;
@@ -182,6 +187,7 @@ static void OnRxTimeout( void )
 
 static void OnRxError( void )
 {
+    rx_error_cnt++; 
     Radio.Sleep( );
     rt_event_send(&radio_event, EV_RADIO_RX_ERROR);
 }
@@ -224,8 +230,17 @@ static void send_ping_packet(uint32_t src_addr,uint32_t dst_addr,uint8_t len)
     {
         Buffer[index + i] = i;
     }
+    
+    Radio.SetChannel( lora_radio_test_paras.tx_frequency );
     rt_thread_mdelay(1);
     Radio.Send( Buffer, len );
+}
+
+void init_tx_rx_timeout(void)
+{
+    /* unit£º ms */
+    uint32_t packet_toa = Radio.TimeOnAir(lora_radio_test_paras.modem,lora_radio_test_paras.bw,lora_radio_test_paras.sf,lora_radio_test_paras.cr,LORA_PREAMBLE_LENGTH, LORA_FIX_LENGTH_PAYLOAD_ON_DISABLE,payload_len,true);
+    tx_timeout = rx_timeout = packet_toa + 1000;  
 }
 
 static bool lora_radio_test_init(void)
@@ -265,13 +280,18 @@ static bool lora_radio_test_init(void)
         }
         else
         {
-            LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "lora radio Init failed!\n");
+            LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "lora radio init failed!\n");
             
             return false;
         }
+  
+        Radio.Standby( );
+        Radio.Sleep( );
     }
     return true;
 }
+INIT_APP_EXPORT(lora_radio_test_init);
+
 
 static void radio_rx(void)
 {
@@ -280,6 +300,7 @@ static void radio_rx(void)
     {
         timeout = rx_timeout;
     }
+    Radio.SetChannel( lora_radio_test_paras.rx_frequency );
     Radio.Rx( timeout );
 }
 
@@ -296,9 +317,12 @@ static void lora_radio_test_thread_entry(void* parameter)
             switch( ev )
             {
                 case EV_RADIO_INIT:
-                    
-                    Radio.SetChannel( lora_radio_test_paras.frequency );
-
+           
+                    init_tx_rx_timeout();
+                
+                    Radio.SetChannel( lora_radio_test_paras.tx_frequency );
+                    lora_radio_test_paras.rx_frequency = lora_radio_test_paras.tx_frequency + lora_radio_test_paras.trx_frequency_offset;
+                
                     if( lora_radio_test_paras.modem == MODEM_LORA )
                     {
                         /* default private syncword for p2p test */
@@ -348,9 +372,10 @@ static void lora_radio_test_thread_entry(void* parameter)
                         {
                             LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "Slaver Address(SA):[0x%X]\n",slaver_address);
                         }
-                        LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "Stay to Rx Continuous with freq=%d, SF=%d, BW=%s, CR=%d, Public_Network:%d, IQ_Inversion:%d", lora_radio_test_paras.frequency,lora_radio_test_paras.sf, 
+                        LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "Stay to Rx Continuous with freq=%d, SF=%d, BW=%s, CR=%d, Public_Network:%d, IQ_Inversion:%d", lora_radio_test_paras.rx_frequency,lora_radio_test_paras.sf, 
                                                                                                                                                                        bandwidth_string[lora_radio_test_paras.bw], lora_radio_test_paras.cr, 
                                                                                                                                                                        lora_radio_test_paras.public_network,lora_radio_test_paras.iq_inversion);
+                        Radio.SetChannel( lora_radio_test_paras.rx_frequency );
                         Radio.Rx( 0 );
                     }
                     else
@@ -390,6 +415,7 @@ static void lora_radio_test_thread_entry(void* parameter)
                             }
                             else /* valid reception but neither a PING ACK */
                             {   
+                                Radio.SetChannel( lora_radio_test_paras.rx_frequency );
                                 Radio.Rx( RX_TIMEOUT_VALUE );
                             }
                         }
@@ -427,6 +453,7 @@ static void lora_radio_test_thread_entry(void* parameter)
                                 rx_correct_cnt++;
                                 
                                 /* RX continuous */
+                                Radio.SetChannel( lora_radio_test_paras.rx_frequency );
                                 Radio.Rx( 0 ); 
               
                                 LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "Received: Totals=%d,bytes=%d,timestamp=%d,rssi=%d,snr=%d\n",rx_correct_cnt, BufferSize, rx_timestamp, rssi_value, snr_value );
@@ -442,12 +469,18 @@ static void lora_radio_test_thread_entry(void* parameter)
                                 RX_LED_TOGGLE;
                                 /* echo the receive packet to master */
                                 {
-                                    rt_thread_mdelay(1);
+                                    /* wait for master going to be ready to rx */
+                                    rt_thread_mdelay(5);
+                                    Radio.SetChannel( lora_radio_test_paras.tx_frequency );
                                     Radio.Send( Buffer, BufferSize );
                                 }
+#ifdef RT_USING_ULOG
+                                ulog_hexdump(LOG_TAG,16,Buffer,BufferSize);
+#endif
                             }                            
                             else /* valid reception but not a PING as expected */
                             {    
+                                Radio.SetChannel( lora_radio_test_paras.rx_frequency );
                                 Radio.Rx( 0 ); 
                             }
                         }
@@ -462,9 +495,9 @@ static void lora_radio_test_thread_entry(void* parameter)
             case EV_RADIO_RX_TIMEOUT:
                 rx_timeout_cnt++;
                 LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "Request [SA=0x%X] timed out: seqno=%d, time=%d ms", slaver_address, tx_seq_cnt, LORA_RADIO_TIMESTAMP_TO_MS( rx_timestamp - tx_timestamp ));
-             case EV_RADIO_RX_ERROR:
-             case EV_RADIO_TX_START:
-                    if( master_flag == true )
+            case EV_RADIO_RX_ERROR:
+            case EV_RADIO_TX_START:
+                    if( master_flag == true && ev != EV_RADIO_RX_ERROR )
                     {
                         /* tx_seq_cnt start from 0 */
                         if( tx_seq_cnt < max_tx_nbtrials ) 
@@ -475,7 +508,7 @@ static void lora_radio_test_thread_entry(void* parameter)
                                 uint32_t packet_toa = Radio.TimeOnAir(lora_radio_test_paras.modem,lora_radio_test_paras.bw,lora_radio_test_paras.sf,lora_radio_test_paras.cr,LORA_PREAMBLE_LENGTH, LORA_FIX_LENGTH_PAYLOAD_ON_DISABLE,payload_len,true);
                                 LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "Master Address(MA):[0x%X]",master_address);
                                 LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "Pinging [SA=0x%X] with %u bytes(ToA=%d ms) of data for %d counters:", slaver_address, payload_len, packet_toa, max_tx_nbtrials);
-                                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "With radio parameters: freq=%d, TxPower=%d, SF=%d, BW=%s, CR=%d, Public_Network:%d, IQ_Inversion:%d", lora_radio_test_paras.frequency, lora_radio_test_paras.txpower, 
+                                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "With radio parameters: tx freq=%d, rx freq=%d, TxPower=%d, SF=%d, BW=%s, CR=%d, Public_Network:%d, IQ_Inversion:%d", lora_radio_test_paras.tx_frequency,lora_radio_test_paras.rx_frequency, lora_radio_test_paras.txpower, 
                                                                                                                                                                                         lora_radio_test_paras.sf, bandwidth_string[lora_radio_test_paras.bw], lora_radio_test_paras.cr,
                                                                                                                                                                                         lora_radio_test_paras.public_network,lora_radio_test_paras.iq_inversion);
                             }
@@ -511,6 +544,7 @@ static void lora_radio_test_thread_entry(void* parameter)
                     }
                     else
                     {
+                        Radio.SetChannel( lora_radio_test_paras.rx_frequency );
                         Radio.Rx( 0 );
                     }
                     break;
@@ -531,11 +565,11 @@ static void lora_radio_test_thread_entry(void* parameter)
 
 const char* lora_help_info[] = 
 {
-    [CMD_LORA_CHIP_PROBE_INDEX]       = "lora probe             - lora radio probe",
-    [CMD_LORA_CHIP_CONFIG_INDEX]      = "lora config<para><val> - lora radio config parameters", 
-    [CMD_LORA_TX_CW_INDEX]            = "lora cw <freq>,<power> - tx carrier wave",
-    [CMD_LORA_PING_INDEX]             = "lora ping <para1><..>  - ping <-m: master,-s: slaver>",   
-    [CMD_LORA_RX_PACKET_INDEX]        = "lora rx <timeout>      - rx data only(sniffer)",  
+    [CMD_LORA_CHIP_PROBE_INDEX]       = "lora probe                 - lora radio probe",
+    [CMD_LORA_CHIP_CONFIG_INDEX]      = "lora config<para><val>     - config parameters<freq><freq_offset><power><sf><bw><public><iq>", 
+    [CMD_LORA_TX_CW_INDEX]            = "lora cw <freq>,<power>     - tx carrier wave",
+    [CMD_LORA_PING_INDEX]             = "lora ping <para1><..>      - ping <-m: master,-s: slaver>",   
+    [CMD_LORA_RX_PACKET_INDEX]        = "lora rx <rx_only><timeout> - rx data (or sniffer)",  
 };
 
 /* LoRa Radio Test Shell */
@@ -546,7 +580,7 @@ static int lora(int argc, char *argv[])
     if (argc < 2)
     {   
         /* parameter error */
-        LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "Usage:\n");
+        LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "LoRa Radio(%s) Usage:\n",LORA_RADIO_SW_VERSION);
         for (i = 0; i < sizeof(lora_help_info) / sizeof(char*); i++) 
         {
             LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "%s", lora_help_info[i]);
@@ -581,7 +615,7 @@ static int lora(int argc, char *argv[])
             uint8_t timeout = 0;
             if (argc >= 3) 
             {
-                lora_radio_test_paras.frequency = atol(argv[2]);
+                lora_radio_test_paras.tx_frequency = atol(argv[2]);
             }
             if (argc >= 4) 
             {
@@ -591,7 +625,7 @@ static int lora(int argc, char *argv[])
             {
                 timeout = atol(argv[4]);
             }
-            Radio.SetTxContinuousWave( lora_radio_test_paras.frequency, lora_radio_test_paras.txpower, timeout);
+            Radio.SetTxContinuousWave( lora_radio_test_paras.tx_frequency, lora_radio_test_paras.txpower, timeout);
         }
         else if (!rt_strcmp(cmd0, "ping")) 
         {       
@@ -621,10 +655,11 @@ static int lora(int argc, char *argv[])
                  {
                     /* payload_len for setup tx payload length */
                     payload_len = atoi(argv[4]);
-                    
-                    /* unit£º ms */
-                    uint32_t packet_toa = Radio.TimeOnAir(lora_radio_test_paras.modem,lora_radio_test_paras.bw,lora_radio_test_paras.sf,lora_radio_test_paras.cr,LORA_PREAMBLE_LENGTH, LORA_FIX_LENGTH_PAYLOAD_ON_DISABLE,payload_len,true);
-                    tx_timeout = rx_timeout = packet_toa + 1000;         
+                     
+                    if( payload_len < MIN_TETS_APP_DATA_SIZE )
+                    {
+                        LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "Waring: This size will not supported [lora ping]");
+                    }
                  }
                  
                  if( argc >= 6 )
@@ -640,6 +675,7 @@ static int lora(int argc, char *argv[])
                  }
             } 
 
+            
             rt_event_send(&radio_event, EV_RADIO_INIT);
         }
         else if( !rt_strcmp(cmd0, "rx"))
@@ -662,15 +698,30 @@ static int lora(int argc, char *argv[])
 		else if (!rt_strcmp(cmd0, "config")) 
         {
             const char *cmd1 = argv[2];
-          
+       
             /* config radio paramters, such as frequency,txPower,sf,bw...*/
             if (!rt_strcmp(cmd1, "freq"))  
             {
                 if (argc >= 4)
                 {                    
-                    lora_radio_test_paras.frequency = atol(argv[3]);
+                    lora_radio_test_paras.tx_frequency = atol(argv[3]);
                 }
-                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "Frequency: %d",lora_radio_test_paras.frequency);
+                // RX = TX + offset
+                lora_radio_test_paras.rx_frequency = lora_radio_test_paras.tx_frequency + lora_radio_test_paras.trx_frequency_offset;
+                
+                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "Tx Frequency: %d",lora_radio_test_paras.tx_frequency);
+                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "Rx Frequency: %d",lora_radio_test_paras.rx_frequency);
+            }
+            else if (!rt_strcmp(cmd1, "foffset"))  
+            {
+                if (argc >= 4)
+                {                    
+                    lora_radio_test_paras.trx_frequency_offset = atol(argv[3]);
+                }
+                
+                lora_radio_test_paras.rx_frequency = lora_radio_test_paras.tx_frequency + lora_radio_test_paras.trx_frequency_offset;
+             
+                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "Tx and Rx Frequency Offset: %d",lora_radio_test_paras.trx_frequency_offset);
             }
             else if (!rt_strcmp(cmd1, "power")) 
             {
@@ -684,17 +735,45 @@ static int lora(int argc, char *argv[])
             {
                 if (argc >= 4)
                 {
-                    lora_radio_test_paras.sf = atoi(argv[3]);
+                    if (!rt_strcmp(argv[3], "?")) 
+                    {
+                        LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "SF:7|8|9|10|11|12");
+                    }
+                    else
+                    {                        
+                        lora_radio_test_paras.sf = atoi(argv[3]);
+                    }
                 }
                 LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "SF: %d",lora_radio_test_paras.sf);
             }
             else if (!rt_strcmp(cmd1, "bw")) 
             {
+                uint16_t bw;
                 if (argc >= 4)
                 {
-                    lora_radio_test_paras.bw = atoi(argv[3]);
+                    if (!rt_strcmp(argv[3], "?")) 
+                    {
+                        LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "BW:0(125kHz)|1(250kHz)|2(500kHz)");
+                    }
+                    else
+                    {
+                        bw = atoi(argv[3]);
+                    }
+                    
+                    if(bw == 125)
+                    {
+                        lora_radio_test_paras.bw = 0;
+                    }
+                    else if(bw == 250)
+                    {
+                        lora_radio_test_paras.bw = 1;
+                    }
+                    else if(bw == 500)
+                    {
+                        lora_radio_test_paras.bw = 2;
+                    }
                 }
-                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "BW: %s",bandwidth_string[lora_radio_test_paras.bw]);
+                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "BW: %d(%s)",lora_radio_test_paras.bw, bandwidth_string[lora_radio_test_paras.bw]);
             }
             else if (!rt_strcmp(cmd1, "public"))
             {
@@ -711,17 +790,18 @@ static int lora(int argc, char *argv[])
                     lora_radio_test_paras.iq_inversion = atoi(argv[3]);
                 }
                 LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "IQ Inversion: %d",lora_radio_test_paras.iq_inversion);
-            }   
-
-            // display lora radio parameters
+            }
             if (argc < 3) 
             {
-                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "Frequency      {freq}:   %d",lora_radio_test_paras.frequency);
-                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "TxPower        {power}:  %d",lora_radio_test_paras.txpower);
-                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "SF             {sf}:     %d",lora_radio_test_paras.sf);
-                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "BW             {bw}:     %s",bandwidth_string[lora_radio_test_paras.bw]);
-                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "Public Network {public}: %d",lora_radio_test_paras.public_network);
-                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "IQ Inversion   {iq}:     %d",lora_radio_test_paras.iq_inversion);
+                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "-items-        -{cmd}-   -Value-");
+                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, " Tx Freq        {freq}:   %d",lora_radio_test_paras.tx_frequency);
+                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, " Rx Freq        {N.A.}:   %d",lora_radio_test_paras.rx_frequency);
+                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, " RX Freq Offset {foffset}:%d",lora_radio_test_paras.trx_frequency_offset);
+                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, " TxPower        {power}:  %d",lora_radio_test_paras.txpower);
+                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, " SF             {sf}:     %d",lora_radio_test_paras.sf);
+                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, " BW             {bw}:     %d(%s kHz)",lora_radio_test_paras.bw,bandwidth_string[lora_radio_test_paras.bw]);
+                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, " Public Network {public}: %d",lora_radio_test_paras.public_network);
+                LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, " IQ Inversion   {iq}:     %d",lora_radio_test_paras.iq_inversion);
             }
         }            
     }

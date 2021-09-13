@@ -29,6 +29,13 @@
 #include "lora-spi-sx126x.h"
 #include "sx126x-board.h"
 
+#ifdef RT_USING_PM
+#include "drivers/pm.h"
+#ifndef PM_RADIO_ID
+#define PM_RADIO_ID  ( PM_MODULE_MAX_ID - 3 )
+#endif
+#endif
+
 #define LOG_TAG "PHY.LoRa.SX126X"
 #define LOG_LEVEL  LOG_LVL_DBG
 #include "lora-radio-debug.h"
@@ -571,7 +578,13 @@ static void lora_radio_thread_entry(void* parameter)
                                 RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
                                 RT_WAITING_FOREVER, &ev) == RT_EOK)
         {
+#ifdef RT_USING_PM
+            rt_pm_module_request(PM_RADIO_ID, PM_SLEEP_MODE_NONE);
             RadioIrqProcess();
+            rt_pm_module_release(PM_RADIO_ID, PM_SLEEP_MODE_NONE);
+#else
+            RadioIrqProcess();
+#endif
         }
     }
 }

@@ -79,6 +79,7 @@ void SX126xIoIrqInit( DioIrqHandler dioIrq )
 
 void SX126xIoDeInit( void )
 {
+    SX126xAntSwOff();
 }
 
 void SX126xIoDbgInit( void )

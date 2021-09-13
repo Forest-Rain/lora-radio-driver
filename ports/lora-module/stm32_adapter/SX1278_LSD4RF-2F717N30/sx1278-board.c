@@ -174,6 +174,7 @@ void SX127xIoDeInit( void )
 //    GpioInit( &SX127x.DIO4, RADIO_DIO_4, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 //    GpioInit( &SX127x.DIO5, RADIO_DIO_5, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 #endif /*end of USING_LORA_RADIO_DRIVER_RTOS_SUPPORT */
+    SX127xAntSwDeInit();
 }
 
 void SX127xIoDbgInit( void )
