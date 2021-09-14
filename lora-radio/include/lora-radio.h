@@ -29,8 +29,8 @@
 #include <stdbool.h>
 
 /* LoRa Radio software version number */
-#define LORA_RADIO_SW_VERSION                 "1.4.2"
-#define LORA_RADIO_SW_VERSION_NUM              0x10402
+#define LORA_RADIO_SW_VERSION                 "1.4.3"
+#define LORA_RADIO_SW_VERSION_NUM              0x10403
 
 /*!
  * Begins critical section

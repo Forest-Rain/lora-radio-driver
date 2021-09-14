@@ -290,8 +290,7 @@ static bool lora_radio_tester_init(void)
     }
     return true;
 }
-INIT_APP_EXPORT(lora_radio_tester_init);
-
+//INIT_APP_EXPORT(lora_radio_tester_init);
 
 static void radio_rx(void)
 {
