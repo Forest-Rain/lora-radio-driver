@@ -1,5 +1,5 @@
 /*!
- * \file      lora-radio-test-shell.c
+ * \file      lora-radio-tester.c
  *
  * \brief     lora radio shell for test implementation
  *
@@ -10,7 +10,7 @@
 #include "lora-radio-rtos-config.h"
 #include "lora-radio.h"
 #include "lora-radio-timer.h"
-#include "lora-radio-test-shell.h"
+#include "lora-radio-tester.h"
 
 #define LOG_TAG "APP.LoRa.Radio.Shell"
 #include "lora-radio-debug.h"
@@ -243,7 +243,7 @@ void init_tx_rx_timeout(void)
     tx_timeout = rx_timeout = packet_toa + 1000;  
 }
 
-static bool lora_radio_test_init(void)
+static bool lora_radio_tester_init(void)
 {
     if( lora_chip_initialized == false )
     {
@@ -290,7 +290,7 @@ static bool lora_radio_test_init(void)
     }
     return true;
 }
-INIT_APP_EXPORT(lora_radio_test_init);
+INIT_APP_EXPORT(lora_radio_tester_init);
 
 
 static void radio_rx(void)
@@ -591,7 +591,7 @@ static int lora(int argc, char *argv[])
     {
         const char *cmd0 = argv[1];
 				
-        if( lora_radio_test_init() == false )
+        if( lora_radio_tester_init() == false )
         {
             LORA_RADIO_DEBUG_LOG(LR_DBG_SHELL, LOG_LVL_INFO, "LoRa Chip Init Failed");
             return 0;
@@ -807,5 +807,5 @@ static int lora(int argc, char *argv[])
     }
     return 1;
 }
-MSH_CMD_EXPORT(lora, lora radio test shell);
+MSH_CMD_EXPORT(lora, lora radio tester);
 

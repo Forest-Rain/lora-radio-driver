@@ -5,8 +5,8 @@ cwd   = GetCurrentDir()
 include_path = [cwd]
 
 
-if GetDepend('LORA_RADIO_DRIVER_USING_LORA_RADIO_TEST_SHELL'):
-    src += Glob('lora-radio-test-shell/lora-radio-tester.c')
+if GetDepend('LORA_RADIO_DRIVER_USING_LORA_RADIO_TESTER'):
+    src += Glob('lora-radio-tester/lora-radio-tester.c')
 
 
 group = DefineGroup('lora-radio-driver/sample', src, depend = ['PKG_USING_LORA_RADIO_DRIVER'], CPPPATH = include_path)

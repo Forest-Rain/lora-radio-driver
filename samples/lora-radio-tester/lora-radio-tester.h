@@ -1,5 +1,5 @@
 /*!
- * \file      lora-radio-test-shell.h
+ * \file      lora-radio-tester.h
  *
  * \brief     lora radio test implementation
  *
@@ -8,8 +8,8 @@
  * \author    Forest-Rain
  */
 
-#ifndef __LORA_RADIO_TEST_SHELL_H__
-#define __LORA_RADIO_TEST_SHELL_H__
+#ifndef __LORA_RADIO_TESTER_H__
+#define __LORA_RADIO_TESTER_H__
 
 /* application debug */
 #ifndef LR_DBG_SHELL
