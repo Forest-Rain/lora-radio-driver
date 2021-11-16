@@ -47,7 +47,7 @@ static uint32_t slaver_address = LORA_SLAVER_DEVADDR;
 static uint8_t payload_len = 32;//1~255
 
 static uint32_t tx_seq_cnt = 0;
-static uint16_t max_tx_nbtrials = 10;
+static uint32_t max_tx_nbtrials = 10;
 static uint32_t rx_correct_cnt = 0;
 static uint32_t rx_error_cnt = 0;
 static uint32_t rx_timeout_cnt = 0;

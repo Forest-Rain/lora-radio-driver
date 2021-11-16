@@ -11,7 +11,11 @@
 #ifndef __LORA_RADIO_DEBUG_H__
 #define __LORA_RADIO_DEBUG_H__
 
-#if ( defined LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD ) || ( defined LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD_NANO )
+#ifndef USE_NO_RTOS
+#include "rtconfig.h"
+#endif
+
+#if ( defined LORA_RADIO_DRIVER_USING_RTOS_RT_THREAD ) || ( defined LORA_RADIO_DRIVER_USING_RTOS_RT_THREAD_NANO )
 #ifdef RT_USING_ULOG
 #include <rtdbg.h>
 #include <ulog.h> 
@@ -27,11 +31,6 @@
 
 /* Turn on some of these (set to non-zero) to debug LoRa Radio */
 
-/* application */
-#ifndef LR_DBG_APP
-#define LR_DBG_APP                          0
-#endif
-
 /* API interface */
 #ifndef LR_DBG_INTERFACE
 #define LR_DBG_INTERFACE                    0
@@ -42,12 +41,17 @@
 #define LR_DBG_CHIP                         0
 #endif
 
-/* spi driver ,eg: lora-spi.c*/
+/* spi driver ,eg: lora-spi-board.c*/
 #ifndef LR_DBG_SPI
 #define LR_DBG_SPI                          0
 #endif
 
-#if ( defined LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD ) || ( defined LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD_NANO )
+/* board driver ,eg: sx1268-board.c*/
+#ifndef LR_DBG_BOARD
+#define LR_DBG_BOARD                        0
+#endif
+
+#if ( defined LORA_RADIO_DRIVER_USING_RTOS_RT_THREAD ) || ( defined LORA_RADIO_DRIVER_USING_RTOS_RT_THREAD_NANO )
 
 #if defined RT_USING_ULOG
 #define LORA_RADIO_DEBUG_LOG(type, level, ...)                                \

@@ -28,10 +28,13 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-/* LoRa Radio software version number */
-#define LORA_RADIO_SW_VERSION                 "1.4.3"
-#define LORA_RADIO_SW_VERSION_NUM              0x10403
+/*!
+ * LoRa Radio software version number
+ */
+#define LORA_RADIO_SW_VERSION                 "1.4.5"
+#define LORA_RADIO_SW_VERSION_NUM              0x10405
 
+#ifdef LORA_RADIO_DRIVER_USING_RTOS_RT_THREAD
 /*!
  * Begins critical section
  */
@@ -41,6 +44,21 @@
  * Ends critical section
  */
 #define LORA_RADIO_CRITICAL_SECTION_END( ) rt_hw_interrupt_enable(level)
+#else
+/*!
+ * Begins critical section
+ */
+#define LORA_RADIO_CRITICAL_SECTION_BEGIN(x)  register uint32_t level; level = __get_PRIMASK(); __disable_irq();
+
+/*!
+ * Ends critical section
+ */
+#define LORA_RADIO_CRITICAL_SECTION_END(x)    __set_PRIMASK(level)
+#endif
+
+/** @addtogroup LORA_RADIO_UPPER_API
+  * @{
+  */
 
 /*!
  * Radio driver supported modems
@@ -49,6 +67,9 @@ typedef enum
 {
     MODEM_FSK = 0,
     MODEM_LORA,
+    MODEM_BPSK,       //!<for STM32WL
+    MODEM_SIGFOX_TX,  //!<for STM32WL
+    MODEM_SIGFOX_RX,  //!<for STM32WL    
 }RadioModems_t;
 
 /*!
@@ -73,7 +94,7 @@ typedef enum
     EV_LORA_RADIO_IRQ3_FIRED       =   0x0008,
     EV_LORA_RADIO_IRQ4_FIRED       =   0x0010,
     EV_LORA_RADIO_IRQ5_FIRED       =   0x0020,
-    EV_LORA_RADIO_TIMEOUT_FIRED    =   0x0040, /* sx127x tx\rx timeout*/
+    EV_LORA_RADIO_TIMEOUT_FIRED    =   0x0040, //!< sx127x tx\rx timeout
 }RadioDioIrqEvent_t;
 
 /*!
@@ -121,6 +142,7 @@ typedef struct
      * \param [IN] channelDetected    Channel Activity detected during the CAD
      */
     void ( *CadDone ) ( bool channelActivityDetected );
+
 }RadioEvents_t;
 
 /*!
@@ -397,6 +419,7 @@ struct Radio_s
      * \brief radio spi check
      */
     uint8_t ( *Check )( void );
+ 
     /*
      * The next functions are available only on SX126x radios.
      */
@@ -418,7 +441,64 @@ struct Radio_s
      * \param [in]  sleepTime     Structure describing sleep timeout value
      */
     void ( *SetRxDutyCycle ) ( uint32_t rxTime, uint32_t sleepTime );
+    
+    /*!
+     * @brief Sets the Transmitter in continuous PRBS mode for STM32WL
+     *
+     * \remark power and datarate shall be configured prior calling TxPrbs
+     */
+    void (*TxPrbs) ( void );
+    /*!
+     * @brief Sets the Transmitter in continuous unmodulated Carrier mode for STM32WL
+     */
+    void (*TxCw) ( int8_t power );
+ 
+    /*!
+     * \brief radio rxdone timestamp
+     */
+    uint32_t ( *GetRxdoneTimestamp )( void );
+
 };
+
+/*!
+ * \brief Radio Parameter config definition
+ */
+typedef struct LoRaRadioConfig_s
+{
+    RadioModems_t modem; // LoRa Modem \ FSK modem
+    uint32_t frequency;
+    int8_t txpower;
+    
+    // LoRa
+    uint8_t sf;    // spreadfactor
+    uint8_t bw;    // bandwidth
+    uint8_t cr;    // coderate
+    uint8_t hop_period;
+    uint8_t symb_timeout;
+    
+    union 
+    {
+        struct
+        {
+            uint8_t  iq_inverted:1;
+            //uint8_t  public_network:1;
+            uint8_t  fix_len_enable:1;
+            uint8_t crc_on:1;
+            uint8_t freq_hop_on:1;
+            uint8_t rx_continuous:1;
+        }bits;
+        uint8_t byte;
+    }rf_misc;
+
+    // FSK
+    uint32_t fdev;
+    uint32_t datarate;
+    uint32_t fsk_bandwidth;
+    uint32_t fsk_afc_bandwidth;
+    
+    uint16_t preamble_len;
+
+}LoRaRadioConfig_t;
 
 /*!
  * \brief Radio driver
@@ -428,6 +508,8 @@ struct Radio_s
  */
 extern const struct Radio_s Radio;
 
-
+/**
+  * @}
+  */
 
 #endif // __RADIO_H__

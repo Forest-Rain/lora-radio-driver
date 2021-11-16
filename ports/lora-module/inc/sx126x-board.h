@@ -19,6 +19,8 @@
  * \author    Miguel Luis ( Semtech )
  *
  * \author    Gregory Cristian ( Semtech )
+ *
+ * \author    Forest-Rain
  */
 #ifndef __SX126x_BOARD_H__
 #define __SX126x_BOARD_H__
@@ -77,12 +79,21 @@
     #endif
 #endif // end of LORA_RADIO_GPIO_SETUP_BY_PIN_NAME
 
+
+/** @addtogroup LORA_RADIO_BOARD
+  * @{
+  */
+
+/** @addtogroup LORA_RADIO_BOARD_SX126X
+  * @{
+  */
+
 /*!
  * Defines the time required for the TCXO to wakeup [ms].
  */
 #define BOARD_TCXO_WAKEUP_TIME                          2
 
-#define SX126X_DELAY_MS( ms )                           rt_thread_mdelay(ms) 
+#define SX126X_DELAY_MS( ms )                           rt_thread_mdelay(ms)
 #define SX126X_BLOCK_DELAY_1MS()                        rt_hw_us_delay(999)
 
 /*!
@@ -170,5 +181,12 @@ void SX126xDbgPinTxWrite( uint8_t state );
  */
 void SX126xDbgPinRxWrite( uint8_t state );
 
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 #endif // __SX126x_BOARD_H__

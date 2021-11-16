@@ -10,7 +10,15 @@
 #ifndef __LORA_SPI_SX126X_H__
 #define __LORA_SPI_SX126X_H__
 
-#include "sx126x/sx126x.h"
+#include "sx126x\sx126x.h"
+
+/** @addtogroup LORA_RADIO_SPI
+  * @{
+  */
+
+/** @addtogroup SX126X_SPI
+  * @{
+  */
 
 /*!
  * \brief Wakes up the radio
@@ -89,6 +97,14 @@ void SX126xWriteBuffer( uint8_t offset, uint8_t *buffer, uint8_t size );
  * \param [in]  size          The number of byte to be read
  */
 void SX126xReadBuffer( uint8_t offset, uint8_t *buffer, uint8_t size );
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 #endif /* __LORA_SPI_SX126X_H__ */
 

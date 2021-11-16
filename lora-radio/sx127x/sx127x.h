@@ -122,8 +122,10 @@ typedef struct
     RadioState_t             State;
     RadioModems_t            Modem;
     uint32_t                 Channel;
+#if defined( LORA_RADIO_DRIVER_USING_RF_MODEM_FSK ) 
     RadioFskSettings_t       Fsk;
     RadioFskPacketHandler_t  FskPacketHandler;
+#endif    
     RadioLoRaSettings_t      LoRa;
     RadioLoRaPacketHandler_t LoRaPacketHandler;
 }RadioSettings_t;
@@ -189,6 +191,14 @@ typedef void ( DioIrqHandler )( void );
 }                                                 \
 
 #define RF_MID_BAND_THRESH                          525000000
+
+/** @addtogroup LORA_RADIO_CHIP_DRIVER
+  * @{
+  */
+
+/** @addtogroup SX127X_DRIVER
+  * @{
+  */
 
 /*!
  * ============================================================================
@@ -505,5 +515,13 @@ void RadioIrqProcess( uint8_t irq_index );
  * Radio hardware and global parameters
  */
 extern SX127x_t SX127x;
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 #endif // __SX127x_H__

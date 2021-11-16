@@ -30,6 +30,7 @@
 #include <stdbool.h>
 #include "SX127x/SX127x.h"
 
+
 #ifdef LORA_RADIO_GPIO_SETUP_BY_PIN_NAME
 #if ( RT_VER_NUM <= 0x40002 )
     #define LORA_RADIO_NSS_PIN       stm32_pin_get(LORA_RADIO_NSS_PIN_NAME)
@@ -94,10 +95,21 @@
 
 #endif // end of LORA_RADIO_GPIO_SETUP_BY_PIN_NAME
 
+/** @addtogroup LORA_RADIO_BOARD_SX127X
+  * @{
+  */
+
+#ifdef LORA_RADIO_DRIVER_USING_RTOS_RT_THREAD
 /*!
  * \brief delayms for radio access
  */
 #define SX127X_DELAY_MS(ms)              rt_thread_mdelay(ms) 
+#else
+/*!
+ * \brief delayms for radio access
+ */
+#define SX127X_DELAY_MS(ms)              HAL_Delay(ms) 
+#endif
 
 /*!
  * \brief Initializes the radio I/Os pins interface
@@ -207,5 +219,9 @@ int stm32_pin_get(char *pin_name);
  * Radio hardware and global parameters
  */
 extern SX127x_t SX127x;
+
+/**
+  * @}
+  */
 
 #endif // __SX127x_BOARD_H__

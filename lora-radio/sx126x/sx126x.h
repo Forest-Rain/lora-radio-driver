@@ -713,6 +713,14 @@ typedef struct
     void ( *cadDone )( bool cadFlag );              //!< Pointer to a function run on channel activity detected
 }SX126xCallbacks_t;
 
+/** @addtogroup LORA_RADIO_CHIP_DRIVER
+  * @{
+  */
+
+/** @addtogroup SX126X_DRIVER
+  * @{
+  */
+
 /*!
  * ============================================================================
  * Public functions prototypes
@@ -1108,5 +1116,13 @@ void SX126xClearIrqStatus( uint16_t irq );
  * Radio hardware and global parameters
  */
 extern SX126x_t SX126x;
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 #endif // __SX126x_H__

@@ -1,8 +1,9 @@
 # LoRa-Radio-Driver软件包使用说明
 
 # 1 简介
-LoRa-Radio-Driver软件包是基于RTOS( RT-Thread ) 实现的LoRa Tranceiver芯片的驱动文件，可用于快速搭建基于LoRa等通信的应用产品。
+LoRa-Radio-Driver软件包是基于RTOS( RT-Thread ) 实现的LoRa Tranceiver芯片(SX126x、SX127x等)的驱动文件，该驱动文件通过SPI访问LoRa Tranceiver芯片，可用于快速搭建基于LoRa等通信的应用产品。
 LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](https://github.com/Forest-Rain/lora-radio-driver/blob/master/doc)基础上，进一步封装实现。
+
 > LoRaMac\Radio
 > [https://github.com/Lora-net/LoRaMac-node/tree/master/src/radio](https://github.com/Lora-net/LoRaMac-node/tree/master/src/radio)
 
@@ -21,15 +22,14 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
       - LoRa Transceiver (SPI)
          - SX126X (SX1262\ASR6500S\LLCC68\SX1268..)
             - SX1268
-               - [x] [LSD4RF-2R717N40 (CN470频段)](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
+               - [x] [LSD4RF-2R717N40](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
             - SX1262
-               - [x] ASR6500S
-               - [x] [LSD4RF-2R822N30 (868/915MHz频段)](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
+             - [x] ASR6500S
             - LLCC68
             - LR1110
          - SX127X (SX1272\SX1276\SX1278..)
             - SX1278
-               - [x] [LSD4RF-2F717N30(CN470频段)](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
+               - [x] [LSD4RF-2F717N20](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)
                - [x] [Ra-01](http://wiki.ai-thinker.com/lora/man)
          - [ ] SX1276
       - LoRa SIP\SoC
@@ -37,15 +37,12 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
       - LoRa Radio Driver当前功能主要在STM32L平台测试通过，未来计划将适配更多的MCU平台（华大MCU、nRF、BK）
          - [x] STM32L0系列
          - [x] STM32L4系列
-         - [x] STM32H7系列
    - 当前支持的RTOS
       - [x] RT-Thread
       - [ ] RT-Thread Nano
-   - 当前测试的IDE
-      - [x] MDK5.29
-      - [x] RT-Thread Studio 1.1.3
+
 # 2 LoRa Radio Driver 软件包组织结构
-![image.png](https://github.com/Forest-Rain/lora-radio-driver/raw/master/doc/pics/01_lora-radio-driver_pkgs_struction.png)
+![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1598742766628-ea39cbc7-119b-4a3f-a323-45ba4cee9bbd.png#align=left&display=inline&height=677&margin=%5Bobject%20Object%5D&name=image.png&originHeight=677&originWidth=1111&size=80753&status=done&style=none&width=1111)
 
 - lora-radio
    - sx126x
@@ -89,9 +86,8 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
          - stm32_adapter 
             - lora-board-spi.c
                - STM32平台的SPI外设初始化等通用接口
-            - LSD4RF-2F717N30 （SX1278 LoRa模块）
+            - LSD4RF-2F717N20 （SX1278 LoRa模块）
             - LSD4RF-2R717N40 （SX1268 LoRa模块）
-            - LSD4RF-2R822N30 （SX1262 LoRa模块）
             - Ra-01 （SX1278 LoRa模块）
                - xxxx-borad.c
                   - LoRa模块功率输出方式（PA\RFO...）
@@ -217,10 +213,9 @@ RT-Thread online packages --->
 | 序号 | 硬件平台 | MCU | LoRa模块 | 主要用户接口 |
 | --- | --- | --- | --- | --- |
 | 1 | LSD4RF-TEST2002  | STM32L476VG | [LSD4RF-2R717N40](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)<br />[ ( SX1268 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87) | <br />- 用户接口定义<br />   - VCC  - 3.3V<br />   - GND<br />   - SCK    - PC10 (SPI3)<br />   - MISO  - PC11 (SPI3)<br />   - MOSI  - PC12 (SPI3)<br />   - NSS    - PA15<br />   - RESET - PA7<br />   - DIO0  - PB1<br />   - BUSY - PB2<br />   - RFSW1 - PB0<br />   - RFSW2 - PC5<br />- 射频开关TX trace<br />   - TX: RFSW1 = 1 , RFSW2 = 0<br />   - TX: RFSW1 = 0 , RFSW2 = 1<br /> |
-| 2 | LSD4RF-TEST2002  | STM32L476VG | [LSD4RF-2F717N30](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)<br />[ ( SX1278 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87) | <br />- 用户接口定义<br />   - VCC   - 3.3V<br />   - GND<br />   - SCK    - PC10 (SPI3)<br />   - MISO  - PC11 (SPI3)<br />   - MOSI  - PC12 (SPI3)<br />   - NSS    - PB6<br />   - RESET - PA7<br />   - DIO0  - PB1<br />   - DIO1  - PC4<br />   - DIO2  - PB2<br />   - DIO3  - NC<br />   - DIO4  - NC<br />   - RFSW1 - PB0<br />   - RFSW2 - PC5<br />- 射频开关TX trace<br />   - TX: RFSW1 = 1 , RFSW2 = 0<br />   - TX: RFSW1 = 0 , RFSW2 = 1<br /> |
+| 2 | LSD4RF-TEST2002  | STM32L476VG | [LSD4RF-2F717N20](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)<br />[ ( SX1278 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87) | <br />- 用户接口定义<br />   - VCC   - 3.3V<br />   - GND<br />   - SCK    - PC10 (SPI3)<br />   - MISO  - PC11 (SPI3)<br />   - MOSI  - PC12 (SPI3)<br />   - NSS    - PB6<br />   - RESET - PA7<br />   - DIO0  - PB1<br />   - DIO1  - PC4<br />   - DIO2  - PB2<br />   - DIO3  - NC<br />   - DIO4  - NC<br />   - RFSW1 - PB0<br />   - RFSW2 - PC5<br />- 射频开关TX trace<br />   - TX: RFSW1 = 1 , RFSW2 = 0<br />   - TX: RFSW1 = 0 , RFSW2 = 1<br /> |
 | 3 | Nucleo-L476RG | STM32L476RG | [Ra-01](http://wiki.ai-thinker.com/lora/man)<br />(RT-thread LoRa Adruino扩展板V1) | <br />- 用户接口定义<br />   - VCC    - 3.3V<br />   - GND<br />   - SCK    - PA5(SPI1)<br />   - MISO  - PA6(SPI1)<br />   - MOSI  - PA7(SPI1)<br />   - NSS    - PB6<br />   - RESET - PC7<br />   - DIO0  - PA9<br />   - DIO1  - PA8<br /> |
-| 4 | ART-Pi  | STM32H750XB | [LSD4RF-2R717N40](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)<br />[ ( SX1268 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87) | <br />- 用户接口定义<br />   - VCC  - 3.3V<br />   - GND<br />   - SCK    - PI1 (SPI2)<br />   - MISO  - PI2 (SPI2)<br />   - MOSI  - PI3 (SPI2)<br />   - NSS    - PI0<br />   - RESET - PA15<br />   - DIO1  - PG7<br />   - BUSY - PH15<br />   - RFSW1 - PH14<br />   - RFSW2 - PH13<br />- 射频开关TX trace<br />   - TX: RFSW1 = 1 , RFSW2 = 0<br />   - TX: RFSW1 = 0 , RFSW2 = 1<br /> |
-| 5 | ART-Pi  | STM32H750XB | [LSD4RF-2R822N30](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87)<br />[ ( SX1262 )](http://bbs.lierda.com/forum.php?mod=viewthread&tid=87) | |
+
 ## 4.2 Shell测试命令
 若使能 [* ] LoRa Radio Test Shell，则可以通过shell（finish）命令直接进行LoRa相关测试
 ```c
@@ -228,19 +223,19 @@ RT-Thread online packages --->
      Select the RF frequency (Region CN470)  --->                                                                            │ │
      Select RF Modem (Modem LoRa)  --->
 ```
-![image.png](https://github.com/Forest-Rain/lora-radio-driver/raw/master/doc/pics/02_lora-radio-test-shell-cmdlist.png)
+![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1592550763879-ac947241-b072-4db8-89bf-ced6ab168af9.png#align=left&display=inline&height=163&margin=%5Bobject%20Object%5D&name=image.png&originHeight=163&originWidth=858&size=21400&status=done&style=none&width=858)
 
 | 序号 | finish命令 | 说明 |
 | --- | --- | --- |
 | 1 | lora probe | 测试lora设备(SPI)访问是否正常 |
-| 2 | lora cw <para1> <para2> | \<para1\>:频点，单位Hz<br>\<para2\>:功率，单位dBm|
-| 3 | lora ping <para1> <para2><para3> | \<para1\> : 主机\从机<br>-m 主机<br>-s 从机<br> \<para2\>: 发送数据包个数<br>\<para3\>: pingc测试数据包长度,最大支持255Byte |
-| 4 | lora rx  | 接收数据包，同时以16进制格式与ASCII码显示数据内容 |
-| 5 | lora config <para1> <para2> | \<para1\>:radio参数，字符表示<br/>  freq 表示频率，单位Hz<br/>  power 表示发射功率，单位dbm<br/>  sf 表示扩频因子，有效值: 7~12<br/>  bw表示带宽，有效值: 0 (125kHz)、1 (250KHz)、2 (500KHz)<br/>  public表示同步字，有效值: 0 （sync = 0x12), 1  (sync = 0x34)<br/>  iq 表示iq反转，有效值: 0 (iq不反转)，1 (iq反转)<br/>\<para2\>:radio参数的具体值 |
+| 2 | lora cw <para1> <para2> | 输出CW,可用于测试发射功率、频点等<br />\<para1\>:频点，单位Hz<br>\<para2\>:功率，单位dBm |
+| 3 | lora ping <para1> <para2> | 单向\双向通信测试<br />\<para1\> : 主机\从机<br>-m 主机<br>-s 从机<br> \<para2\>: 发送数据包个数 |
+| 4 | lora rx  | 接收(监听)数据包，同时以16进制格式与ASCII码显示数据内容 |
+| 5 | lora config <para1> <para2> | 配置射频参数<br />\<para1\>:radio参数，字符表示<br/>  freq 表示频率，单位Hz<br/>  power 表示发射功率，单位dbm<br/>  sf 表示扩频因子，有效值: 7~12<br/>  bw表示带宽，有效值: 0 (125kHz)、1 (250KHz)、2 (500KHz)<br/>  public表示同步字，有效值: 0 （sync = 0x12), 1  (sync = 0x34)<br/>  iq 表示iq反转，有效值: 0 (iq不反转)，1 (iq反转)<br/>\<para2\>:radio参数的具体值 |
 
-![image.png](https://github.com/Forest-Rain/lora-radio-driver/raw/master/doc/pics/03_lora-ping_SX1278-SX1268-TRX-test.png)
+![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1598743470109-a54f4753-4ffd-4c7a-a3bf-30d13b8e15e1.png#align=left&display=inline&height=905&margin=%5Bobject%20Object%5D&name=image.png&originHeight=905&originWidth=1848&size=267690&status=done&style=none&width=1848)
 lora ping 双向通信测试示例(SX1278 <-> SX1268)
-![image.png](https://github.com/Forest-Rain/lora-radio-driver/raw/master/doc/pics/04_lora-rx_sniffer-test.png)
+![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1598743657349-9a16556a-35da-4134-8d37-8924ac841578.png#align=left&display=inline&height=871&margin=%5Bobject%20Object%5D&name=image.png&originHeight=871&originWidth=1854&size=269482&status=done&style=none&width=1854)
 lora rx 单向接收(监听)lora数据包测试示例 (SX1278 <- 或-> SX1268)
 
 ## 4.3 应用层调用说明
@@ -334,12 +329,11 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 # 5 版本更新历史
 
 - V1.0.0 版本 2020-06-20
-   - 基于lorawan4.4.2 release版本的radio
    - 主体功能实现基于STM32平台
       - 支持SX126x、SX127x系列芯片
          - 测试LoRa芯片支持LSD4RF-2R717N40(SX1268)、SX1278、ASR6500S @ [**zyk6271**](https://github.com/zyk6271)
    - 支持基于RT-Thread内核rt_timer的lora-radio-timer接口@ [**AnswerInTheWind** ](https://github.com/AnswerInTheWind)
-   - 优化日志换行功能、sx126x.c的multi-rtimer.h包含问题@[**zyk6271**](https://github.com/zyk6271)
+   - 优化日志换行功能@[**zyk6271**](https://github.com/zyk6271)
 - V1.1.0 版本 2020-08-30
    - 完善用户使用指南
    - .lora-radio-driver软件包
@@ -351,7 +345,7 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
             - sx126x更新 RadioRandom 与 SX126xGetRandom
             - 更新 RadioIrqProcess
             - 更新RadioTimeOnAir
-         - RadioIrqProcess 增加 临界区保护，优先完成RF中断回调服务函数，防止出现硬件异常
+         - RadioIrqProcess 增加 临界区保护，防止出现硬件异常
       - 调整lora-radio-driver软件包架构，便于未来适配不同的MCU平台
          - port目录下新增mcu平台适配层，如stm32_adapter
    - lora-radio-test-shell
@@ -364,20 +358,24 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
          - 区分单实例(单lora模块)与多实例（多lora模块）情况，目前支持单实例
          - 移除了Kconfig中对BSP_USING_SPIx的直接定义，BSP_USING_SPIx定义调整到[Target Platform]\Board\Kconfig)
          - 重命名宏定义REGION_X为PHY_REGION_X(如REGION_CN470 -> PHY_REGION_CN470)，以便与LoRaWAN协议栈中缺省REGION_X共存
+
 - V1.1.2 版本 2020-10-12
-   - 修复Ra-01未同步与v1.1.1更新导致的问题
-   - 优化 drv_gpio.h使用，兼容RT-Thread Studio
-   - 优化 lora-radio-test-shell.c 功能
-     - 新增接收超时时间设置
- - V1.2 版本 2020-10-14
-    - 新增硬件测试平台
-      - ART-Pi+LSD4RF-2F717N30(SX1268)模块平台 (470~510MHz频段)
-      - ART-Pi+LSD4RF-2R717N40(SX1268)模块平台 (470~510MHz频段)
-      - ART-Pi+LSD4RF-2R822N30(SX1262)模块平台 (868/915MHz频段)
- - V1.4.0 版本 2021-04-25
-   - 重设计lora config命令，便于快速配置单个radio参数
-   - ping数据包长度最大支持255Byte，可通过shell自定义ping测试数据包长度
-   - shell新增加iq version、public network参数设置
-   - 使用LORA_RADIO_DEBUG_LOG代替rt_kprintf
+  - 修复Ra-01未同步与v1.1.1更新导致的问题
+  - 优化 drv_gpio.h使用，兼容RT-Thread Studio
+  - 优化 lora-radio-test-shell.c 功能
+  - 新增接收超时时间设置
+- V1.2 版本 2020-10-14
+  - 新增硬件测试平台
+  - ART-Pi+LSD4RF-2F717N30(SX1268)模块平台 (470~510MHz频段)
+  - ART-Pi+LSD4RF-2R717N40(SX1268)模块平台 (470~510MHz频段)
+  - ART-Pi+LSD4RF-2R822N30(SX1262)模块平台 (868/915MHz频段)
+- V1.4.0 版本 2021-04-25
+  - 重设计lora config命令，便于快速配置单个radio参数
+  - ping数据包长度最大支持255Byte，可通过shell自定义ping测试数据包长度
+  - shell新增加iq version、public network参数设置
+  - 使用LORA_RADIO_DEBUG_LOG代替rt_kprintf
+- V1.5.0 版本 2021-11-15
+  - 新增doxygen支持
+
 # 6 问题和建议
 如果有什么问题或者建议欢迎提交 [Issue](https://github.com/Forest-Rain/lora-radio-driver/issues) 进行讨论。

@@ -10,6 +10,14 @@
 #ifndef __LORA_SPI_SX127x_H__
 #define __LORA_SPI_SX127x_H__
 
+/** @addtogroup LORA_RADIO_SPI
+  * @{
+  */
+
+/** @addtogroup SX127X_SPI
+  * @{
+  */
+
 /*!
  * \brief Writes the radio register at the specified address
  *
@@ -44,6 +52,13 @@ void SX127xWriteBuffer( uint16_t addr, uint8_t *buffer, uint8_t size );
  */
 void SX127xReadBuffer( uint16_t addr, uint8_t *buffer, uint8_t size );
 
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 
 #endif // __LORA_SPI_SX127x_H__
