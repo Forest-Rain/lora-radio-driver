@@ -123,7 +123,7 @@ void lora_radio_thread_entry(void* parameter)
     
     while(1)
     {
-        if (rt_event_recv(&lora_radio_event, EV_LORA_RADIO_IRQ_MASK,
+        if (rt_event_recv(&lora_radio_event, EV_LORA_RADIO_IRQ_MASK | EV_LORA_RADIO_TIMEOUT_FIRED,
                                 (RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR),
                                 RT_WAITING_FOREVER, &ev) == RT_EOK)
         {
