@@ -146,7 +146,7 @@ void SX127xOnDio5Irq( void  );
  */
 void SX127xOnTimeoutIrq( void );
 
-#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD  
+#ifdef LORA_RADIO_DRIVER_USING_RTOS_RT_THREAD  
 /*!
  * \brief Tx & Rx timeout timer Event
  */
@@ -281,7 +281,7 @@ void SX127xInit( RadioEvents_t *events )
 #endif
     
     // Initialize driver timeout timers
-#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD    
+#ifdef LORA_RADIO_DRIVER_USING_RTOS_RT_THREAD    
     TimerInit( &TxTimeoutTimer, SX127xOnTimeoutIrqEvent );
     TimerInit( &RxTimeoutTimer, SX127xOnTimeoutIrqEvent );
     TimerInit( &RxTimeoutSyncWord, SX127xOnTimeoutIrqEvent );
@@ -471,6 +471,7 @@ void SX127xSetRxConfig( RadioModems_t modem, uint32_t bandwidth,
 
     switch( modem )
     {
+#if defined( LORA_RADIO_DRIVER_USING_RF_MODEM_FSK )
     case MODEM_FSK:
         {
             SX127x.Settings.Fsk.Bandwidth = bandwidth;
@@ -512,6 +513,7 @@ void SX127xSetRxConfig( RadioModems_t modem, uint32_t bandwidth,
             SX127xWrite( REG_PACKETCONFIG2, ( SX127xRead( REG_PACKETCONFIG2 ) | RF_PACKETCONFIG2_DATAMODE_PACKET ) );
         }
         break;
+#endif
     case MODEM_LORA:
         {
 
@@ -748,6 +750,7 @@ void SX127xSetTxConfig( RadioModems_t modem, int8_t power, uint32_t fdev,
 
     switch( modem )
     {
+#if defined( LORA_RADIO_DRIVER_USING_RF_MODEM_FSK )
     case MODEM_FSK:
         {
             SX127x.Settings.Fsk.Power = power;
@@ -780,6 +783,7 @@ void SX127xSetTxConfig( RadioModems_t modem, int8_t power, uint32_t fdev,
             SX127xWrite( REG_PACKETCONFIG2, ( SX127xRead( REG_PACKETCONFIG2 ) | RF_PACKETCONFIG2_DATAMODE_PACKET ) );
         }
         break;
+#endif
     case MODEM_LORA:
         {
             SX127x.Settings.LoRa.Power = power;
@@ -1042,6 +1046,7 @@ void SX127xSend( uint8_t *buffer, uint8_t size )
 
     switch( SX127x.Settings.Modem )
     {
+#if defined( LORA_RADIO_DRIVER_USING_RF_MODEM_FSK )
     case MODEM_FSK:
         {
             SX127x.Settings.FskPacketHandler.NbBytes = 0;
@@ -1073,6 +1078,7 @@ void SX127xSend( uint8_t *buffer, uint8_t size )
             txTimeout = SX127x.Settings.Fsk.TxTimeout;
         }
         break;
+#endif
     case MODEM_LORA:
         {
             if( SX127x.Settings.LoRa.IqInverted == true )
@@ -1146,6 +1152,7 @@ void SX127xSetRx( uint32_t timeout )
 
     switch( SX127x.Settings.Modem )
     {
+#if defined( LORA_RADIO_DRIVER_USING_RF_MODEM_FSK )
     case MODEM_FSK:
         {
             rxContinuous = SX127x.Settings.Fsk.RxContinuous;
@@ -1178,6 +1185,7 @@ void SX127xSetRx( uint32_t timeout )
             SX127x.Settings.FskPacketHandler.Size = 0;
         }
         break;
+#endif
     case MODEM_LORA:
         {
             if( SX127x.Settings.LoRa.IqInverted == true )
@@ -1285,6 +1293,7 @@ void SX127xSetRx( uint32_t timeout )
         TimerStart( &RxTimeoutTimer );
     }
 
+#if defined( LORA_RADIO_DRIVER_USING_RF_MODEM_FSK )
     if( SX127x.Settings.Modem == MODEM_FSK )
     {
         SX127xSetOpMode( RF_OPMODE_RECEIVER );
@@ -1293,6 +1302,7 @@ void SX127xSetRx( uint32_t timeout )
         TimerStart( &RxTimeoutSyncWord );
     }
     else
+#endif
     {
         if( rxContinuous == true )
         {
@@ -1313,6 +1323,7 @@ void SX127xSetTx( uint32_t timeout )
 
     switch( SX127x.Settings.Modem )
     {
+#if defined( LORA_RADIO_DRIVER_USING_RF_MODEM_FSK )
     case MODEM_FSK:
         {
             // DIO0=PacketSent
@@ -1331,6 +1342,7 @@ void SX127xSetTx( uint32_t timeout )
             SX127x.Settings.FskPacketHandler.FifoThresh = SX127xRead( REG_FIFOTHRESH ) & 0x3F;
         }
         break;
+#endif
     case MODEM_LORA:
         {
             if( SX127x.Settings.LoRa.FreqHopOn == true )
@@ -1560,12 +1572,14 @@ void SX127xSetMaxPayloadLength( RadioModems_t modem, uint8_t max )
 
     switch( modem )
     {
+#if defined( LORA_RADIO_DRIVER_USING_RF_MODEM_FSK )
     case MODEM_FSK:
         if( SX127x.Settings.Fsk.FixLen == false )
         {
             SX127xWrite( REG_PAYLOADLENGTH, max );
         }
         break;
+#endif
     case MODEM_LORA:
         SX127xWrite( REG_LR_PAYLOADMAXLENGTH, max );
         break;
@@ -1598,6 +1612,7 @@ void SX127xOnTimeoutIrq( void )
     switch( SX127x.Settings.State )
     {
     case RF_RX_RUNNING:
+#if defined( LORA_RADIO_DRIVER_USING_RF_MODEM_FSK )
         if( SX127x.Settings.Modem == MODEM_FSK )
         {
             SX127x.Settings.FskPacketHandler.PreambleDetected = false;
@@ -1623,6 +1638,7 @@ void SX127xOnTimeoutIrq( void )
                 TimerStop( &RxTimeoutSyncWord );
             }
         }
+#endif
         if( ( RadioEvents != NULL ) && ( RadioEvents->RxTimeout != NULL ) )
         {
             RadioEvents->RxTimeout( );
@@ -1686,6 +1702,7 @@ void SX127xOnDio0Irq( void )
             // RxDone interrupt
             switch( SX127x.Settings.Modem )
             {
+#if defined( LORA_RADIO_DRIVER_USING_RF_MODEM_FSK )
             case MODEM_FSK:
                 if( SX127x.Settings.Fsk.CrcOn == true )
                 {
@@ -1770,6 +1787,7 @@ void SX127xOnDio0Irq( void )
                 SX127x.Settings.FskPacketHandler.NbBytes = 0;
                 SX127x.Settings.FskPacketHandler.Size = 0;
                 break;
+#endif
             case MODEM_LORA:
                 {
                     // Clear Irq
@@ -1871,6 +1889,7 @@ void SX127xOnDio1Irq( void )
         case RF_RX_RUNNING:
             switch( SX127x.Settings.Modem )
             {
+#if defined( LORA_RADIO_DRIVER_USING_RF_MODEM_FSK )
             case MODEM_FSK:
                 // Stop timer
                 TimerStop( &RxTimeoutSyncWord );
@@ -1907,6 +1926,7 @@ void SX127xOnDio1Irq( void )
                     SX127x.Settings.FskPacketHandler.NbBytes += ( SX127x.Settings.FskPacketHandler.Size - SX127x.Settings.FskPacketHandler.NbBytes );
                 }
                 break;
+#endif
             case MODEM_LORA:
                 // Sync time out
                 TimerStop( &RxTimeoutTimer );
@@ -1927,6 +1947,7 @@ void SX127xOnDio1Irq( void )
         case RF_TX_RUNNING:
             switch( SX127x.Settings.Modem )
             {
+#if defined( LORA_RADIO_DRIVER_USING_RF_MODEM_FSK )
             case MODEM_FSK:
                 // FifoEmpty interrupt
                 if( ( SX127x.Settings.FskPacketHandler.Size - SX127x.Settings.FskPacketHandler.NbBytes ) > SX127x.Settings.FskPacketHandler.ChunkSize )
@@ -1941,6 +1962,7 @@ void SX127xOnDio1Irq( void )
                     SX127x.Settings.FskPacketHandler.NbBytes += SX127x.Settings.FskPacketHandler.Size - SX127x.Settings.FskPacketHandler.NbBytes;
                 }
                 break;
+#endif
             case MODEM_LORA:
                 break;
             default:
@@ -1959,6 +1981,7 @@ void SX127xOnDio2Irq( void )
         case RF_RX_RUNNING:
             switch( SX127x.Settings.Modem )
             {
+#if defined( LORA_RADIO_DRIVER_USING_RF_MODEM_FSK )
             case MODEM_FSK:
                 // Checks if DIO4 is connected. If it is not PreambleDetected is set to true.
                 ////if( SX127x.DIO4.port == NULL )
@@ -1980,6 +2003,7 @@ void SX127xOnDio2Irq( void )
                     SX127x.Settings.FskPacketHandler.RxGain = ( SX127xRead( REG_LNA ) >> 5 ) & 0x07;
                 }
                 break;
+#endif
             case MODEM_LORA:
                 if( SX127x.Settings.LoRa.FreqHopOn == true )
                 {
@@ -2060,6 +2084,7 @@ void SX127xOnDio4Irq( void  )
 {
     switch( SX127x.Settings.Modem )
     {
+#if defined( LORA_RADIO_DRIVER_USING_RF_MODEM_FSK )
     case MODEM_FSK:
         {
             if( SX127x.Settings.FskPacketHandler.PreambleDetected == false )
@@ -2068,6 +2093,7 @@ void SX127xOnDio4Irq( void  )
             }
         }
         break;
+#endif
     case MODEM_LORA:
         break;
     default:
@@ -2088,7 +2114,7 @@ void SX127xOnDio5Irq( void )
     }
 }
 
-#ifdef LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD
+#ifdef LORA_RADIO_DRIVER_USING_RTOS_RT_THREAD
 void RadioIrqProcess( uint8_t irq_index )
 {
     LORA_RADIO_CRITICAL_SECTION_BEGIN( );
