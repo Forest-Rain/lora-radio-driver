@@ -14,7 +14,9 @@
 #ifndef USE_NO_RTOS
 #include "rtconfig.h"
 #endif
-//#define LORA_RADIO_DRIVER_USING_RTOS_RT_THREAD
+
+// default based on rt-thread
+#define LORA_RADIO_DRIVER_USING_RTOS_RT_THREAD 
 //#define LORA_RADIO_DRIVER_USING_RTOS_RT_THREAD_NANO
 
 #ifdef LORA_RADIO_DRIVER_USING_RTOS_RT_THREAD
