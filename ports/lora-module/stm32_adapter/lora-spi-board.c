@@ -40,8 +40,7 @@ struct rt_spi_device *lora_radio_spi_init(const char *bus_name, const char *lora
     RT_ASSERT(bus_name);
     
     {
-        /* eg: res = rt_hw_spi_device_attach( bus_name, lora_device_name, GPIOA, GPIO_PIN_15); */
-        res = rt_hw_spi_device_attach( bus_name, lora_device_name, GET_GPIO_PORT(LORA_RADIO_NSS_PIN), GET_GPIO_PIN(LORA_RADIO_NSS_PIN));
+        res = rt_hw_spi_device_attach( bus_name, lora_device_name, LORA_RADIO_NSS_PIN);
         
         if (res != RT_EOK)
         {
