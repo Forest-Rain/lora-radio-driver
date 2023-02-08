@@ -28,7 +28,7 @@
 #include "lora-radio-rtos-config.h"
 #include <stdint.h>
 #include <stdbool.h>
-#include "sx126x/sx126x.h"
+#include "sx126x.h"
 
 #ifdef LORA_RADIO_GPIO_SETUP_BY_PIN_NAME
 #if ( RT_VER_NUM <= 0x40002 )
