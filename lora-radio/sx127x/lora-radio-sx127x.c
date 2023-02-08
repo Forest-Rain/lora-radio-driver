@@ -26,7 +26,7 @@
 
 #include <stdlib.h>
 #include "lora-radio.h"
-#include "sx127x\sx127x.h"
+#include "sx127x.h"
 #include "sx127x-board.h"
 
 #ifdef RT_USING_PM

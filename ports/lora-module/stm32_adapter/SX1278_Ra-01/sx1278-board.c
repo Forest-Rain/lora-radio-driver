@@ -24,7 +24,7 @@
  */
 #include "lora-radio-rtos-config.h"
 #include "lora-radio.h"
-#include "sx127x\sx127x.h"
+#include "sx127x.h"
 #include "sx127x-board.h"
 
 #define LOG_TAG "LoRa.Board.Ra-01(SX1278)"
