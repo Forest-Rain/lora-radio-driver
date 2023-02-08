@@ -28,7 +28,7 @@
 #include "lora-radio-rtos-config.h"
 #include <stdint.h>
 #include <stdbool.h>
-#include "SX127x/SX127x.h"
+#include "SX127x.h"
 
 
 #ifdef LORA_RADIO_GPIO_SETUP_BY_PIN_NAME

@@ -10,7 +10,7 @@
 #ifndef __LORA_SPI_SX126X_H__
 #define __LORA_SPI_SX126X_H__
 
-#include "sx126x\sx126x.h"
+#include "sx126x.h"
 
 /** @addtogroup LORA_RADIO_SPI
   * @{
