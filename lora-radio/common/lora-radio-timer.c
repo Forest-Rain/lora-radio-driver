@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include "lora-radio-timer.h"
 
-#if defined ( LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD ) || defined ( LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD_NANO )
+#if defined ( LORA_RADIO_DRIVER_USING_RTOS_RT_THREAD ) || defined ( LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD_NANO )
 #ifndef PKG_USING_MULTI_RTIMER
 
 void rtick_timer_init( rtick_timer_event_t *obj, void ( *callback )( void ) )
@@ -60,5 +60,5 @@ TimerTime_t rtick_timer_get_elapsed_time( TimerTime_t past )
 
 #endif
 
-#endif // End Of  ( LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD ) || defined ( LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD_NANO )
+#endif // End Of  ( LORA_RADIO_DRIVER_USING_RTOS_RT_THREAD ) || defined ( LORA_RADIO_DRIVER_USING_ON_RTOS_RT_THREAD_NANO )
 
