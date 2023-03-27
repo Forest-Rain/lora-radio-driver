@@ -16,43 +16,43 @@
 #define LR_DBG_SHELL                          0
 #endif
 
-#if defined( PHY_REGION_AS923 )
+#if defined( LORA_RADIO_DRIVER_USING_PHY_REGION_AS923 )
 
 #define RF_FREQUENCY                                923000000 // Hz
 
-#elif defined( PHY_REGION_AU915 )
+#elif defined( LORA_RADIO_DRIVER_USING_PHY_REGION_AU915 )
 
 #define RF_FREQUENCY                                915000000 // Hz
 
-#elif defined( PHY_REGION_CN470 ) || defined ( PHY_REGION_CN470S )
+#elif defined( LORA_RADIO_DRIVER_USING_PHY_REGION_CN470 ) || defined ( LORA_RADIO_DRIVER_USING_PHY_REGION_CN470S )
 
 #define RF_FREQUENCY                                470300000 // Hz
 
-#elif defined( PHY_REGION_CN779 )
+#elif defined( LORA_RADIO_DRIVER_USING_PHY_REGION_CN779 )
 
 #define RF_FREQUENCY                                779000000 // Hz
 
-#elif defined( PHY_REGION_EU433 )
+#elif defined( LORA_RADIO_DRIVER_USING_PHY_REGION_EU433 )
 
 #define RF_FREQUENCY                                433000000 // Hz
 
-#elif defined( PHY_REGION_EU868 )
+#elif defined( LORA_RADIO_DRIVER_USING_PHY_REGION_EU868 )
 
 #define RF_FREQUENCY                                868000000 // Hz
 
-#elif defined( PHY_REGION_KR920 )
+#elif defined( LORA_RADIO_DRIVER_USING_PHY_REGION_KR920 )
 
 #define RF_FREQUENCY                                920000000 // Hz
 
-#elif defined( PHY_REGION_IN865 )
+#elif defined( LORA_RADIO_DRIVER_USING_PHY_REGION_IN865 )
 
 #define RF_FREQUENCY                                865000000 // Hz
 
-#elif defined( PHY_REGION_US915 )
+#elif defined( LORA_RADIO_DRIVER_USING_PHY_REGION_US915 )
 
 #define RF_FREQUENCY                                915000000 // Hz
 
-#elif defined( PHY_REGION_RU864 )
+#elif defined( LORA_RADIO_DRIVER_USING_PHY_REGION_RU864 )
 
 #define RF_FREQUENCY                                864000000 // Hz
 
@@ -151,4 +151,3 @@ typedef struct
 }lora_radio_test_t;
 
 #endif
-
