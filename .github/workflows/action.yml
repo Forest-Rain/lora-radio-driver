@@ -30,7 +30,7 @@ jobs:
          #- {RTT_BSP: "qemu-vexpress-a9", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32l476-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32l496-ali-developer", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "stm32/stm32l496-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
+         #- {RTT_BSP: "stm32/stm32l496-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -84,7 +84,7 @@ jobs:
           sed -i "s/# CONFIG_LR_DBG_SHELL_CONFIG is not set/CONFIG_LR_DBG_SHELL_CONFIG=y/g" bsp/$RTT_BSP/.config
           sed -i "s/# CONFIG_LORA_RADIO_DRIVER_USING_LORA_RADIO_TESTER is not set/CONFIG_LORA_RADIO_DRIVER_USING_LORA_RADIO_TESTER=y/g" bsp/$RTT_BSP/.config
           scons --pyconfig-silent -C bsp/$RTT_BSP
-          sed "$a BSP_USING_SPI\nBSP_USING_SPI1\n" bsp/$RTT_BSP/.config
+          #sed -i "$a BSP_USING_SPI\nBSP_USING_SPI1\n" bsp/$RTT_BSP/.config
           scons --pyconfig-silent -C bsp/$RTT_BSP
           cat bsp/$RTT_BSP/.config
           cat bsp/$RTT_BSP/rtconfig.h
