@@ -91,4 +91,4 @@ jobs:
           cat bsp/$RTT_BSP/.config
           cat bsp/$RTT_BSP/rtconfig.h
           pushd bsp/$RTT_BSP && pkgs --update && popd
-          scons -C bsp/$RTT_BSP
+          scons -C bsp/$RTT_BSP 
