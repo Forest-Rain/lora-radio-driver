@@ -1,5 +1,3 @@
-# LoRa-Radio-Driver编程说明
-
 # 1 系统依赖
 
 - SPI外设——用户需根据实际MCU平台，自定义LoRa模块实际所需要使用的SPI外设
@@ -139,7 +137,7 @@ RT-Thread online packages --->
      Select RF Modem (Modem LoRa)  --->
 ```
 
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1592550763879-ac947241-b072-4db8-89bf-ced6ab168af9.png#align=left&display=inline&height=163&margin=%5Bobject%20Object%5D&name=image.png&originHeight=163&originWidth=858&size=21400&status=done&style=none&width=858)
+![image.png](../image/02_lora-radio-test-shell-cmdlist.png)
 
 | 序号 | finish命令 | 说明 |
 | --- | --- | --- |
@@ -149,9 +147,9 @@ RT-Thread online packages --->
 | 4 | lora rx  | 接收(监听)数据包，同时以16进制格式与ASCII码显示数据内容 |
 | 5 | lora config <para1> <para2> | 配置射频参数<br />\<para1\>:radio参数，字符表示<br/>  freq 表示频率，单位Hz<br/>  power 表示发射功率，单位dbm<br/>  sf 表示扩频因子，有效值: 7~12<br/>  bw表示带宽，有效值: 0 (125kHz)、1 (250KHz)、2 (500KHz)<br/>  public表示同步字，有效值: 0 （sync = 0x12), 1  (sync = 0x34)<br/>  iq 表示iq反转，有效值: 0 (iq不反转)，1 (iq反转)<br/>\<para2\>:radio参数的具体值 |
 
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1598743470109-a54f4753-4ffd-4c7a-a3bf-30d13b8e15e1.png#align=left&display=inline&height=905&margin=%5Bobject%20Object%5D&name=image.png&originHeight=905&originWidth=1848&size=267690&status=done&style=none&width=1848)
+![image.png](../image/03_lora-ping_SX1278-SX1268-TRX-test.png)
 lora ping 双向通信测试示例(SX1278 <-> SX1268)
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1598743657349-9a16556a-35da-4134-8d37-8924ac841578.png#align=left&display=inline&height=871&margin=%5Bobject%20Object%5D&name=image.png&originHeight=871&originWidth=1854&size=269482&status=done&style=none&width=1854)
+![image.png](../image/04_lora-rx_sniffer-test.png)
 lora rx 单向接收(监听)lora数据包测试示例 (SX1278 <- 或-> SX1268)
 
 ## 4.3 应用层调用说明

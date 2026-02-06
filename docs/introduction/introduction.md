@@ -41,7 +41,7 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
 
 # 2 LoRa Radio Driver 软件包组织结构
 
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/253586/1598742766628-ea39cbc7-119b-4a3f-a323-45ba4cee9bbd.png#align=left&display=inline&height=677&margin=%5Bobject%20Object%5D&name=image.png&originHeight=677&originWidth=1111&size=80753&status=done&style=none&width=1111)
+![image.png](../image/01_lora-radio-driver_pkgs_struction.png)
 
 - lora-radio
   - sx126x
@@ -96,57 +96,6 @@ LoRa-Radio-Driver软件包在LoRaWAN开源协议栈[LoRaMAC-Node中的radio](htt
       - xxx_adapter
         - 其他mcu平台下的硬件接口实现
 
-# 3 版本更新历史
-
-- V1.0.0 版本 2020-06-20
-  - 主体功能实现基于STM32平台
-    - 支持SX126x、SX127x系列芯片
-      - 测试LoRa芯片支持LSD4RF-2R717N40(SX1268)、SX1278、ASR6500S @ [**zyk6271**](https://github.com/zyk6271)
-  - 支持基于RT-Thread内核rt_timer的lora-radio-timer接口@ [**AnswerInTheWind**](https://github.com/AnswerInTheWind)
-  - 优化日志换行功能@[**zyk6271**](https://github.com/zyk6271)
-- V1.1.0 版本 2020-08-30
-  - 完善用户使用指南
-  - .lora-radio-driver软件包
-    - 新增日志输出选择 lora-radio-debug.h，可以按需开启调试日志，也可以用于适配不同日志输出方式
-    - 新增rtos适配选择 lora-radio-rtos-config.h，便于未来适配RT-Thread-Nano、不同的RTOS平台
-    - lora-radio(sx126x\sx127x)
-      - 同步更新到lorawan4.4.4 release版本的radio
-        - sx126x更新 SX126xSetLoRaSymbNumTimeout（同步到loramac-node-master）
-        - sx126x更新 RadioRandom 与 SX126xGetRandom
-        - 更新 RadioIrqProcess
-        - 更新RadioTimeOnAir
-      - RadioIrqProcess 增加 临界区保护，防止出现硬件异常
-    - 调整lora-radio-driver软件包架构，便于未来适配不同的MCU平台
-      - port目录下新增mcu平台适配层，如stm32_adapter
-  - lora-radio-test-shell
-    - 修复 PHY CRC Error后，没有重新进入接收问题
-    - lora ping命令
-      - 新增发送空口数据包的TOA时间显示
-      - 新增主机侧接收到数据包后，seqno显示
-  - [Kconfig](https://github.com/Forest-Rain/packages/blob/master/peripherals/lora_radio_driver)
-    - 更新[lora-radio-driver\Kconfig](https://github.com/Forest-Rain/packages) 软件包配置文件
-      - 区分单实例(单lora模块)与多实例（多lora模块）情况，目前支持单实例
-      - 移除了Kconfig中对BSP_USING_SPIx的直接定义，BSP_USING_SPIx定义调整到[Target Platform]\Board\Kconfig)
-      - 重命名宏定义REGION_X为PHY_REGION_X(如REGION_CN470 -> PHY_REGION_CN470)，以便与LoRaWAN协议栈中缺省REGION_X共存
-
-- V1.1.2 版本 2020-10-12
-  - 修复Ra-01未同步与v1.1.1更新导致的问题
-  - 优化 drv_gpio.h使用，兼容RT-Thread Studio
-  - 优化 lora-radio-test-shell.c 功能
-  - 新增接收超时时间设置
-- V1.2 版本 2020-10-14
-  - 新增硬件测试平台
-  - ART-Pi+LSD4RF-2F717N30(SX1268)模块平台 (470~510MHz频段)
-  - ART-Pi+LSD4RF-2R717N40(SX1268)模块平台 (470~510MHz频段)
-  - ART-Pi+LSD4RF-2R822N30(SX1262)模块平台 (868/915MHz频段)
-- V1.4.0 版本 2021-04-25
-  - 重设计lora config命令，便于快速配置单个radio参数
-  - ping数据包长度最大支持255Byte，可通过shell自定义ping测试数据包长度
-  - shell新增加iq version、public network参数设置
-  - 使用LORA_RADIO_DEBUG_LOG代替rt_kprintf
-- V1.5.0 版本 2021-11-15
-  - 新增doxygen支持
-
-# 4 问题和建议
+# 3 问题和建议
 
 如果有什么问题或者建议欢迎提交 [Issue](https://github.com/Forest-Rain/lora-radio-driver/issues) 进行讨论。

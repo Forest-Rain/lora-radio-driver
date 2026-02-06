@@ -1,11 +1,12 @@
-introduction
+Changelog
 ===============================
+
 .. only:: html
 
-    本文档仅包含针对 LoRa 芯片驱动的简介。
+    本文档包含针lora-radio-driver的变更记录。
 
 .. toctree::
    :maxdepth: 1
    :hidden:
 
-   introduction.md
+   CHANGELOG.md

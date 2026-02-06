@@ -238,7 +238,7 @@ static void send_ping_packet(uint32_t src_addr,uint32_t dst_addr,uint8_t len)
 
 void init_tx_rx_timeout(void)
 {
-    /* unit£º ms */
+    /* unit ms */
     uint32_t packet_toa = Radio.TimeOnAir(lora_radio_test_paras.modem,lora_radio_test_paras.bw,lora_radio_test_paras.sf,lora_radio_test_paras.cr,LORA_PREAMBLE_LENGTH, LORA_FIX_LENGTH_PAYLOAD_ON_DISABLE,payload_len,true);
     tx_timeout = rx_timeout = packet_toa + 1000;  
 }

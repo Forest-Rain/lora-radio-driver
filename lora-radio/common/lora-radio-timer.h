@@ -13,11 +13,11 @@
 
 #else
 
-#ifdef LORA_RADIO_DRIVER_USING_RTOS_RT_THREAD
-
 /** @addtogroup LORA_RADIO_TIMER
   * @{
   */
+
+#ifdef LORA_RADIO_DRIVER_USING_RTOS_RT_THREAD
 
 #define TimerInit            rtick_timer_init
 #define TimerStart           rtick_timer_start
