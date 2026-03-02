@@ -43,6 +43,13 @@ language = 'zh_CN'
 
 html_theme = 'sphinx_rtd_theme'
 
+html_context = {
+    "display_github": True,
+    "github_user": "Forest-Rain",
+    "github_repo": "lora-radio-driver",
+    "github_version": "master/docs/",
+}
+
 html_static_path = ['_static']
 
 # --- Breathe configuration -----------------------------------------------------
