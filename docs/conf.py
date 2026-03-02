@@ -38,6 +38,14 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 language = 'zh_CN'
 
+# 中文搜索支持 - 配置 Elasticsearch 中文分词器
+html_search_language = 'zh'
+
+# RTD Elasticsearch 搜索配置
+html_search_options = {
+    'type': 'elastic',
+}
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
