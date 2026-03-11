@@ -8,3 +8,4 @@ sphinx_rtd_theme>=1.0.0
 sphinx-tabs
 sphinxcontrib-svg2pdfconverter
 sphinx-sitemap
+jieba
